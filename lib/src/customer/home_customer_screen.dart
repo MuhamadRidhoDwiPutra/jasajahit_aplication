@@ -7,6 +7,7 @@ import 'profile_customer_screen.dart';
 import 'pesan_customer_screen.dart';
 import 'tracking_pesanan_customer_screen.dart';
 import 'riwayat_customer_screen.dart';
+import 'desain_customer_screen.dart';
 
 class HomeCustomerScreen extends StatelessWidget {
   const HomeCustomerScreen({Key? key}) : super(key: key);
@@ -16,171 +17,255 @@ class HomeCustomerScreen extends StatelessWidget {
     return Scaffold(
       backgroundColor: const Color(0xFF8FBC8F),
       body: SafeArea(
-        child: Column(
+        child: Stack(
           children: [
-            // Custom AppBar
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-              child: Row(
-                children: [
-                  IconButton(
-                    icon: const Icon(Icons.notifications_none),
-                    onPressed: () {},
+            Column(
+              children: [
+                // Custom AppBar with gradient
+                Container(
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      colors: [Colors.green[700]!, Colors.green[500]!],
+                      begin: Alignment.topLeft,
+                      end: Alignment.bottomRight,
+                    ),
                   ),
-                  const Expanded(
-                    child: Center(
-                      child: Text(
-                        'Dashboard',
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                  child: Row(
+                    children: [
+                      Container(
+                        decoration: BoxDecoration(
+                          color: Colors.white.withOpacity(0.2),
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        child: IconButton(
+                          icon: const Icon(Icons.notifications_none,
+                              color: Colors.white),
+                          onPressed: () {},
+                        ),
+                      ),
+                      const Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              'Selamat Datang',
+                              style: TextStyle(
+                                fontSize: 14,
+                                color: Colors.white70,
+                              ),
+                            ),
+                            Text(
+                              'Customer',
+                              style: TextStyle(
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.white,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      Container(
+                        decoration: BoxDecoration(
+                          color: Colors.white.withOpacity(0.2),
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        child: IconButton(
+                          icon: const Icon(Icons.account_circle_outlined,
+                              color: Colors.white),
+                          onPressed: () {},
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+
+                // Search Bar
+                Padding(
+                  padding: const EdgeInsets.all(16),
+                  child: Container(
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(12),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withOpacity(0.1),
+                          blurRadius: 8,
+                          offset: const Offset(0, 2),
+                        ),
+                      ],
+                    ),
+                    child: TextField(
+                      decoration: InputDecoration(
+                        hintText: 'Cari model pakaian...',
+                        prefixIcon: const Icon(Icons.search),
+                        border: InputBorder.none,
+                        contentPadding: const EdgeInsets.symmetric(
+                            horizontal: 16, vertical: 14),
+                      ),
+                    ),
+                  ),
+                ),
+
+                // Categories Section
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 16),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const Text(
+                        'Kategori',
                         style: TextStyle(
                           fontSize: 18,
                           fontWeight: FontWeight.bold,
                           color: Colors.white,
                         ),
                       ),
-                    ),
-                  ),
-                  Column(
-                    children: [
-                      IconButton(
-                        icon: const Icon(Icons.account_circle_outlined),
-                        onPressed: () {},
-                      ),
-                      const Text(
-                        '24 jam',
-                        style: TextStyle(fontSize: 10, color: Colors.white),
+                      const SizedBox(height: 12),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          _CategoryCard(
+                            icon: Icons.checkroom,
+                            title: 'Baju',
+                            color: Colors.blue[400]!,
+                          ),
+                          _CategoryCard(
+                            icon: Icons.style,
+                            title: 'Pakaian',
+                            color: Colors.purple[400]!,
+                          ),
+                          _CategoryCard(
+                            icon: Icons.groups,
+                            title: 'Seragam',
+                            color: Colors.orange[400]!,
+                          ),
+                        ],
                       ),
                     ],
                   ),
-                ],
-              ),
-            ),
-            // Slogan Card
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-              child: Container(
-                width: double.infinity,
-                height: 60,
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(12),
                 ),
-                child: const Center(
-                  child: Text(
-                    'Slogan',
-                    style: TextStyle(fontSize: 16, color: Colors.black54),
-                  ),
-                ),
-              ),
-            ),
-            // Section: Buat Desain
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
-              child: Align(
-                alignment: Alignment.centerLeft,
-                child: Text(
-                  'Buat Desain Sebagus Mungkin',
-                  style: TextStyle(
-                    fontWeight: FontWeight.bold,
-                    color: Colors.white.withOpacity(0.95),
-                  ),
-                ),
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: const [
-                  _MenuCard(
-                    title: 'Gambar\nmodel\nBaju',
-                    icon: Icons.checkroom,
-                  ),
-                  _MenuCard(
-                    title: 'Gambar\nModel\nPakaian',
-                    icon: Icons.style,
-                  ),
-                  _MenuCard(
-                    title: 'Gambar\nmodel\nSeragam',
-                    icon: Icons.groups,
-                  ),
-                ],
-              ),
-            ),
-            // Section: Best Recommendation
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
-              child: Align(
-                alignment: Alignment.centerLeft,
-                child: Text(
-                  'Best Recommendation',
-                  style: TextStyle(
-                    fontWeight: FontWeight.bold,
-                    color: Colors.white.withOpacity(0.95),
+
+                const SizedBox(height: 24),
+
+                // Best Recommendation Section
+                Expanded(
+                  child: Container(
+                    decoration: const BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.only(
+                        topLeft: Radius.circular(24),
+                        topRight: Radius.circular(24),
+                      ),
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.fromLTRB(16, 24, 16, 16),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              const Text(
+                                'Rekomendasi Terbaik',
+                                style: TextStyle(
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                              TextButton(
+                                onPressed: () {},
+                                child: const Text('Lihat Semua'),
+                              ),
+                            ],
+                          ),
+                        ),
+                        Expanded(
+                          child: ListView(
+                            padding: const EdgeInsets.symmetric(horizontal: 16),
+                            children: const [
+                              _RecommendationCard(
+                                title: 'Kemeja Formal',
+                                price: 'Rp 150.000',
+                                rating: 4.8,
+                                imageUrl: 'assets/images/kemeja.jpg',
+                              ),
+                              SizedBox(height: 16),
+                              _RecommendationCard(
+                                title: 'Seragam Sekolah',
+                                price: 'Rp 200.000',
+                                rating: 4.9,
+                                imageUrl: 'assets/images/seragam.jpg',
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
                 ),
-              ),
+              ],
             ),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-              child: Row(
-                children: const [
-                  Expanded(child: _RecommendationCard(icon: Icons.checkroom)),
-                  SizedBox(width: 12),
-                  Expanded(child: _RecommendationCard(icon: Icons.style)),
-                ],
-              ),
+            FloatingActionButton(
+              backgroundColor: const Color(0xFFFFD600),
+              child: const Icon(Icons.add, color: Colors.white, size: 32),
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => const DesainCustomerScreen()),
+                );
+              },
+              elevation: 4,
             ),
-            const Spacer(),
           ],
         ),
       ),
-      bottomNavigationBar: Container(
-        color: Colors.orange[700],
-        padding: const EdgeInsets.symmetric(vertical: 4),
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
+      bottomNavigationBar: BottomAppBar(
+        color: Colors.white,
+        shape: const CircularNotchedRectangle(),
+        notchMargin: 8,
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceAround,
           children: [
-            const _BottomNavIcon(icon: Icons.home, label: 'menu beranda'),
             _BottomNavIcon(
-              icon: Icons.message,
-              label: 'menu Pesan',
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) => const PesanCustomerScreen()),
-                );
-              },
+              icon: Icons.home,
+              label: 'Beranda',
+              onTap: () {},
+              isActive: true,
             ),
             _BottomNavIcon(
               icon: Icons.local_shipping,
-              label: 'pelacak pesanan',
+              label: 'Tracking',
               onTap: () {
-                Navigator.push(
+                Navigator.pushReplacement(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => const TrackingPesananCustomerScreen(),
-                  ),
+                      builder: (context) =>
+                          const TrackingPesananCustomerScreen()),
                 );
               },
             ),
+            const SizedBox(width: 48), // Space for FAB
             _BottomNavIcon(
               icon: Icons.history,
-              label: 'menu riwayat',
+              label: 'Riwayat',
               onTap: () {
-                Navigator.push(
+                Navigator.pushReplacement(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => const RiwayatCustomerScreen(),
-                  ),
+                      builder: (context) => const RiwayatCustomerScreen()),
                 );
               },
             ),
             _BottomNavIcon(
               icon: Icons.person,
-              label: 'menu profile',
+              label: 'Profil',
               onTap: () {
-                Navigator.push(
+                Navigator.pushReplacement(
                   context,
                   MaterialPageRoute(
                       builder: (context) => const ProfileCustomerScreen()),
@@ -194,29 +279,51 @@ class HomeCustomerScreen extends StatelessWidget {
   }
 }
 
-class _MenuCard extends StatelessWidget {
-  final String title;
+class _CategoryCard extends StatelessWidget {
   final IconData icon;
-  const _MenuCard({required this.title, required this.icon});
+  final String title;
+  final Color color;
+
+  const _CategoryCard({
+    required this.icon,
+    required this.title,
+    required this.color,
+  });
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      width: 90,
-      height: 80,
+      width: 100,
+      padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: BorderRadius.circular(16),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.1),
+            blurRadius: 8,
+            offset: const Offset(0, 2),
+          ),
+        ],
       ),
       child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
+        mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(icon, size: 32, color: Colors.grey[600]),
-          const SizedBox(height: 4),
+          Container(
+            padding: const EdgeInsets.all(8),
+            decoration: BoxDecoration(
+              color: color.withOpacity(0.1),
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: Icon(icon, color: color, size: 24),
+          ),
+          const SizedBox(height: 8),
           Text(
             title,
-            textAlign: TextAlign.center,
-            style: const TextStyle(fontSize: 13, color: Colors.black54),
+            style: const TextStyle(
+              fontSize: 12,
+              fontWeight: FontWeight.w500,
+            ),
           ),
         ],
       ),
@@ -225,37 +332,94 @@ class _MenuCard extends StatelessWidget {
 }
 
 class _RecommendationCard extends StatelessWidget {
-  final IconData icon;
-  const _RecommendationCard({required this.icon});
+  final String title;
+  final String price;
+  final double rating;
+  final String imageUrl;
+
+  const _RecommendationCard({
+    required this.title,
+    required this.price,
+    required this.rating,
+    required this.imageUrl,
+  });
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: 140,
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: BorderRadius.circular(16),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.1),
+            blurRadius: 8,
+            offset: const Offset(0, 2),
+          ),
+        ],
       ),
-      padding: const EdgeInsets.all(12),
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Expanded(
-            child: Container(
-              decoration: BoxDecoration(
-                color: Colors.grey[400],
-                borderRadius: BorderRadius.circular(8),
-              ),
-              child: Center(
-                child: Icon(icon, size: 48, color: Colors.grey[700]),
-              ),
+          ClipRRect(
+            borderRadius: const BorderRadius.vertical(top: Radius.circular(16)),
+            child: Image.asset(
+              imageUrl,
+              height: 160,
+              width: double.infinity,
+              fit: BoxFit.cover,
+              errorBuilder: (context, error, stackTrace) {
+                return Container(
+                  height: 160,
+                  color: Colors.grey[300],
+                  child: const Center(
+                    child: Icon(Icons.image, size: 48, color: Colors.grey),
+                  ),
+                );
+              },
             ),
           ),
-          const SizedBox(height: 8),
-          const Text('Nama\nModel Baju', style: TextStyle(fontSize: 13)),
-          const Align(
-            alignment: Alignment.bottomRight,
-            child: Icon(Icons.favorite_border, size: 20, color: Colors.black45),
+          Padding(
+            padding: const EdgeInsets.all(12),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  title,
+                  style: const TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                const SizedBox(height: 4),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      price,
+                      style: TextStyle(
+                        fontSize: 14,
+                        color: Colors.green[700],
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                    Row(
+                      children: [
+                        const Icon(Icons.star, color: Colors.amber, size: 16),
+                        const SizedBox(width: 4),
+                        Text(
+                          rating.toString(),
+                          style: const TextStyle(
+                            fontSize: 14,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              ],
+            ),
           ),
         ],
       ),
@@ -267,23 +431,41 @@ class _BottomNavIcon extends StatelessWidget {
   final IconData icon;
   final String label;
   final VoidCallback? onTap;
-  const _BottomNavIcon({required this.icon, required this.label, this.onTap});
+  final bool isActive;
+
+  const _BottomNavIcon({
+    required this.icon,
+    required this.label,
+    this.onTap,
+    this.isActive = false,
+  });
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        IconButton(
-          icon: Icon(icon, color: Colors.white),
-          onPressed: onTap,
+    return InkWell(
+      onTap: onTap,
+      child: Container(
+        padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(
+              icon,
+              color: isActive ? Colors.green[700] : Colors.grey[600],
+              size: 24,
+            ),
+            const SizedBox(height: 4),
+            Text(
+              label,
+              style: TextStyle(
+                fontSize: 12,
+                color: isActive ? Colors.green[700] : Colors.grey[600],
+                fontWeight: isActive ? FontWeight.bold : FontWeight.normal,
+              ),
+            ),
+          ],
         ),
-        const SizedBox(height: 2),
-        Text(
-          label,
-          style: const TextStyle(fontSize: 10, color: Colors.white),
-        ),
-      ],
+      ),
     );
   }
 }

@@ -1,123 +1,301 @@
 import 'package:flutter/material.dart';
-// ignore: unused_import
 import 'home_customer_screen.dart';
+import 'pesan_customer_screen.dart';
+import 'riwayat_customer_screen.dart';
+import 'profile_customer_screen.dart';
+import 'desain_customer_screen.dart';
 
 class TrackingPesananCustomerScreen extends StatelessWidget {
-  const TrackingPesananCustomerScreen({super.key});
+  const TrackingPesananCustomerScreen({Key? key}) : super(key: key);
+
+  get floatingActionButton => null;
 
   @override
   Widget build(BuildContext context) {
+    // Dummy data for progress
+    final int currentStep =
+        2; // 0: Diterima, 1: Diproses, 2: Dikirim, 3: Selesai
+    final List<String> steps = [
+      'Diterima',
+      'Diproses',
+      'Dikirim',
+      'Selesai',
+    ];
     return Scaffold(
-      backgroundColor: const Color(0xFF6B7F6B),
-      appBar: AppBar(
-        backgroundColor: const Color(0xFF6B7F6B),
-        elevation: 0,
-        leading: Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: CircleAvatar(
-            backgroundColor: Colors.grey[300],
-            child: Icon(Icons.notifications, color: Colors.black),
-          ),
-        ),
-        title: const Text(
-          'Status Pesanan',
-          style: TextStyle(color: Colors.white, fontSize: 18),
-        ),
-        centerTitle: true,
-        actions: [
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: CircleAvatar(
-              backgroundColor: Colors.grey[300],
-              child: Icon(Icons.refresh, color: Colors.black),
-            ),
-          ),
-        ],
-      ),
-      body: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 0, vertical: 0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+      backgroundColor: const Color(0xFF8FBC8F),
+      body: SafeArea(
+        child: Stack(
           children: [
-            Container(
-              color: Colors.grey[400],
-              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
-              child: Row(
-                children: [
-                  const Text(
-                    'Kode pesanan:',
-                    style: TextStyle(fontSize: 16, color: Colors.black),
+            Column(
+              children: [
+                // AppBar with gradient
+                Container(
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      colors: [Colors.green[700]!, Colors.green[500]!],
+                      begin: Alignment.topLeft,
+                      end: Alignment.bottomRight,
+                    ),
                   ),
-                  const SizedBox(width: 8),
-                  Expanded(
-                    child: TextField(
-                      decoration: InputDecoration(
-                        hintText: 'Masukan kode pesanan...',
-                        hintStyle: const TextStyle(
-                            fontSize: 14, color: Colors.black54),
-                        border: InputBorder.none,
-                        isDense: true,
-                        contentPadding: EdgeInsets.zero,
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                  child: Row(
+                    children: [
+                      Container(
+                        decoration: BoxDecoration(
+                          color: Colors.white.withOpacity(0.2),
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        child: IconButton(
+                          icon: const Icon(Icons.arrow_back_ios_new,
+                              color: Colors.white),
+                          onPressed: () {
+                            Navigator.pushReplacement(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) =>
+                                      const HomeCustomerScreen()),
+                            );
+                          },
+                        ),
                       ),
-                      style: const TextStyle(fontSize: 14),
+                      const Expanded(
+                        child: Text(
+                          'Tracking Pesanan',
+                          style: TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.white,
+                          ),
+                          textAlign: TextAlign.center,
+                        ),
+                      ),
+                      SizedBox(width: 48), // Placeholder for symmetry
+                    ],
+                  ),
+                ),
+                const SizedBox(height: 16),
+                // Status Card
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 16),
+                  child: Container(
+                    padding: const EdgeInsets.all(16),
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(16),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withOpacity(0.08),
+                          blurRadius: 8,
+                          offset: const Offset(0, 2),
+                        ),
+                      ],
+                    ),
+                    child: Row(
+                      children: [
+                        Icon(
+                          currentStep == 3
+                              ? Icons.check_circle_rounded
+                              : Icons.local_shipping_rounded,
+                          color:
+                              currentStep == 3 ? Colors.green : Colors.orange,
+                          size: 40,
+                        ),
+                        const SizedBox(width: 16),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                currentStep == 3
+                                    ? 'Pesanan Selesai'
+                                    : 'Pesanan Sedang ${steps[currentStep]}',
+                                style: TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.bold,
+                                  color: currentStep == 3
+                                      ? Colors.green
+                                      : Colors.orange[800],
+                                ),
+                              ),
+                              const SizedBox(height: 4),
+                              Text(
+                                currentStep == 3
+                                    ? 'Terima kasih telah mempercayakan pesanan Anda.'
+                                    : 'Pesanan Anda sedang dalam proses ${steps[currentStep].toLowerCase()}.',
+                                style: const TextStyle(
+                                    fontSize: 13, color: Colors.black54),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
                     ),
                   ),
-                ],
-              ),
-            ),
-            Expanded(
-              child: Padding(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 18, vertical: 8),
-                child: ListView(
-                  children: const [
-                    _TimelineItem(
-                      date: '12 mei\n18.00',
-                      status: '[Pesanan diproses] Menunggu konfirmasi penjahit',
-                      isActive: true,
-                      isLast: false,
-                      isChecked: true,
-                    ),
-                    _TimelineItem(
-                      date: '13 mei\n18.00',
-                      status:
-                          '[Pesanan diterima] Pesanan telah dikonfirmasi oleh jasa jahit',
-                      isActive: false,
-                      isLast: false,
-                    ),
-                    _TimelineItem(
-                      date: '14 mei\n18.00',
-                      status: '[Pesanan sedang dikerjakan]',
-                      isActive: false,
-                      isLast: false,
-                    ),
-                    _TimelineItem(
-                      date: '14 mei\n18.00',
-                      status: '[Pesanan Telah Selesai]',
-                      isActive: false,
-                      isLast: true,
-                    ),
-                  ],
                 ),
-              ),
+                const SizedBox(height: 24),
+                // Progress Bar
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 24),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: List.generate(steps.length, (index) {
+                      final isActive = index <= currentStep;
+                      return Expanded(
+                        child: Column(
+                          children: [
+                            Container(
+                              width: 28,
+                              height: 28,
+                              decoration: BoxDecoration(
+                                color: isActive
+                                    ? Colors.green[700]
+                                    : Colors.grey[300],
+                                shape: BoxShape.circle,
+                                border: Border.all(
+                                  color: isActive
+                                      ? Colors.green
+                                      : Colors.grey[400]!,
+                                  width: 2,
+                                ),
+                              ),
+                              child: Center(
+                                child: Icon(
+                                  index == 3 ? Icons.check : Icons.circle,
+                                  color: Colors.white,
+                                  size: 16,
+                                ),
+                              ),
+                            ),
+                            const SizedBox(height: 6),
+                            Text(
+                              steps[index],
+                              style: TextStyle(
+                                fontSize: 12,
+                                color: isActive
+                                    ? Colors.green[700]
+                                    : Colors.grey[500],
+                                fontWeight: isActive
+                                    ? FontWeight.bold
+                                    : FontWeight.normal,
+                              ),
+                            ),
+                          ],
+                        ),
+                      );
+                    }).expand((widget) sync* {
+                      yield widget;
+                      if (widget != steps.length - 1) {
+                        yield SizedBox(width: 8);
+                      }
+                    }).toList(),
+                  ),
+                ),
+                const SizedBox(height: 24),
+                // Order Details Card
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 16),
+                  child: Container(
+                    padding: const EdgeInsets.all(16),
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(16),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withOpacity(0.08),
+                          blurRadius: 8,
+                          offset: const Offset(0, 2),
+                        ),
+                      ],
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: const [
+                        Text('Detail Pesanan',
+                            style: TextStyle(
+                                fontSize: 15, fontWeight: FontWeight.bold)),
+                        SizedBox(height: 12),
+                        _OrderDetailRow(
+                            label: 'No. Pesanan', value: 'ORD123456'),
+                        _OrderDetailRow(
+                            label: 'Tanggal', value: '12 Juni 2024'),
+                        _OrderDetailRow(label: 'Item', value: 'Kemeja Formal'),
+                        _OrderDetailRow(label: 'Jumlah', value: '2'),
+                        _OrderDetailRow(label: 'Total', value: 'Rp 300.000'),
+                      ],
+                    ),
+                  ),
+                ),
+              ],
             ),
-            Container(
-              color: Colors.orange[700],
-              padding: const EdgeInsets.symmetric(vertical: 6, horizontal: 0),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceAround,
-                children: const [
-                  _BottomNavIcon(icon: Icons.home, label: 'Icon menu beranda'),
-                  _BottomNavIcon(icon: Icons.message, label: 'Icon menu Pesan'),
-                  _BottomNavIcon(
-                      icon: Icons.local_shipping,
-                      label: 'Icon pelacakan pesanan'),
-                  _BottomNavIcon(
-                      icon: Icons.history, label: 'Icon menu riwayat'),
-                  _BottomNavIcon(
-                      icon: Icons.person, label: 'Icon menu profile'),
-                ],
-              ),
+          ],
+        ),
+      ),
+      floatingActionButton: FloatingActionButton(
+        backgroundColor: const Color(0xFFFFD600),
+        child: const Icon(Icons.add, color: Colors.white, size: 32),
+        onPressed: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+                builder: (context) => const DesainCustomerScreen()),
+          );
+        },
+        elevation: 4,
+      ),
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
+      bottomNavigationBar: BottomAppBar(
+        color: Colors.white,
+        shape: const CircularNotchedRectangle(),
+        notchMargin: 8,
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceAround,
+          children: [
+            _BottomNavIcon(
+              icon: Icons.home,
+              label: 'Beranda',
+              onTap: () {
+                Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => const HomeCustomerScreen()),
+                );
+              },
+            ),
+            _BottomNavIcon(
+              icon: Icons.local_shipping,
+              label: 'Tracking',
+              onTap: () {
+                Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) =>
+                          const TrackingPesananCustomerScreen()),
+                );
+              },
+            ),
+            const SizedBox(width: 48), // Space for FAB
+            _BottomNavIcon(
+              icon: Icons.history,
+              label: 'Riwayat',
+              onTap: () {
+                Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => const RiwayatCustomerScreen()),
+                );
+              },
+            ),
+            _BottomNavIcon(
+              icon: Icons.person,
+              label: 'Profil',
+              onTap: () {
+                Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => const ProfileCustomerScreen()),
+                );
+              },
             ),
           ],
         ),
@@ -126,89 +304,25 @@ class TrackingPesananCustomerScreen extends StatelessWidget {
   }
 }
 
-// ignore: unused_element
-class _TimelineItem extends StatelessWidget {
-  final String date;
-  final String status;
-  final bool isActive;
-  final bool isLast;
-  final bool isChecked;
-
-  const _TimelineItem({
-    required this.date,
-    required this.status,
-    // ignore: unused_element
-    this.isActive = false,
-    // ignore: unused_element
-    this.isLast = false,
-    // ignore: unused_element
-    this.isChecked = false,
-  });
+class _OrderDetailRow extends StatelessWidget {
+  final String label;
+  final String value;
+  const _OrderDetailRow({required this.label, required this.value});
 
   @override
   Widget build(BuildContext context) {
-    return Row(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Column(
-          children: [
-            Text(
-              date,
-              style: const TextStyle(color: Colors.white, fontSize: 14),
-              textAlign: TextAlign.right,
-            ),
-            if (!isLast)
-              Container(
-                width: 2,
-                height: 40,
-                color: Colors.white,
-                margin: const EdgeInsets.symmetric(vertical: 2),
-              ),
-          ],
-        ),
-        const SizedBox(width: 8),
-        Column(
-          children: [
-            Stack(
-              alignment: Alignment.center,
-              children: [
-                Container(
-                  width: 18,
-                  height: 18,
-                  decoration: BoxDecoration(
-                    color: Colors.black,
-                    shape: BoxShape.circle,
-                  ),
-                ),
-                if (isChecked)
-                  const Icon(Icons.check, color: Colors.white, size: 14),
-              ],
-            ),
-            if (!isLast)
-              Container(
-                width: 2,
-                height: 40,
-                color: Colors.white,
-                margin: const EdgeInsets.symmetric(vertical: 2),
-              ),
-          ],
-        ),
-        const SizedBox(width: 12),
-        Expanded(
-          child: Padding(
-            padding: const EdgeInsets.only(top: 2.0),
-            child: Text(
-              status,
-              style: const TextStyle(color: Colors.white, fontSize: 15),
-            ),
-          ),
-        ),
-        if (isChecked)
-          const Padding(
-            padding: EdgeInsets.only(left: 8.0, top: 2),
-            child: Icon(Icons.check, color: Colors.black, size: 20),
-          ),
-      ],
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 2),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Text(label,
+              style: const TextStyle(fontSize: 13, color: Colors.black54)),
+          Text(value,
+              style:
+                  const TextStyle(fontSize: 13, fontWeight: FontWeight.w500)),
+        ],
+      ),
     );
   }
 }
@@ -216,20 +330,42 @@ class _TimelineItem extends StatelessWidget {
 class _BottomNavIcon extends StatelessWidget {
   final IconData icon;
   final String label;
-  const _BottomNavIcon({required this.icon, required this.label});
+  final VoidCallback? onTap;
+  final bool isActive;
+
+  const _BottomNavIcon({
+    required this.icon,
+    required this.label,
+    this.onTap,
+    this.isActive = false,
+  });
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        Icon(icon, color: Colors.white),
-        const SizedBox(height: 2),
-        Text(
-          label,
-          style: const TextStyle(fontSize: 10, color: Colors.white),
+    return InkWell(
+      onTap: onTap,
+      child: Container(
+        padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(
+              icon,
+              color: isActive ? Colors.green[700] : Colors.grey[600],
+              size: 24,
+            ),
+            const SizedBox(height: 4),
+            Text(
+              label,
+              style: TextStyle(
+                fontSize: 12,
+                color: isActive ? Colors.green[700] : Colors.grey[600],
+                fontWeight: isActive ? FontWeight.bold : FontWeight.normal,
+              ),
+            ),
+          ],
         ),
-      ],
+      ),
     );
   }
 }
