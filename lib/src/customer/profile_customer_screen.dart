@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'home_customer_screen.dart';
+// ignore: unused_import
 import 'pesan_customer_screen.dart';
 import 'tracking_pesanan_customer_screen.dart';
 import 'riwayat_customer_screen.dart';
 import 'desain_customer_screen.dart';
+import 'package:jasa_jahit_aplication/src/page/login_screen.dart';
 
 class ProfileCustomerScreen extends StatelessWidget {
   const ProfileCustomerScreen({Key? key}) : super(key: key);
@@ -168,12 +170,11 @@ class ProfileCustomerScreen extends StatelessWidget {
                                       vertical: 12, horizontal: 20),
                                 ),
                                 onPressed: () {
-                                  Navigator.pushAndRemoveUntil(
+                                  Navigator.pushReplacement(
                                     context,
                                     MaterialPageRoute(
                                         builder: (context) =>
-                                            const HomeCustomerScreen()),
-                                    (route) => false,
+                                            const LoginScreen()),
                                   );
                                 },
                                 child: const Text('Logout',

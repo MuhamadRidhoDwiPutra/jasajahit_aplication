@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
+// ignore: unused_import
 import 'package:jasa_jahit_aplication/src/customer/pesan_customer_screen.dart';
 import 'ukuran_customer_screen.dart';
 import 'home_customer_screen.dart';
 
 class DesainCustomerScreen extends StatefulWidget {
-  const DesainCustomerScreen({Key? key}) : super(key: key);
+  const DesainCustomerScreen({super.key});
 
   @override
   State<DesainCustomerScreen> createState() => _DesainCustomerScreenState();
@@ -19,6 +20,7 @@ class _DesainCustomerScreenState extends State<DesainCustomerScreen> {
 
   @override
   Widget build(BuildContext context) {
+    // ignore: deprecated_member_use
     return WillPopScope(
       onWillPop: () async {
         Navigator.pushReplacement(
