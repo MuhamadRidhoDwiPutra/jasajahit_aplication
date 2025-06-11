@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'home_customer_screen.dart';
 
-class BerhasilPesanCustomerScreen extends StatelessWidget {
-  const BerhasilPesanCustomerScreen({Key? key}) : super(key: key);
+class BerhasilPesanCelanaCustomerScreen extends StatelessWidget {
+  const BerhasilPesanCelanaCustomerScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -50,7 +50,7 @@ class BerhasilPesanCustomerScreen extends StatelessWidget {
                       borderRadius: BorderRadius.circular(6),
                     ),
                     child: const Text(
-                      'Model Pakaian : ',
+                      'Model Pakaian : Celana',
                       style: TextStyle(fontWeight: FontWeight.bold),
                     ),
                   ),

@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
-import 'pembayaran_customer_screen.dart';
+import 'pembayaran_baju_customer_screen.dart';
 
-class CekDetailPesananScreen extends StatelessWidget {
-  const CekDetailPesananScreen({Key? key}) : super(key: key);
+class CekDetailPesananBajuScreen extends StatelessWidget {
+  // ignore: use_super_parameters
+  const CekDetailPesananBajuScreen({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -17,7 +18,7 @@ class CekDetailPesananScreen extends StatelessWidget {
             Navigator.pushReplacement(
               context,
               MaterialPageRoute(
-                builder: (context) => const PembayaranCustomerScreen(),
+                builder: (context) => const PembayaranBajuCustomerScreen(),
               ),
             );
           },

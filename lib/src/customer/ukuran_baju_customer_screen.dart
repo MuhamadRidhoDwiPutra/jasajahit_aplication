@@ -1,15 +1,18 @@
+// ignore: file_names
 import 'package:flutter/material.dart';
 import 'desain_customer_screen.dart';
-import 'konfirmasi_desain_customer_screen.dart';
+import 'konfirmasi_desain_baju_customer_screen.dart';
 
-class UkuranCustomerScreen extends StatefulWidget {
-  const UkuranCustomerScreen({Key? key}) : super(key: key);
+class UkuranBajuCustomerScreen extends StatefulWidget {
+  // ignore: use_super_parameters
+  const UkuranBajuCustomerScreen({Key? key}) : super(key: key);
 
   @override
-  State<UkuranCustomerScreen> createState() => _UkuranCustomerScreenState();
+  State<UkuranBajuCustomerScreen> createState() =>
+      _UkuranBajuCustomerScreenState();
 }
 
-class _UkuranCustomerScreenState extends State<UkuranCustomerScreen> {
+class _UkuranBajuCustomerScreenState extends State<UkuranBajuCustomerScreen> {
   final TextEditingController lingkarDadaController = TextEditingController();
   final TextEditingController lebarBahuController = TextEditingController();
   final TextEditingController panjangBajuController = TextEditingController();
@@ -94,7 +97,7 @@ class _UkuranCustomerScreenState extends State<UkuranCustomerScreen> {
                     context,
                     MaterialPageRoute(
                         builder: (context) =>
-                            const KonfirmasiDesainCustomerScreen()),
+                            const KonfirmasiDesainBajuCustomerScreen()),
                   );
                 },
                 child: const Text('Simpan Data',

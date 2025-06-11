@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 // ignore: unused_import
-import 'package:jasa_jahit_aplication/src/customer/pesan_customer_screen.dart';
-import 'ukuran_customer_screen.dart';
+import 'ukuran_baju_customer_screen.dart';
 import 'home_customer_screen.dart';
+import 'ukuran_celana_customer_screen.dart';
 
 class DesainCustomerScreen extends StatefulWidget {
   const DesainCustomerScreen({super.key});
@@ -12,12 +12,6 @@ class DesainCustomerScreen extends StatefulWidget {
 }
 
 class _DesainCustomerScreenState extends State<DesainCustomerScreen> {
-  String? selectedModel;
-  String? selectedKain;
-
-  final List<String> modelList = ['Model A', 'Model B', 'Model C'];
-  final List<String> kainList = ['Kain Katun', 'Kain Polyester', 'Kain Rayon'];
-
   @override
   Widget build(BuildContext context) {
     // ignore: deprecated_member_use
@@ -64,79 +58,117 @@ class _DesainCustomerScreenState extends State<DesainCustomerScreen> {
                     fontWeight: FontWeight.bold),
               ),
               const SizedBox(height: 18),
-              // Dropdown Model
-              const Text('Model', style: TextStyle(color: Colors.white)),
-              const SizedBox(height: 4),
-              Container(
-                decoration: BoxDecoration(
-                  color: Colors.grey[300],
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                child: DropdownButtonHideUnderline(
-                  child: DropdownButton<String>(
-                    value: selectedModel,
-                    isExpanded: true,
-                    icon: const Icon(Icons.arrow_drop_down,
-                        color: Colors.black, size: 32),
-                    hint: const Text('Pilih Model'),
-                    items: modelList
-                        .map((e) => DropdownMenuItem(value: e, child: Text(e)))
-                        .toList(),
-                    onChanged: (val) => setState(() => selectedModel = val),
-                    dropdownColor: Colors.white,
-                    style: const TextStyle(color: Colors.black),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                children: [
+                  Expanded(
+                    child: Card(
+                      color: Colors.white,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      child: Padding(
+                        padding: const EdgeInsets.all(16.0),
+                        child: Column(
+                          children: [
+                            Container(
+                              height: 100,
+                              width: 100,
+                              color: Colors.grey[300],
+                              child: const Center(
+                                child: Text(
+                                  'Gambar Baju',
+                                  style: TextStyle(color: Colors.black),
+                                ),
+                              ),
+                            ),
+                            const SizedBox(height: 16),
+                            SizedBox(
+                              width: double.infinity,
+                              child: ElevatedButton(
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: Colors.orange[700],
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(8),
+                                  ),
+                                  padding:
+                                      const EdgeInsets.symmetric(vertical: 8),
+                                ),
+                                onPressed: () {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) =>
+                                          const UkuranBajuCustomerScreen(),
+                                    ),
+                                  );
+                                },
+                                child: const Text('Buat Desain mu',
+                                    style:
+                                        TextStyle(fontWeight: FontWeight.bold)),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
                   ),
-                ),
-              ),
-              const SizedBox(height: 18),
-              // Dropdown Kain
-              const Text('Kain', style: TextStyle(color: Colors.white)),
-              const SizedBox(height: 4),
-              Container(
-                decoration: BoxDecoration(
-                  color: Colors.grey[300],
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                child: DropdownButtonHideUnderline(
-                  child: DropdownButton<String>(
-                    value: selectedKain,
-                    isExpanded: true,
-                    icon: const Icon(Icons.arrow_drop_down,
-                        color: Colors.black, size: 32),
-                    hint: const Text('Pilih Kain'),
-                    items: kainList
-                        .map((e) => DropdownMenuItem(value: e, child: Text(e)))
-                        .toList(),
-                    onChanged: (val) => setState(() => selectedKain = val),
-                    dropdownColor: Colors.white,
-                    style: const TextStyle(color: Colors.black),
+                  const SizedBox(width: 16), // Space between cards
+                  Expanded(
+                    child: Card(
+                      color: Colors.white,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      child: Padding(
+                        padding: const EdgeInsets.all(16.0),
+                        child: Column(
+                          children: [
+                            Container(
+                              height: 100,
+                              width: 100,
+                              color: Colors.grey[300],
+                              child: const Center(
+                                child: Text(
+                                  'Gambar Celana',
+                                  style: TextStyle(color: Colors.black),
+                                ),
+                              ),
+                            ),
+                            const SizedBox(height: 16),
+                            SizedBox(
+                              width: double.infinity,
+                              child: ElevatedButton(
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: Colors.orange[700],
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(8),
+                                  ),
+                                  padding:
+                                      const EdgeInsets.symmetric(vertical: 8),
+                                ),
+                                onPressed: () {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) =>
+                                          const UkuranCelanaCustomerScreen(),
+                                    ),
+                                  );
+                                },
+                                child: const Text('Buat Desain mu',
+                                    style:
+                                        TextStyle(fontWeight: FontWeight.bold)),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
                   ),
-                ),
+                ],
               ),
               const Spacer(),
-              SizedBox(
-                width: double.infinity,
-                child: ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.orange[700],
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                    padding: const EdgeInsets.symmetric(vertical: 14),
-                  ),
-                  onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => const UkuranCustomerScreen(),
-                      ),
-                    );
-                  },
-                  child: const Text('Simpan Data',
-                      style: TextStyle(fontWeight: FontWeight.bold)),
-                ),
-              ),
-              const SizedBox(height: 16),
             ],
           ),
         ),

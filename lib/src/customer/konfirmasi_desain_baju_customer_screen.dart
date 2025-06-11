@@ -1,9 +1,13 @@
 import 'package:flutter/material.dart';
-import 'cek_detail_pesanan_screen.dart';
-import 'berhasil_pesan_customer_screen.dart';
+import 'ukuran_baju_customer_screen.dart';
+// ignore: unused_import
+import 'home_customer_screen.dart';
+import 'pembayaran_baju_customer_screen.dart';
+// ignore: unused_import
+import 'konfirmasi_desain_baju_customer_screen.dart';
 
-class PembayaranCustomerScreen extends StatelessWidget {
-  const PembayaranCustomerScreen({Key? key}) : super(key: key);
+class KonfirmasiDesainBajuCustomerScreen extends StatelessWidget {
+  const KonfirmasiDesainBajuCustomerScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -14,10 +18,17 @@ class PembayaranCustomerScreen extends StatelessWidget {
         elevation: 0,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back, color: Colors.black),
-          onPressed: () => Navigator.pop(context),
+          onPressed: () {
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(
+                builder: (context) => const UkuranBajuCustomerScreen(),
+              ),
+            );
+          },
         ),
         title: const Text(
-          'Daftar Pesanan',
+          'Pesanan Saya',
           style: TextStyle(color: Colors.white, fontSize: 18),
         ),
         centerTitle: true,
@@ -56,7 +67,7 @@ class PembayaranCustomerScreen extends StatelessWidget {
                   Row(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      // Gambar pakaian
+                      // Gambar baju
                       Container(
                         width: 70,
                         height: 70,
@@ -65,48 +76,27 @@ class PembayaranCustomerScreen extends StatelessWidget {
                           borderRadius: BorderRadius.circular(8),
                         ),
                         child: const Center(
-                          child: Text('Gambar pakaian',
+                          child: Text('Gambar Baju',
                               textAlign: TextAlign.center,
                               style: TextStyle(
                                   fontSize: 13, color: Colors.black54)),
                         ),
                       ),
                       const SizedBox(width: 12),
-                      // Data pesanan
+                      // Data ukuran
                       Expanded(
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: const [
-                            Text('Tanggal Pemesanan\n12 mei 2024'),
-                            Text('Jumlah Produk\n1'),
-                            Text('Harga:\nRp. 50.000'),
+                            Text('Data Ukuran:',
+                                style: TextStyle(fontWeight: FontWeight.bold)),
+                            SizedBox(height: 4),
+                            Divider(height: 1, color: Colors.black54),
+                            SizedBox(height: 4),
+                            Text('LD:    cm    PL:    cm'),
+                            Text('LB:    cm    LL:    cm'),
+                            Text('PB:    cm'),
                           ],
-                        ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 8),
-                  Row(
-                    children: [
-                      const Expanded(
-                        child: Text('No. Rekening: 073253718293'),
-                      ),
-                      GestureDetector(
-                        onTap: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) =>
-                                  const CekDetailPesananScreen(),
-                            ),
-                          );
-                        },
-                        child: const Text(
-                          'Cek detail',
-                          style: TextStyle(
-                            color: Colors.blue,
-                            decoration: TextDecoration.underline,
-                          ),
                         ),
                       ),
                     ],
@@ -115,37 +105,20 @@ class PembayaranCustomerScreen extends StatelessWidget {
               ),
             ),
             const SizedBox(height: 16),
-            // Upload bukti pembayaran
-            const Text('Kirim bukti pembayaran',
-                style: TextStyle(color: Colors.white)),
-            const SizedBox(height: 6),
-            ElevatedButton(
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.grey[300],
-                foregroundColor: Colors.black,
-                shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(6)),
-                elevation: 0,
+            // Card info tanggal dan jumlah produk
+            Container(
+              width: double.infinity,
+              padding: const EdgeInsets.all(10),
+              decoration: BoxDecoration(
+                color: Colors.grey[300],
+                borderRadius: BorderRadius.circular(8),
               ),
-              onPressed: () {},
-              child: const Text('Choose file'),
-            ),
-            const SizedBox(height: 18),
-            // QRIS
-            const Text('QRIS', style: TextStyle(color: Colors.white)),
-            const SizedBox(height: 6),
-            Center(
-              child: Container(
-                width: 120,
-                height: 90,
-                decoration: BoxDecoration(
-                  color: Colors.grey[300],
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                child: const Center(
-                  child: Text('Scan disini',
-                      style: TextStyle(color: Colors.black54)),
-                ),
+              child: const Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text('Tanggal Pemesanan: '),
+                  Text('Jumlah Produk    : '),
+                ],
               ),
             ),
             const Spacer(),
@@ -164,10 +137,10 @@ class PembayaranCustomerScreen extends StatelessWidget {
                     context,
                     MaterialPageRoute(
                         builder: (context) =>
-                            const BerhasilPesanCustomerScreen()),
+                            const PembayaranBajuCustomerScreen()),
                   );
                 },
-                child: const Text('Bayar',
+                child: const Text('Pesan Sekarang',
                     style: TextStyle(fontWeight: FontWeight.bold)),
               ),
             ),
