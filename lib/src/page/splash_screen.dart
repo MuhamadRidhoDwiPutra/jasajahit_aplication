@@ -62,21 +62,33 @@ class _SplashScreenState extends State<SplashScreen>
             // Logo or App Name
             FadeTransition(
               opacity: _animation,
-              child: const Text(
+              child: Text(
                 'Jasa Jahit',
                 style: TextStyle(
-                  fontSize: 32,
+                  fontSize: 42,
                   fontWeight: FontWeight.bold,
                   color: Colors.white,
+                  shadows: [
+                    Shadow(
+                      blurRadius: 10.0,
+                      color: Colors.black.withOpacity(0.3),
+                      offset: const Offset(3.0, 3.0),
+                    ),
+                  ],
                 ),
               ),
             ),
-            const SizedBox(height: 20),
+            const SizedBox(height: 30),
             // Loading Indicator
             ScaleTransition(
               scale: _animation,
-              child: const CircularProgressIndicator(
-                valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+              child: SizedBox(
+                width: 60,
+                height: 60,
+                child: const CircularProgressIndicator(
+                  valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                  strokeWidth: 5,
+                ),
               ),
             ),
           ],
