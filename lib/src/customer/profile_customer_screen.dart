@@ -2,8 +2,11 @@ import 'package:flutter/material.dart';
 import 'home_customer_screen.dart';
 // ignore: unused_import
 import 'pesan_customer_screen.dart';
+// ignore: unused_import
 import 'tracking_pesanan_customer_screen.dart';
+// ignore: unused_import
 import 'riwayat_customer_screen.dart';
+// ignore: unused_import
 import 'desain_customer_screen.dart';
 import 'package:jasa_jahit_aplication/src/page/login_screen.dart';
 
@@ -189,70 +192,18 @@ class ProfileCustomerScreen extends StatelessWidget {
                 ),
               ],
             ),
-            FloatingActionButton(
-              backgroundColor: const Color(0xFFFFD600),
-              child: const Icon(Icons.add, color: Colors.white, size: 32),
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) => const DesainCustomerScreen()),
-                );
-              },
-              elevation: 4,
-            ),
-          ],
-        ),
-      ),
-      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
-      bottomNavigationBar: BottomAppBar(
-        color: Colors.white,
-        shape: const CircularNotchedRectangle(),
-        notchMargin: 8,
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceAround,
-          children: [
-            _BottomNavIcon(
-              icon: Icons.home,
-              label: 'Beranda',
-              onTap: () {
-                Navigator.pushReplacement(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) => const HomeCustomerScreen()),
-                );
-              },
-            ),
-            _BottomNavIcon(
-              icon: Icons.local_shipping,
-              label: 'Tracking',
-              onTap: () {
-                Navigator.pushReplacement(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) =>
-                          const TrackingPesananCustomerScreen()),
-                );
-              },
-            ),
-            const SizedBox(width: 48), // Space for FAB
-            _BottomNavIcon(
-              icon: Icons.history,
-              label: 'Riwayat',
-              onTap: () {
-                Navigator.pushReplacement(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) => const RiwayatCustomerScreen()),
-                );
-              },
-            ),
-            _BottomNavIcon(
-              icon: Icons.person,
-              label: 'Profil',
-              onTap: () {},
-              isActive: true,
-            ),
+            // FloatingActionButton(
+            //   backgroundColor: const Color(0xFFFFD600),
+            //   child: const Icon(Icons.add, color: Colors.white, size: 32),
+            //   onPressed: () {
+            //     Navigator.push(
+            //       context,
+            //       MaterialPageRoute(
+            //           builder: (context) => const DesainCustomerScreen()),
+            //     );
+            //   },
+            //   elevation: 4,
+            // ),
           ],
         ),
       ),
@@ -284,6 +235,7 @@ class _ProfileField extends StatelessWidget {
   }
 }
 
+// ignore: unused_element
 class _BottomNavIcon extends StatelessWidget {
   final IconData icon;
   final String label;
@@ -293,7 +245,9 @@ class _BottomNavIcon extends StatelessWidget {
   const _BottomNavIcon({
     required this.icon,
     required this.label,
+    // ignore: unused_element_parameter
     this.onTap,
+    // ignore: unused_element_parameter
     this.isActive = false,
   });
 

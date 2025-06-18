@@ -22,82 +22,74 @@ class CekDetailAdminScreen extends StatelessWidget {
     return Scaffold(
       backgroundColor: const Color(0xFF8FBC8F),
       appBar: AppBar(
-        backgroundColor: Colors.transparent,
-        elevation: 0,
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Colors.black),
-          onPressed: () {
-            Navigator.pop(context);
-          },
-        ),
-        title: const Text(
-          'Detail Pesanan',
-          style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
-        ),
-        centerTitle: true,
+        backgroundColor: Colors.white,
+        elevation: 1,
+        title: const Text('Detail Pesanan',
+            style: TextStyle(fontWeight: FontWeight.bold, color: Colors.black)),
+        iconTheme: const IconThemeData(color: Color(0xFFDE8500)),
       ),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            _buildInfoRow(
-              context,
-              label: 'Kode pesanan',
-              value: orderCode,
-              hasCopyButton: true,
-            ),
-            const SizedBox(height: 16),
-            _buildInfoRow(
-              context,
-              label: 'Model',
-              value: model,
-            ),
-            const SizedBox(height: 16),
-            _buildInfoRow(
-              context,
-              label: 'Jenis kain',
-              value: fabricType,
-            ),
-            const SizedBox(height: 16),
-            _buildInfoRow(
-              context,
-              label: 'Jumlah produk',
-              value: productQuantity.toString(),
-            ),
-            const SizedBox(height: 32),
-            Center(
-              child: Container(
-                width: 150,
-                height: 150,
-                decoration: BoxDecoration(
-                  color:
-                      Colors.grey[200], // Warna placeholder gambar lebih terang
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                child: const Center(
-                  child: Text(
-                    'Gambar\nBaju yang\ndipesan',
-                    textAlign: TextAlign.center,
-                    style: TextStyle(
-                        color: Colors.grey,
-                        fontSize: 14), // Gaya teks placeholder
+      body: Center(
+        child: Card(
+          color: Colors.white,
+          elevation: 3,
+          margin: const EdgeInsets.all(24),
+          shape:
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+          child: Padding(
+            padding: const EdgeInsets.all(24),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Text('Kode Pesanan',
+                    style:
+                        TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+                const SizedBox(height: 4),
+                Text(orderCode, style: const TextStyle(fontSize: 16)),
+                const Divider(height: 24, color: Colors.black12),
+                const Text('Model',
+                    style:
+                        TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+                const SizedBox(height: 4),
+                Text(model, style: const TextStyle(fontSize: 16)),
+                const Divider(height: 24, color: Colors.black12),
+                const Text('Jenis Kain',
+                    style:
+                        TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+                const SizedBox(height: 4),
+                Text(fabricType, style: const TextStyle(fontSize: 16)),
+                const Divider(height: 24, color: Colors.black12),
+                const Text('Jumlah Produk',
+                    style:
+                        TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+                const SizedBox(height: 4),
+                Text(productQuantity.toString(),
+                    style: const TextStyle(fontSize: 16)),
+                const Divider(height: 24, color: Colors.black12),
+                const Text('Tanggal Pesan',
+                    style:
+                        TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+                const SizedBox(height: 4),
+                Text(orderDate, style: const TextStyle(fontSize: 16)),
+                const SizedBox(height: 24),
+                Center(
+                  child: ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: const Color(0xFFDE8500),
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(8)),
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 32, vertical: 12),
+                    ),
+                    onPressed: () {/* aksi kembali */},
+                    child: const Text('Kembali',
+                        style: TextStyle(
+                            color: Colors.white, fontWeight: FontWeight.bold)),
                   ),
                 ),
-              ),
+              ],
             ),
-            const SizedBox(height: 16),
-            Center(
-              child: Text(
-                'Tanggal Pemesanan\n$orderDate',
-                textAlign: TextAlign.center,
-                style: const TextStyle(
-                    fontSize: 14,
-                    color: Colors.black87,
-                    fontWeight: FontWeight.w500), // Gaya teks tanggal
-              ),
-            ),
-          ],
+          ),
         ),
       ),
     );

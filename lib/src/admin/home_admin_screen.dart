@@ -16,7 +16,7 @@ class _HomeAdminScreenState extends State<HomeAdminScreen> {
   int _selectedIndex = 0;
 
   final List<Widget> _adminScreens = [
-    _HomeAdminContent(), // Konten beranda saat ini
+    _HomeAdminContent(),
     StatusPesananAdminScreen(),
     RiwayatTransaksiAdminScreen(),
     ModelPakaianAdminScreen(),
@@ -26,7 +26,7 @@ class _HomeAdminScreenState extends State<HomeAdminScreen> {
   final List<String> _appBarTitles = const [
     'Daftar Pesanan',
     'Status Pesanan',
-    'Riwayat Transaksi Pesanan',
+    'Riwayat Transaksi',
     'Model Pakaian',
     'Profil Admin',
   ];
@@ -44,42 +44,58 @@ class _HomeAdminScreenState extends State<HomeAdminScreen> {
       body: SafeArea(
         child: Column(
           children: [
-            // Bar Navigasi Kustom
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.05),
+                    blurRadius: 10,
+                    offset: const Offset(0, 2),
+                  ),
+                ],
+              ),
               child: Row(
                 children: [
-                  IconButton(
-                    icon: const Icon(Icons.notifications_none),
-                    onPressed: () {},
+                  Container(
+                    decoration: BoxDecoration(
+                      color: const Color(0xFFDE8500).withOpacity(0.1),
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: IconButton(
+                      icon: const Icon(Icons.notifications_none,
+                          color: Color(0xFFDE8500)),
+                      onPressed: () {},
+                    ),
                   ),
                   Expanded(
                     child: Center(
                       child: Text(
                         _appBarTitles[_selectedIndex],
                         style: const TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.white,
+                          fontSize: 20,
+                          fontWeight: FontWeight.w600,
+                          color: Colors.black,
+                          fontFamily: 'SF Pro Display',
                         ),
                       ),
                     ),
                   ),
                   Container(
-                    decoration: const BoxDecoration(
-                      shape: BoxShape.circle,
-                      color: Colors.white24,
+                    decoration: BoxDecoration(
+                      color: const Color(0xFFDE8500).withOpacity(0.1),
+                      borderRadius: BorderRadius.circular(12),
                     ),
                     child: IconButton(
                       icon: const Icon(Icons.account_circle_outlined,
-                          color: Colors.white),
+                          color: Color(0xFFDE8500)),
                       onPressed: () {},
                     ),
                   ),
                 ],
               ),
             ),
-            // Konten halaman yang berubah
             Expanded(
               child: IndexedStack(
                 index: _selectedIndex,
@@ -90,42 +106,60 @@ class _HomeAdminScreenState extends State<HomeAdminScreen> {
         ),
       ),
       bottomNavigationBar: Container(
-        color: Colors.orange[700],
-        padding: const EdgeInsets.symmetric(vertical: 4),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceAround,
-          children: [
-            _BottomNavIcon(
-                icon: Icons.home,
-                label: 'Beranda',
-                index: 0,
-                selectedIndex: _selectedIndex,
-                onTap: _onItemTapped),
-            _BottomNavIcon(
-                icon: Icons.message,
-                label: 'Pesan',
-                index: 1,
-                selectedIndex: _selectedIndex,
-                onTap: _onItemTapped),
-            _BottomNavIcon(
-                icon: Icons.history,
-                label: 'Riwayat',
-                index: 2,
-                selectedIndex: _selectedIndex,
-                onTap: _onItemTapped),
-            _BottomNavIcon(
-                icon: Icons.checkroom,
-                label: 'Model Pakaian',
-                index: 3,
-                selectedIndex: _selectedIndex,
-                onTap: _onItemTapped),
-            _BottomNavIcon(
-                icon: Icons.person,
-                label: 'Profil',
-                index: 4,
-                selectedIndex: _selectedIndex,
-                onTap: _onItemTapped),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.05),
+              blurRadius: 10,
+              offset: const Offset(0, -2),
+            ),
           ],
+        ),
+        child: SafeArea(
+          child: Padding(
+            padding: const EdgeInsets.symmetric(vertical: 8),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              children: [
+                _BottomNavIcon(
+                  icon: Icons.home,
+                  label: 'Beranda',
+                  index: 0,
+                  selectedIndex: _selectedIndex,
+                  onTap: _onItemTapped,
+                ),
+                _BottomNavIcon(
+                  icon: Icons.message,
+                  label: 'Pesan',
+                  index: 1,
+                  selectedIndex: _selectedIndex,
+                  onTap: _onItemTapped,
+                ),
+                _BottomNavIcon(
+                  icon: Icons.history,
+                  label: 'Riwayat',
+                  index: 2,
+                  selectedIndex: _selectedIndex,
+                  onTap: _onItemTapped,
+                ),
+                _BottomNavIcon(
+                  icon: Icons.checkroom,
+                  label: 'Model',
+                  index: 3,
+                  selectedIndex: _selectedIndex,
+                  onTap: _onItemTapped,
+                ),
+                _BottomNavIcon(
+                  icon: Icons.person,
+                  label: 'Profil',
+                  index: 4,
+                  selectedIndex: _selectedIndex,
+                  onTap: _onItemTapped,
+                ),
+              ],
+            ),
+          ),
         ),
       ),
     );
@@ -156,20 +190,19 @@ class _BottomNavIcon extends StatelessWidget {
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(icon, color: isSelected ? Colors.white : Colors.white70),
-          const SizedBox(height: 2),
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 3),
-            decoration: BoxDecoration(
-              color: isSelected ? Colors.white : Colors.transparent,
-              borderRadius: BorderRadius.circular(6),
-            ),
-            child: Text(
-              label,
-              style: TextStyle(
-                  fontSize: 10,
-                  color: isSelected ? Colors.black87 : Colors.white70),
-              textAlign: TextAlign.center,
+          Icon(
+            icon,
+            color: isSelected ? const Color(0xFFDE8500) : Colors.grey[400],
+            size: 24,
+          ),
+          const SizedBox(height: 4),
+          Text(
+            label,
+            style: TextStyle(
+              color: isSelected ? const Color(0xFFDE8500) : Colors.grey[400],
+              fontSize: 12,
+              fontWeight: FontWeight.w500,
+              fontFamily: 'SF Pro Text',
             ),
           ),
         ],
@@ -220,25 +253,55 @@ class _OrderCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Card(
-      elevation: 3,
-      color: Colors.white,
-      margin: EdgeInsets.zero,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(16),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.05),
+            blurRadius: 10,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
       child: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(
-              'Kode pesanan: $orderCode',
-              style: const TextStyle(
-                fontWeight: FontWeight.bold,
-                fontSize: 16,
-                color: Colors.black87,
-              ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  'Kode pesanan: $orderCode',
+                  style: const TextStyle(
+                    fontWeight: FontWeight.w600,
+                    fontSize: 16,
+                    color: Colors.black,
+                    fontFamily: 'SF Pro Display',
+                  ),
+                ),
+                Container(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                  decoration: BoxDecoration(
+                    color: const Color(0xFFDE8500).withOpacity(0.1),
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: const Text(
+                    'Baru',
+                    style: TextStyle(
+                      color: Color(0xFFDE8500),
+                      fontWeight: FontWeight.w500,
+                      fontSize: 12,
+                      fontFamily: 'SF Pro Text',
+                    ),
+                  ),
+                ),
+              ],
             ),
-            const Divider(color: Colors.black26, height: 24),
+            const Divider(color: Colors.black12, height: 24),
             Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -246,71 +309,84 @@ class _OrderCard extends StatelessWidget {
                   width: 100,
                   height: 100,
                   decoration: BoxDecoration(
-                    color: Colors.grey[200],
-                    borderRadius: BorderRadius.circular(8),
+                    color: const Color(0xFF8FBC8F).withOpacity(0.1),
+                    borderRadius: BorderRadius.circular(12),
                   ),
                   child: Center(
-                      child: Text(imageText,
-                          style: TextStyle(color: Colors.grey[600]))),
+                    child: Text(
+                      imageText,
+                      style: const TextStyle(
+                        color: Color(0xFF8FBC8F),
+                        fontSize: 12,
+                        fontFamily: 'SF Pro Text',
+                      ),
+                    ),
+                  ),
                 ),
                 const SizedBox(width: 16),
                 Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text('Tanggal Pemesanan:',
-                          style:
-                              TextStyle(fontSize: 12, color: Colors.black54)),
-                      Text(orderDate,
-                          style: TextStyle(
-                              fontSize: 14, fontWeight: FontWeight.w600)),
-                      const SizedBox(height: 8),
-                      Text('Jumlah Produk:',
-                          style:
-                              TextStyle(fontSize: 12, color: Colors.black54)),
-                      Text(productQuantity.toString(),
-                          style: TextStyle(
-                              fontSize: 14, fontWeight: FontWeight.w600)),
+                      Text(
+                        'Tanggal Pesanan',
+                        style: TextStyle(
+                          color: Colors.grey[600],
+                          fontSize: 12,
+                          fontFamily: 'SF Pro Text',
+                        ),
+                      ),
+                      const SizedBox(height: 4),
+                      Text(
+                        orderDate,
+                        style: const TextStyle(
+                          fontSize: 14,
+                          fontWeight: FontWeight.w500,
+                          color: Colors.black,
+                          fontFamily: 'SF Pro Text',
+                        ),
+                      ),
+                      const SizedBox(height: 12),
+                      Text(
+                        'Jumlah Produk',
+                        style: TextStyle(
+                          color: Colors.grey[600],
+                          fontSize: 12,
+                          fontFamily: 'SF Pro Text',
+                        ),
+                      ),
+                      const SizedBox(height: 4),
+                      Text(
+                        '$productQuantity item',
+                        style: const TextStyle(
+                          fontSize: 14,
+                          fontWeight: FontWeight.w500,
+                          color: Colors.black,
+                          fontFamily: 'SF Pro Text',
+                        ),
+                      ),
                     ],
                   ),
                 ),
-              ],
-            ),
-            const SizedBox(height: 16),
-            Align(
-              alignment: Alignment.bottomRight,
-              child: TextButton(
-                onPressed: () {
-                  // Aksi ketika tombol detail ditekan
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => CekDetailAdminScreen(
-                        orderCode: orderCode,
-                        model:
-                            'Seragam', // Placeholder, ganti dengan data sebenarnya jika ada
-                        fabricType: 'Katun', // Placeholder
-                        productQuantity: productQuantity,
-                        orderDate: orderDate,
+                IconButton(
+                  icon:
+                      const Icon(Icons.chevron_right, color: Color(0xFFDE8500)),
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => CekDetailAdminScreen(
+                          orderCode: orderCode,
+                          model: 'Seragam',
+                          fabricType: 'Katun',
+                          productQuantity: productQuantity,
+                          orderDate: orderDate,
+                        ),
                       ),
-                    ),
-                  );
-                },
-                style: TextButton.styleFrom(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                  backgroundColor: Colors.orange[700],
-                  shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(8)),
+                    );
+                  },
                 ),
-                child: const Text(
-                  'Cek detail',
-                  style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 12,
-                      fontWeight: FontWeight.bold),
-                ),
-              ),
+              ],
             ),
           ],
         ),

@@ -39,189 +39,136 @@ class _StatusPesananAdminScreenState extends State<StatusPesananAdminScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        Expanded(
-          child: ListView.builder(
-            padding: const EdgeInsets.all(16.0),
-            itemCount: orders.length,
-            itemBuilder: (context, index) {
-              final order = orders[index];
-              return _StatusOrderCard(
-                orderCode: order['orderCode'],
-                imageText: order['imageText'],
-                orderDate: order['orderDate'],
-                finishDate: order['finishDate'],
-                productQuantity: order['productQuantity'],
-                currentStatus: order['status'],
-                statusOptions: statusOptions,
-                onStatusChanged: (newStatus) {
-                  setState(() {
-                    orders[index]['status'] = newStatus;
-                  });
-                },
-              );
-            },
-          ),
-        ),
-      ],
-    );
-  }
-}
-
-class _StatusOrderCard extends StatelessWidget {
-  final String orderCode;
-  final String imageText;
-  final String orderDate;
-  final String finishDate;
-  final int productQuantity;
-  final String currentStatus;
-  final List<String> statusOptions;
-  final ValueChanged<String?> onStatusChanged;
-
-  const _StatusOrderCard({
-    Key? key,
-    required this.orderCode,
-    required this.imageText,
-    required this.orderDate,
-    required this.finishDate,
-    required this.productQuantity,
-    required this.currentStatus,
-    required this.statusOptions,
-    required this.onStatusChanged,
-  }) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return Card(
-      elevation: 3,
-      color: Colors.white,
-      margin: const EdgeInsets.only(bottom: 16),
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-      child: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              'Kode pesanan: $orderCode',
-              style: const TextStyle(
-                fontWeight: FontWeight.bold,
-                fontSize: 16,
-                color: Colors.black87,
-              ),
-            ),
-            const Divider(color: Colors.black26, height: 24),
-            Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Container(
-                  width: 100,
-                  height: 100,
-                  decoration: BoxDecoration(
-                    color: Colors.grey[200],
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                  child: Center(
-                      child: Text(imageText,
-                          style: TextStyle(color: Colors.grey[600]))),
-                ),
-                const SizedBox(width: 16),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
+    return Scaffold(
+      backgroundColor: const Color(0xFF8FBC8F),
+      appBar: AppBar(
+        backgroundColor: Colors.white,
+        elevation: 1,
+        title: const Text('Status Pesanan',
+            style: TextStyle(fontWeight: FontWeight.bold, color: Colors.black)),
+        iconTheme: const IconThemeData(color: Color(0xFFDE8500)),
+      ),
+      body: ListView.builder(
+        padding: const EdgeInsets.all(16),
+        itemCount: orders.length,
+        itemBuilder: (context, index) {
+          final order = orders[index];
+          return Card(
+            color: Colors.white,
+            elevation: 3,
+            margin: const EdgeInsets.only(bottom: 16),
+            shape:
+                RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+            child: Padding(
+              padding: const EdgeInsets.all(16),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Text('Tanggal Pemesanan:',
-                          style:
-                              TextStyle(fontSize: 12, color: Colors.black54)),
-                      Text(orderDate,
-                          style: TextStyle(
-                              fontSize: 14, fontWeight: FontWeight.w600)),
-                      const SizedBox(height: 8),
-                      Text('Tanggal selesai:',
-                          style:
-                              TextStyle(fontSize: 12, color: Colors.black54)),
-                      Text(finishDate,
-                          style: TextStyle(
-                              fontSize: 14, fontWeight: FontWeight.w600)),
-                      const SizedBox(height: 8),
-                      Text('Jumlah Produk:',
-                          style:
-                              TextStyle(fontSize: 12, color: Colors.black54)),
-                      Text(productQuantity.toString(),
-                          style: TextStyle(
-                              fontSize: 14, fontWeight: FontWeight.w600)),
+                      Text('Kode: ${order['orderCode']}',
+                          style: const TextStyle(
+                              fontWeight: FontWeight.bold, fontSize: 16)),
+                      Container(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 12, vertical: 6),
+                        decoration: BoxDecoration(
+                          color: const Color(0xFFDE8500).withOpacity(0.1),
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        child: Text(order['status'],
+                            style: const TextStyle(
+                                color: Color(0xFFDE8500),
+                                fontWeight: FontWeight.w500,
+                                fontSize: 12)),
+                      ),
                     ],
                   ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 16),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.end,
-              children: [
-                Container(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-                  decoration: BoxDecoration(
-                    color: Colors.grey[100],
-                    borderRadius: BorderRadius.circular(8),
-                    border: Border.all(color: Colors.grey[400]!),
-                  ),
-                  child: DropdownButtonHideUnderline(
-                    child: DropdownButton<String>(
-                      value: currentStatus,
-                      icon: const Icon(Icons.arrow_drop_down,
-                          color: Colors.black54),
-                      style:
-                          const TextStyle(color: Colors.black87, fontSize: 14),
-                      onChanged: onStatusChanged,
-                      items: statusOptions
-                          .map<DropdownMenuItem<String>>((String value) {
-                        return DropdownMenuItem<String>(
-                          value: value,
-                          child: Text(value,
-                              style: const TextStyle(color: Colors.black87)),
-                        );
-                      }).toList(),
-                    ),
-                  ),
-                ),
-                const SizedBox(width: 8),
-                TextButton(
-                  onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => CekDetailAdminScreen(
-                          orderCode: orderCode,
-                          model: 'Seragam',
-                          fabricType: 'Katun',
-                          productQuantity: productQuantity,
-                          orderDate: orderDate,
+                  const Divider(color: Colors.black12, height: 24),
+                  Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Container(
+                        width: 80,
+                        height: 80,
+                        decoration: BoxDecoration(
+                          color: const Color(0xFF8FBC8F).withOpacity(0.1),
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        child: Center(
+                            child: Text(order['imageText'],
+                                style:
+                                    const TextStyle(color: Color(0xFF8FBC8F)))),
+                      ),
+                      const SizedBox(width: 16),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text('Tanggal Pesan',
+                                style: TextStyle(
+                                    color: Colors.grey[600], fontSize: 12)),
+                            Text(order['orderDate'],
+                                style: const TextStyle(
+                                    fontWeight: FontWeight.w500)),
+                            const SizedBox(height: 8),
+                            Text('Tanggal Selesai',
+                                style: TextStyle(
+                                    color: Colors.grey[600], fontSize: 12)),
+                            Text(order['finishDate'],
+                                style: const TextStyle(
+                                    fontWeight: FontWeight.w500)),
+                            const SizedBox(height: 8),
+                            Text('Jumlah Produk',
+                                style: TextStyle(
+                                    color: Colors.grey[600], fontSize: 12)),
+                            Text(order['productQuantity'].toString(),
+                                style: const TextStyle(
+                                    fontWeight: FontWeight.w500)),
+                          ],
                         ),
                       ),
-                    );
-                  },
-                  style: TextButton.styleFrom(
-                    padding:
-                        const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                    backgroundColor: Colors.orange[700],
-                    shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(8)),
+                    ],
                   ),
-                  child: const Text(
-                    'Cek detail',
-                    style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 12,
-                        fontWeight: FontWeight.bold),
+                  const SizedBox(height: 16),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: [
+                      ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: const Color(0xFFDE8500),
+                          shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(8)),
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 20, vertical: 10),
+                        ),
+                        onPressed: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => CekDetailAdminScreen(
+                                orderCode: order['orderCode'],
+                                model: 'Seragam',
+                                fabricType: 'Katun',
+                                productQuantity: order['productQuantity'],
+                                orderDate: order['orderDate'],
+                              ),
+                            ),
+                          );
+                        },
+                        child: const Text('Cek Detail',
+                            style: TextStyle(
+                                color: Colors.white,
+                                fontWeight: FontWeight.bold)),
+                      ),
+                    ],
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
-          ],
-        ),
+          );
+        },
       ),
     );
   }

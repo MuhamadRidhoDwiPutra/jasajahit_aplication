@@ -144,69 +144,19 @@ class TrackingPesananCustomerScreen extends StatelessWidget {
           ],
         ),
       ),
-      floatingActionButton: FloatingActionButton(
-        backgroundColor: const Color(0xFFFFD600),
-        child: const Icon(Icons.add, color: Colors.white, size: 32),
-        onPressed: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-                builder: (context) => const DesainCustomerScreen()),
-          );
-        },
-        elevation: 4,
-      ),
+      // floatingActionButton: FloatingActionButton(
+      //   backgroundColor: const Color(0xFFFFD600),
+      //   child: const Icon(Icons.add, color: Colors.white, size: 32),
+      //   onPressed: () {
+      //     Navigator.push(
+      //       context,
+      //       MaterialPageRoute(
+      //           builder: (context) => const DesainCustomerScreen()),
+      //     );
+      //   },
+      //   elevation: 4,
+      // ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
-      bottomNavigationBar: BottomAppBar(
-        color: Colors.white,
-        shape: const CircularNotchedRectangle(),
-        notchMargin: 8,
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceAround,
-          children: [
-            _BottomNavIcon(
-              icon: Icons.home,
-              label: 'Beranda',
-              onTap: () {
-                Navigator.pushReplacement(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) => const HomeCustomerScreen()),
-                );
-              },
-            ),
-            _BottomNavIcon(
-              icon: Icons.local_shipping,
-              label: 'Tracking',
-              onTap: () {},
-              isActive: true,
-            ),
-            const SizedBox(width: 48), // Space for FAB
-            _BottomNavIcon(
-              icon: Icons.history,
-              label: 'Riwayat',
-              onTap: () {
-                Navigator.pushReplacement(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) => const RiwayatCustomerScreen()),
-                );
-              },
-            ),
-            _BottomNavIcon(
-              icon: Icons.person,
-              label: 'Profil',
-              onTap: () {
-                Navigator.pushReplacement(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) => const ProfileCustomerScreen()),
-                );
-              },
-            ),
-          ],
-        ),
-      ),
     );
   }
 }

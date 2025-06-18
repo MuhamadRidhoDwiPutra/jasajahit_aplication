@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:jasa_jahit_aplication/src/admin/home_admin_screen.dart';
 import 'register_screen.dart';
 import 'package:jasa_jahit_aplication/src/customer/home_customer_screen.dart';
-// ignore: unused_import
+// abaikan: import yang tidak digunakan
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -31,7 +31,7 @@ class _LoginScreenState extends State<LoginScreen> {
         MaterialPageRoute(builder: (context) => HomeCustomerScreen()),
       );
     } else {
-      // Tampilkan error jika login gagal
+      // Tampilkan pesan error jika login gagal
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Username atau password salah!')),
       );
@@ -50,7 +50,7 @@ class _LoginScreenState extends State<LoginScreen> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 const SizedBox(height: 40),
-                // Logo and Welcome Text
+                // Logo dan Teks Selamat Datang
                 Center(
                   child: Column(
                     children: [
@@ -94,7 +94,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   ),
                 ),
                 const SizedBox(height: 40),
-                // Login Form
+                // Form Login
                 Container(
                   padding: const EdgeInsets.all(24),
                   decoration: BoxDecoration(
@@ -112,7 +112,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       const Text(
-                        'Login',
+                        'Masuk',
                         style: TextStyle(
                           fontSize: 24,
                           fontWeight: FontWeight.bold,
@@ -120,11 +120,11 @@ class _LoginScreenState extends State<LoginScreen> {
                         ),
                       ),
                       const SizedBox(height: 24),
-                      // Username Field
+                      // Kolom Username
                       TextField(
                         controller: _usernameController,
                         decoration: InputDecoration(
-                          labelText: 'Username',
+                          labelText: 'Nama Pengguna',
                           prefixIcon: const Icon(Icons.person_outline),
                           border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(12),
@@ -139,12 +139,12 @@ class _LoginScreenState extends State<LoginScreen> {
                         ),
                       ),
                       const SizedBox(height: 16),
-                      // Password Field
+                      // Kolom Password
                       TextField(
                         controller: _passwordController,
                         obscureText: true,
                         decoration: InputDecoration(
-                          labelText: 'Password',
+                          labelText: 'Kata Sandi',
                           prefixIcon: const Icon(Icons.lock_outline),
                           border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(12),
@@ -159,7 +159,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         ),
                       ),
                       const SizedBox(height: 24),
-                      // Login Button
+                      // Tombol Login
                       SizedBox(
                         width: double.infinity,
                         child: ElevatedButton(
@@ -173,7 +173,7 @@ class _LoginScreenState extends State<LoginScreen> {
                           ),
                           onPressed: _isLoading ? null : _login,
                           child: const Text(
-                            'Login',
+                            'Masuk',
                             style: TextStyle(
                               fontSize: 16,
                               fontWeight: FontWeight.bold,
@@ -186,7 +186,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   ),
                 ),
                 const SizedBox(height: 24),
-                // Register Link
+                // Tautan Daftar
                 Center(
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,

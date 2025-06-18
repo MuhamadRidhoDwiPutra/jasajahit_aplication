@@ -32,179 +32,172 @@ class _RiwayatTransaksiAdminScreenState
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
-          child: Row(
-            children: [
-              Expanded(
-                child: TextField(
-                  controller: searchController,
-                  decoration: InputDecoration(
-                    hintText: 'Search...',
-                    fillColor: Colors.white,
-                    filled: true,
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(8),
-                      borderSide: BorderSide.none,
-                    ),
-                    contentPadding: const EdgeInsets.symmetric(horizontal: 12),
-                  ),
-                  onChanged: (value) {
-                    // Implementasi pencarian di sini
-                  },
-                ),
-              ),
-              const SizedBox(width: 8),
-              Container(
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                child: IconButton(
-                  icon: const Icon(Icons.search),
-                  onPressed: () {
-                    // Aksi pencarian
-                  },
-                ),
-              ),
-            ],
-          ),
-        ),
-        Expanded(
-          child: ListView.builder(
-            padding: const EdgeInsets.all(16.0),
-            itemCount: transactions.length,
-            itemBuilder: (context, index) {
-              final transaction = transactions[index];
-              return _TransactionCard(
-                orderCode: transaction['orderCode'],
-                imageText: transaction['imageText'],
-                orderDate: transaction['orderDate'],
-                finishDate: transaction['finishDate'],
-                productQuantity: transaction['productQuantity'],
-                totalPrice: transaction['totalPrice'],
-              );
-            },
-          ),
-        ),
-      ],
-    );
-  }
-}
-
-class _TransactionCard extends StatelessWidget {
-  final String orderCode;
-  final String imageText;
-  final String orderDate;
-  final String finishDate;
-  final int productQuantity;
-  final int totalPrice;
-
-  const _TransactionCard({
-    Key? key,
-    required this.orderCode,
-    required this.imageText,
-    required this.orderDate,
-    required this.finishDate,
-    required this.productQuantity,
-    required this.totalPrice,
-  }) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return Card(
-      elevation: 3,
-      color: Colors.white,
-      margin: const EdgeInsets.only(bottom: 16),
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-      child: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              'Kode pesanan: $orderCode',
-              style: const TextStyle(
-                fontWeight: FontWeight.bold,
-                fontSize: 16,
-                color: Colors.black87,
-              ),
-            ),
-            const Divider(color: Colors.black26, height: 24),
-            Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
+    return Scaffold(
+      backgroundColor: const Color(0xFF8FBC8F),
+      appBar: AppBar(
+        backgroundColor: Colors.white,
+        elevation: 1,
+        title: const Text('Riwayat Transaksi',
+            style: TextStyle(fontWeight: FontWeight.bold, color: Colors.black)),
+        iconTheme: const IconThemeData(color: Color(0xFFDE8500)),
+      ),
+      body: Column(
+        children: [
+          Padding(
+            padding:
+                const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+            child: Row(
               children: [
+                Expanded(
+                  child: TextField(
+                    controller: searchController,
+                    decoration: InputDecoration(
+                      hintText: 'Search...',
+                      fillColor: Colors.white,
+                      filled: true,
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(8),
+                        borderSide: BorderSide.none,
+                      ),
+                      contentPadding:
+                          const EdgeInsets.symmetric(horizontal: 12),
+                    ),
+                    onChanged: (value) {
+                      // Implementasi pencarian di sini
+                    },
+                  ),
+                ),
+                const SizedBox(width: 8),
                 Container(
-                  width: 100,
-                  height: 100,
                   decoration: BoxDecoration(
-                    color: Colors.grey[200],
+                    color: Colors.white,
                     borderRadius: BorderRadius.circular(8),
                   ),
-                  child: Center(
-                      child: Text(imageText,
-                          style: TextStyle(color: Colors.grey[600]))),
-                ),
-                const SizedBox(width: 16),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text('Tanggal Pemesanan:',
-                          style:
-                              TextStyle(fontSize: 12, color: Colors.black54)),
-                      Text(orderDate,
-                          style: TextStyle(
-                              fontSize: 14, fontWeight: FontWeight.w600)),
-                      const SizedBox(height: 8),
-                      Text('Tanggal selesai:',
-                          style:
-                              TextStyle(fontSize: 12, color: Colors.black54)),
-                      Text(finishDate,
-                          style: TextStyle(
-                              fontSize: 14, fontWeight: FontWeight.w600)),
-                      const SizedBox(height: 8),
-                      Text('Jumlah Produk:',
-                          style:
-                              TextStyle(fontSize: 12, color: Colors.black54)),
-                      Text(productQuantity.toString(),
-                          style: TextStyle(
-                              fontSize: 14, fontWeight: FontWeight.w600)),
-                    ],
+                  child: IconButton(
+                    icon: const Icon(Icons.search),
+                    onPressed: () {
+                      // Aksi pencarian
+                    },
                   ),
                 ),
               ],
             ),
-            const SizedBox(height: 16),
-            Align(
-              alignment: Alignment.bottomRight,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.end,
-                children: [
-                  Text(
-                    'Total pesanan: Rp. ${totalPrice.toStringAsFixed(0)}',
-                    style: const TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 16,
-                      color: Colors.black87,
+          ),
+          Expanded(
+            child: ListView.builder(
+              padding: const EdgeInsets.all(16),
+              itemCount: transactions.length,
+              itemBuilder: (context, index) {
+                final trx = transactions[index];
+                return Card(
+                  color: Colors.white,
+                  elevation: 3,
+                  margin: const EdgeInsets.only(bottom: 16),
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(16)),
+                  child: Padding(
+                    padding: const EdgeInsets.all(16),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text('Kode: ${trx['orderCode']}',
+                                style: const TextStyle(
+                                    fontWeight: FontWeight.bold, fontSize: 16)),
+                            Container(
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 12, vertical: 6),
+                              decoration: BoxDecoration(
+                                color: const Color(0xFFDE8500).withOpacity(0.1),
+                                borderRadius: BorderRadius.circular(8),
+                              ),
+                              child: Text(trx['status'],
+                                  style: const TextStyle(
+                                      color: Color(0xFFDE8500),
+                                      fontWeight: FontWeight.w500,
+                                      fontSize: 12)),
+                            ),
+                          ],
+                        ),
+                        const Divider(color: Colors.black12, height: 24),
+                        Row(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Container(
+                              width: 80,
+                              height: 80,
+                              decoration: BoxDecoration(
+                                color: const Color(0xFF8FBC8F).withOpacity(0.1),
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                              child: Center(
+                                  child: Text(trx['imageText'],
+                                      style: const TextStyle(
+                                          color: Color(0xFF8FBC8F)))),
+                            ),
+                            const SizedBox(width: 16),
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text('Tanggal Pesan',
+                                      style: TextStyle(
+                                          color: Colors.grey[600],
+                                          fontSize: 12)),
+                                  Text(trx['orderDate'],
+                                      style: const TextStyle(
+                                          fontWeight: FontWeight.w500)),
+                                  const SizedBox(height: 8),
+                                  Text('Tanggal Selesai',
+                                      style: TextStyle(
+                                          color: Colors.grey[600],
+                                          fontSize: 12)),
+                                  Text(trx['finishDate'],
+                                      style: const TextStyle(
+                                          fontWeight: FontWeight.w500)),
+                                  const SizedBox(height: 8),
+                                  Text('Jumlah Produk',
+                                      style: TextStyle(
+                                          color: Colors.grey[600],
+                                          fontSize: 12)),
+                                  Text(trx['productQuantity'].toString(),
+                                      style: const TextStyle(
+                                          fontWeight: FontWeight.w500)),
+                                ],
+                              ),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 16),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.end,
+                          children: [
+                            ElevatedButton(
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: const Color(0xFFDE8500),
+                                shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(8)),
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 20, vertical: 10),
+                              ),
+                              onPressed: () {/* aksi detail */},
+                              child: const Text('Cek Detail',
+                                  style: TextStyle(
+                                      color: Colors.white,
+                                      fontWeight: FontWeight.bold)),
+                            ),
+                          ],
+                        ),
+                      ],
                     ),
                   ),
-                  // TextButton(
-                  //   onPressed: () {
-                  //     // Aksi ketika tombol detail ditekan
-                  //   },
-                  //   child: const Text(
-                  //     'Cek detail',
-                  //     style: TextStyle(color: Colors.black87, fontSize: 12),
-                  //   ),
-                  // ),
-                ],
-              ),
+                );
+              },
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }

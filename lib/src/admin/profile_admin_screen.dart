@@ -6,67 +6,76 @@ class ProfileAdminScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.all(16.0),
-      child: Column(
-        children: [
-          CircleAvatar(
-            radius: 60,
-            backgroundColor: Colors.grey[200],
-            child: Icon(Icons.person, size: 80, color: Colors.grey[600]),
+    return Scaffold(
+      backgroundColor: const Color(0xFF8FBC8F),
+      appBar: AppBar(
+        backgroundColor: Colors.white,
+        elevation: 1,
+        title: const Text('Profil Admin',
+            style: TextStyle(fontWeight: FontWeight.bold, color: Colors.black)),
+        iconTheme: const IconThemeData(color: Color(0xFFDE8500)),
+      ),
+      body: Center(
+        child: Card(
+          color: Colors.white,
+          elevation: 3,
+          margin: const EdgeInsets.all(24),
+          shape:
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+          child: Padding(
+            padding: const EdgeInsets.all(24),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                CircleAvatar(
+                  radius: 40,
+                  backgroundColor: const Color(0xFF8FBC8F).withOpacity(0.2),
+                  child: const Icon(Icons.person,
+                      size: 48, color: Color(0xFF8FBC8F)),
+                ),
+                const SizedBox(height: 16),
+                const Text('Admin Jahit',
+                    style:
+                        TextStyle(fontWeight: FontWeight.bold, fontSize: 20)),
+                const SizedBox(height: 8),
+                const Text('admin@email.com',
+                    style: TextStyle(color: Colors.grey)),
+                const Divider(height: 32, color: Colors.black12),
+                ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: const Color(0xFFDE8500),
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8)),
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 32, vertical: 12),
+                  ),
+                  onPressed: () {/* aksi edit */},
+                  child: const Text('Edit Profil',
+                      style: TextStyle(
+                          color: Colors.white, fontWeight: FontWeight.bold)),
+                ),
+                const SizedBox(height: 16),
+                OutlinedButton(
+                  style: OutlinedButton.styleFrom(
+                    side: const BorderSide(color: Color(0xFFDE8500), width: 2),
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8)),
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 32, vertical: 12),
+                  ),
+                  onPressed: () {
+                    Navigator.pushNamedAndRemoveUntil(
+                        context, '/login', (route) => false);
+                  },
+                  child: const Text('Logout',
+                      style: TextStyle(
+                          color: Color(0xFFDE8500),
+                          fontWeight: FontWeight.bold)),
+                ),
+              ],
+            ),
           ),
-          const SizedBox(height: 16),
-          _buildProfileInfoRow(label: 'Nama', value: 'Admin JahitKu'),
-          const SizedBox(height: 8),
-          _buildProfileInfoRow(label: 'Email', value: 'admin@jahitku.com'),
-          const SizedBox(height: 8),
-          _buildProfileInfoRow(label: 'Telepon', value: '081234567890'),
-          const SizedBox(height: 32),
-          ElevatedButton(
-            onPressed: () {
-              // Aksi untuk mengedit profil
-            },
-            style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.orange[700],
-              padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 15),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(10),
-              ),
-              elevation: 3,
-            ),
-            child: const Text(
-              'Edit Profil',
-              style: TextStyle(
-                  fontSize: 16,
-                  color: Colors.white,
-                  fontWeight: FontWeight.bold),
-            ),
-          ),
-          const SizedBox(height: 16),
-          OutlinedButton(
-            onPressed: () {
-              Navigator.pushAndRemoveUntil(
-                context,
-                MaterialPageRoute(builder: (context) => const LoginScreen()),
-                (Route<dynamic> route) => false,
-              );
-            },
-            style: OutlinedButton.styleFrom(
-              side: BorderSide(color: Colors.orange[700]!, width: 2),
-              padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 15),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(10),
-              ),
-            ),
-            child: Text(
-              'Logout',
-              style: TextStyle(
-                  fontSize: 16,
-                  color: Colors.orange[700],
-                  fontWeight: FontWeight.bold),
-            ),
-          ),
-        ],
+        ),
       ),
     );
   }
