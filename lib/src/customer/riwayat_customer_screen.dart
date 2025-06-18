@@ -1,13 +1,19 @@
 import 'package:flutter/material.dart';
+// ignore: unused_import
 import 'package:jasa_jahit_aplication/src/customer/home_customer_screen.dart';
 // ignore: unused_import
 import 'package:jasa_jahit_aplication/src/customer/pesan_customer_screen.dart';
+// ignore: unused_import
 import 'package:jasa_jahit_aplication/src/customer/profile_customer_screen.dart';
+// ignore: unused_import
 import 'package:jasa_jahit_aplication/src/customer/tracking_pesanan_customer_screen.dart';
+// ignore: unused_import
 import 'desain_customer_screen.dart';
+// ignore: unused_import
+import 'package:jasa_jahit_aplication/src/theme/theme_switcher.dart';
 
 class RiwayatCustomerScreen extends StatelessWidget {
-  const RiwayatCustomerScreen({Key? key}) : super(key: key);
+  const RiwayatCustomerScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -15,21 +21,21 @@ class RiwayatCustomerScreen extends StatelessWidget {
     final List<_OrderHistory> orders = [
       _OrderHistory(
         id: 'ORD123456',
-        item: 'Kemeja Formal',
+        item: 'Kaos lengan panjang',
         date: '12 Juni 2024',
         total: 'Rp 300.000',
         status: OrderStatus.selesai,
       ),
       _OrderHistory(
         id: 'ORD123457',
-        item: 'Seragam Sekolah',
+        item: 'celana pendek',
         date: '10 Juni 2024',
         total: 'Rp 200.000',
-        status: OrderStatus.diproses,
+        status: OrderStatus.selesai,
       ),
       _OrderHistory(
         id: 'ORD123458',
-        item: 'Jas Pria',
+        item: 'kaos lengan pendek',
         date: '5 Juni 2024',
         total: 'Rp 400.000',
         status: OrderStatus.dibatalkan,
@@ -42,89 +48,140 @@ class RiwayatCustomerScreen extends StatelessWidget {
           children: [
             Column(
               children: [
-                // AppBar with gradient
-                Container(
-                  decoration: BoxDecoration(
-                    gradient: LinearGradient(
-                      colors: [Colors.green[700]!, Colors.green[500]!],
-                      begin: Alignment.topLeft,
-                      end: Alignment.bottomRight,
-                    ),
-                  ),
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-                  child: Row(
-                    children: [
-                      Container(
-                        decoration: BoxDecoration(
-                          color: Colors.white.withOpacity(0.2),
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                        child: IconButton(
-                          icon: const Icon(Icons.arrow_back_ios_new,
-                              color: Colors.white),
-                          onPressed: () {
-                            Navigator.pushReplacement(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) =>
-                                      const HomeCustomerScreen()),
-                            );
-                          },
-                        ),
-                      ),
-                      const Expanded(
-                        child: Text(
-                          'Riwayat Pesanan',
-                          style: TextStyle(
-                            fontSize: 18,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.white,
-                          ),
-                          textAlign: TextAlign.center,
-                        ),
-                      ),
-                      SizedBox(width: 48), // Placeholder for symmetry
-                    ],
-                  ),
-                ),
-                const SizedBox(height: 16),
-                // Order History List or Empty State
                 Expanded(
-                  child: orders.isEmpty
-                      ? _EmptyHistory()
-                      : ListView.separated(
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 16, vertical: 8),
-                          itemCount: orders.length,
-                          separatorBuilder: (context, index) =>
-                              const SizedBox(height: 12),
-                          itemBuilder: (context, index) {
-                            final order = orders[index];
-                            return _OrderHistoryCard(order: order);
-                          },
+                  child: ListView.builder(
+                    padding: const EdgeInsets.all(16),
+                    itemCount: orders.length,
+                    itemBuilder: (context, index) {
+                      final order = orders[index];
+                      return Container(
+                        margin: const EdgeInsets.only(bottom: 16),
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(16),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.black.withOpacity(0.05),
+                              blurRadius: 10,
+                              offset: const Offset(0, 2),
+                            ),
+                          ],
                         ),
+                        child: Column(
+                          children: [
+                            Padding(
+                              padding: const EdgeInsets.all(16),
+                              child: Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Text(
+                                    order.id,
+                                    style: const TextStyle(
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.w500,
+                                      color: Colors.grey,
+                                      fontFamily: 'SF Pro Text',
+                                    ),
+                                  ),
+                                  Container(
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 12, vertical: 6),
+                                    decoration: BoxDecoration(
+                                      color: _getStatusColor(order.status)
+                                          .withOpacity(0.1),
+                                      borderRadius: BorderRadius.circular(8),
+                                    ),
+                                    child: Text(
+                                      _getStatusText(order.status),
+                                      style: TextStyle(
+                                        color: _getStatusColor(order.status),
+                                        fontWeight: FontWeight.w500,
+                                        fontSize: 12,
+                                        fontFamily: 'SF Pro Text',
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                            const Divider(height: 1, color: Colors.black12),
+                            Padding(
+                              padding: const EdgeInsets.all(16),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    order.item,
+                                    style: const TextStyle(
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.w600,
+                                      color: Colors.black,
+                                      fontFamily: 'SF Pro Display',
+                                    ),
+                                  ),
+                                  const SizedBox(height: 8),
+                                  Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      Text(
+                                        order.date,
+                                        style: const TextStyle(
+                                          fontSize: 14,
+                                          color: Colors.grey,
+                                          fontFamily: 'SF Pro Text',
+                                        ),
+                                      ),
+                                      Text(
+                                        order.total,
+                                        style: const TextStyle(
+                                          fontSize: 16,
+                                          fontWeight: FontWeight.w600,
+                                          color: Color(0xFFDE8500),
+                                          fontFamily: 'SF Pro Display',
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ],
+                        ),
+                      );
+                    },
+                  ),
                 ),
               ],
             ),
-            // ... existing code ...
           ],
         ),
       ),
-      // floatingActionButton: FloatingActionButton(
-      //   backgroundColor: const Color(0xFFFFD600),
-      //   child: const Icon(Icons.add, color: Colors.white, size: 32),
-      //   onPressed: () {
-      //     Navigator.push(
-      //       context,
-      //       MaterialPageRoute(
-      //           builder: (context) => const DesainCustomerScreen()),
-      //     );
-      //   },
-      //   elevation: 4,
-      // ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
     );
+  }
+
+  Color _getStatusColor(OrderStatus status) {
+    switch (status) {
+      case OrderStatus.selesai:
+        return Colors.green;
+      case OrderStatus.diproses:
+        return const Color(0xFFDE8500);
+      case OrderStatus.dibatalkan:
+        return Colors.red;
+    }
+  }
+
+  String _getStatusText(OrderStatus status) {
+    switch (status) {
+      case OrderStatus.selesai:
+        return 'Selesai';
+      case OrderStatus.diproses:
+        return 'Diproses';
+      case OrderStatus.dibatalkan:
+        return 'Dibatalkan';
+    }
   }
 }
 
@@ -136,6 +193,7 @@ class _OrderHistory {
   final String date;
   final String total;
   final OrderStatus status;
+
   _OrderHistory({
     required this.id,
     required this.item,
@@ -145,137 +203,7 @@ class _OrderHistory {
   });
 }
 
-class _OrderHistoryCard extends StatelessWidget {
-  final _OrderHistory order;
-  const _OrderHistoryCard({required this.order});
-
-  Color getStatusColor(OrderStatus status) {
-    switch (status) {
-      case OrderStatus.selesai:
-        return Colors.green[600]!;
-      case OrderStatus.diproses:
-        return Colors.orange[700]!;
-      case OrderStatus.dibatalkan:
-        return Colors.red[400]!;
-    }
-  }
-
-  IconData getStatusIcon(OrderStatus status) {
-    switch (status) {
-      case OrderStatus.selesai:
-        return Icons.check_circle_rounded;
-      case OrderStatus.diproses:
-        return Icons.local_shipping_rounded;
-      case OrderStatus.dibatalkan:
-        return Icons.cancel_rounded;
-    }
-  }
-
-  String getStatusText(OrderStatus status) {
-    switch (status) {
-      case OrderStatus.selesai:
-        return 'Selesai';
-      case OrderStatus.diproses:
-        return 'Diproses';
-      case OrderStatus.dibatalkan:
-        return 'Dibatalkan';
-    }
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(16),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.08),
-            blurRadius: 8,
-            offset: const Offset(0, 2),
-          ),
-        ],
-      ),
-      child: Row(
-        children: [
-          Container(
-            padding: const EdgeInsets.all(10),
-            decoration: BoxDecoration(
-              color: getStatusColor(order.status).withOpacity(0.15),
-              shape: BoxShape.circle,
-            ),
-            child: Icon(
-              getStatusIcon(order.status),
-              color: getStatusColor(order.status),
-              size: 32,
-            ),
-          ),
-          const SizedBox(width: 16),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(order.item,
-                    style: const TextStyle(
-                        fontSize: 16, fontWeight: FontWeight.bold)),
-                const SizedBox(height: 4),
-                Text(order.date,
-                    style:
-                        const TextStyle(fontSize: 13, color: Colors.black54)),
-                const SizedBox(height: 4),
-                Row(
-                  children: [
-                    Container(
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 8, vertical: 4),
-                      decoration: BoxDecoration(
-                        color: getStatusColor(order.status).withOpacity(0.15),
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                      child: Text(
-                        getStatusText(order.status),
-                        style: TextStyle(
-                          color: getStatusColor(order.status),
-                          fontWeight: FontWeight.bold,
-                          fontSize: 12,
-                        ),
-                      ),
-                    ),
-                    const SizedBox(width: 8),
-                    Text(order.total,
-                        style: const TextStyle(
-                            fontSize: 13, fontWeight: FontWeight.w500)),
-                  ],
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class _EmptyHistory extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Icon(Icons.history, size: 80, color: Colors.grey[300]),
-          const SizedBox(height: 16),
-          const Text(
-            'Belum ada riwayat pesanan',
-            style: TextStyle(fontSize: 16, color: Colors.black54),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
+// ignore: unused_element
 class _BottomNavIcon extends StatelessWidget {
   final IconData icon;
   final String label;
@@ -285,7 +213,9 @@ class _BottomNavIcon extends StatelessWidget {
   const _BottomNavIcon({
     required this.icon,
     required this.label,
+    // ignore: unused_element_parameter
     this.onTap,
+    // ignore: unused_element_parameter
     this.isActive = false,
   });
 

@@ -23,88 +23,150 @@ class _UkuranBajuCustomerScreenState extends State<UkuranBajuCustomerScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: const Color(0xFF8FBC8F),
-      appBar: AppBar(
-        backgroundColor: const Color(0xFF8FBC8F),
-        elevation: 0,
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Colors.black),
-          onPressed: () {
-            Navigator.pushReplacement(
-              context,
-              MaterialPageRoute(
-                  builder: (context) => const DesainCustomerScreen()),
-            );
-          },
-        ),
-        title: const Text(
-          'Ukuran Baju',
-          style: TextStyle(color: Colors.white, fontSize: 18),
-        ),
-        centerTitle: true,
-      ),
-      body: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
+      body: SafeArea(
+        child: Stack(
           children: [
-            const SizedBox(height: 8),
-            // Card gambar detail
-            Center(
-              child: Container(
-                width: 140,
-                height: 80,
-                decoration: BoxDecoration(
-                  color: Colors.grey[300],
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                child: const Center(
-                  child: Text(
-                    'Gambar\nBaju',
-                    textAlign: TextAlign.center,
-                    style: TextStyle(fontSize: 13, color: Colors.black54),
+            Column(
+              children: [
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withOpacity(0.05),
+                        blurRadius: 10,
+                        offset: const Offset(0, 2),
+                      ),
+                    ],
+                  ),
+                  child: Row(
+                    children: [
+                      Container(
+                        decoration: BoxDecoration(
+                          color: const Color(0xFFDE8500).withOpacity(0.1),
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        child: IconButton(
+                          icon: const Icon(Icons.arrow_back_ios_new, color: Color(0xFFDE8500)),
+                          onPressed: () {
+                            Navigator.pushReplacement(
+                              context,
+                              MaterialPageRoute(builder: (context) => const DesainCustomerScreen()),
+                            );
+                          },
+                        ),
+                      ),
+                      const Expanded(
+                        child: Text(
+                          'Ukuran Baju',
+                          style: TextStyle(
+                            fontSize: 20,
+                            fontWeight: FontWeight.w600,
+                            color: Colors.black,
+                            fontFamily: 'SF Pro Display',
+                          ),
+                          textAlign: TextAlign.center,
+                        ),
+                      ),
+                      const SizedBox(width: 48),
+                    ],
                   ),
                 ),
-              ),
-            ),
-            const SizedBox(height: 24),
-            // Form input ukuran
-            _InputField(
-                controller: lingkarDadaController, label: 'Lingkar Dada'),
-            const SizedBox(height: 12),
-            _InputField(controller: lebarBahuController, label: 'Lebar Bahu'),
-            const SizedBox(height: 12),
-            _InputField(
-                controller: panjangBajuController, label: 'Panjang Baju'),
-            const SizedBox(height: 12),
-            _InputField(
-                controller: panjangLenganController, label: 'Panjang Lengan'),
-            const SizedBox(height: 12),
-            _InputField(
-                controller: lebarLenganController, label: 'Lebar Lengan'),
-            const Spacer(),
-            SizedBox(
-              width: double.infinity,
-              child: ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.orange[700],
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(8),
+                Expanded(
+                  child: ListView(
+                    padding: const EdgeInsets.all(16),
+                    children: [
+                      Container(
+                        padding: const EdgeInsets.all(16),
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(16),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.black.withOpacity(0.05),
+                              blurRadius: 10,
+                              offset: const Offset(0, 2),
+                            ),
+                          ],
+                        ),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const Text(
+                              'Ukuran (cm)',
+                              style: TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.w600,
+                                color: Colors.black,
+                                fontFamily: 'SF Pro Display',
+                              ),
+                            ),
+                            const SizedBox(height: 16),
+                            _MeasurementField(
+                              label: 'Lingkar Dada',
+                              controller: lingkarDadaController,
+                              icon: Icons.straighten,
+                            ),
+                            const SizedBox(height: 16),
+                            _MeasurementField(
+                              label: 'Lebar Bahu',
+                              controller: lebarBahuController,
+                              icon: Icons.straighten,
+                            ),
+                            const SizedBox(height: 16),
+                            _MeasurementField(
+                              label: 'Panjang Baju',
+                              controller: panjangBajuController,
+                              icon: Icons.straighten,
+                            ),
+                            const SizedBox(height: 16),
+                            _MeasurementField(
+                              label: 'Panjang Lengan',
+                              controller: panjangLenganController,
+                              icon: Icons.straighten,
+                            ),
+                            const SizedBox(height: 16),
+                            _MeasurementField(
+                              label: 'Lebar Lengan',
+                              controller: lebarLenganController,
+                              icon: Icons.straighten,
+                            ),
+                          ],
+                        ),
+                      ),
+                      const SizedBox(height: 24),
+                      ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: const Color(0xFFDE8500),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          padding: const EdgeInsets.symmetric(vertical: 16),
+                        ),
+                        onPressed: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => const KonfirmasiDesainBajuCustomerScreen(),
+                            ),
+                          );
+                        },
+                        child: const Text(
+                          'Lanjutkan',
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontWeight: FontWeight.w600,
+                            fontSize: 16,
+                            fontFamily: 'SF Pro Text',
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
-                  padding: const EdgeInsets.symmetric(vertical: 14),
                 ),
-                onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) =>
-                            const KonfirmasiDesainBajuCustomerScreen()),
-                  );
-                },
-                child: const Text('Simpan Data',
-                    style: TextStyle(fontWeight: FontWeight.bold)),
-              ),
+              ],
             ),
-            const SizedBox(height: 16),
           ],
         ),
       ),
@@ -112,10 +174,16 @@ class _UkuranBajuCustomerScreenState extends State<UkuranBajuCustomerScreen> {
   }
 }
 
-class _InputField extends StatelessWidget {
-  final TextEditingController controller;
+class _MeasurementField extends StatelessWidget {
   final String label;
-  const _InputField({required this.controller, required this.label});
+  final TextEditingController controller;
+  final IconData icon;
+
+  const _MeasurementField({
+    required this.label,
+    required this.controller,
+    required this.icon,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -124,20 +192,32 @@ class _InputField extends StatelessWidget {
       children: [
         Text(
           label,
-          style: const TextStyle(color: Colors.white, fontSize: 14),
+          style: const TextStyle(
+            fontSize: 14,
+            fontWeight: FontWeight.w500,
+            color: Colors.grey,
+            fontFamily: 'SF Pro Text',
+          ),
         ),
-        const SizedBox(height: 4),
+        const SizedBox(height: 8),
         TextField(
           controller: controller,
+          keyboardType: TextInputType.number,
           decoration: InputDecoration(
+            prefixIcon: Icon(icon, color: const Color(0xFFDE8500)),
             filled: true,
-            fillColor: Colors.grey[300],
+            fillColor: Colors.grey[100],
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(8),
               borderSide: BorderSide.none,
             ),
-            contentPadding:
-                const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+            contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+            hintText: 'Masukkan ukuran dalam cm',
+            hintStyle: TextStyle(
+              color: Colors.grey[400],
+              fontSize: 14,
+              fontFamily: 'SF Pro Text',
+            ),
           ),
         ),
       ],

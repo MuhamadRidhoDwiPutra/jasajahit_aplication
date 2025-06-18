@@ -1,11 +1,24 @@
 import 'package:flutter/material.dart';
+import 'package:jasa_jahit_aplication/src/theme/theme_provider.dart';
+// ignore: unused_import
+import 'src/theme/theme_switcher.dart';
 import 'src/page/splash_screen.dart';
 // ignore: unused_import
 import 'src/page/login_screen.dart';
 // ignore: unused_import
 import 'src/page/register_screen.dart';
+import 'package:provider/provider.dart';
+// import 'theme_provider.dart';
+// // ignore: unused_import
+// import 'theme_switcher.dart';
+
 void main() {
-  runApp(const MyApp());
+  runApp(
+    ChangeNotifierProvider(
+      create: (_) => ThemeProvider(),
+      child: const MyApp(),
+    ),
+  );
 }
 
 class MyApp extends StatelessWidget {
@@ -14,6 +27,7 @@ class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
+    final themeProvider = Provider.of<ThemeProvider>(context);
     return MaterialApp(
       title: 'Flutter Demo',
       theme: ThemeData(
@@ -34,7 +48,45 @@ class MyApp extends StatelessWidget {
         // tested with just a hot reload.
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
+        scaffoldBackgroundColor: const Color(0xFF8FBC8F),
+        appBarTheme: const AppBarTheme(
+          backgroundColor: Colors.white,
+          iconTheme: IconThemeData(color: Color(0xFFDE8500)),
+          titleTextStyle: TextStyle(
+              fontWeight: FontWeight.bold, color: Colors.black, fontSize: 20),
+        ),
       ),
+      darkTheme: ThemeData(
+        brightness: Brightness.dark,
+        colorScheme: ColorScheme.fromSeed(
+          seedColor: Colors.deepPurple,
+          brightness: Brightness.dark,
+          background: Color(0xFF111111),
+          surface: Color(0xFF222222),
+          onBackground: Colors.white,
+          onSurface: Colors.white,
+        ),
+        useMaterial3: true,
+        scaffoldBackgroundColor: Color(0xFF111111),
+        appBarTheme: const AppBarTheme(
+          backgroundColor: Color(0xFF111111),
+          iconTheme: IconThemeData(color: Color(0xFFDE8500)),
+          titleTextStyle: TextStyle(
+              fontWeight: FontWeight.bold, color: Colors.white, fontSize: 20),
+        ),
+        textTheme: TextTheme(
+          bodyLarge: TextStyle(color: Colors.white),
+          bodyMedium: TextStyle(color: Colors.white),
+          bodySmall: TextStyle(color: Colors.white),
+          titleLarge: TextStyle(color: Colors.white),
+          titleMedium: TextStyle(color: Colors.white),
+          titleSmall: TextStyle(color: Colors.white),
+          labelLarge: TextStyle(color: Colors.white),
+          labelMedium: TextStyle(color: Colors.white),
+          labelSmall: TextStyle(color: Colors.white),
+        ),
+      ),
+      themeMode: themeProvider.themeMode,
       home: const SplashScreen(),
     );
   }

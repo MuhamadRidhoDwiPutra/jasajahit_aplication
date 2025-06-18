@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'desain_customer_screen.dart';
+// ignore: unused_import
 import 'konfirmasi_desain_baju_customer_screen.dart';
+import 'konfirmasi_desain_celana_customer_screen.dart';
 
 class UkuranCelanaCustomerScreen extends StatefulWidget {
   const UkuranCelanaCustomerScreen({super.key});
@@ -30,132 +32,178 @@ class _UkuranCelanaCustomerScreenState
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: const Color(0xFF8FBC8F),
-      appBar: AppBar(
-        backgroundColor: const Color(0xFF8FBC8F),
-        elevation: 0,
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Colors.black),
-          onPressed: () {
-            Navigator.pushReplacement(
-              context,
-              MaterialPageRoute(
-                  builder: (context) => const DesainCustomerScreen()),
-            );
-          },
-        ),
-        title: const Text(
-          'Ukuran Celana',
-          style: TextStyle(color: Colors.white, fontSize: 18),
-        ),
-        centerTitle: true,
-      ),
-      body: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-        child: SingleChildScrollView(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              const SizedBox(height: 8),
-              Center(
-                child: Container(
-                  width: 140,
-                  height: 80,
+      body: SafeArea(
+        child: Stack(
+          children: [
+            Column(
+              children: [
+                Container(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                   decoration: BoxDecoration(
-                    color: Colors.grey[300],
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                  child: const Center(
-                    child: Text(
-                      'Gambar\nDetail cara\nmengukur',
-                      textAlign: TextAlign.center,
-                      style: TextStyle(fontSize: 13, color: Colors.black54),
-                    ),
-                  ),
-                ),
-              ),
-              const SizedBox(height: 24),
-              // Dropdown Kain
-              const Text('Kain', style: TextStyle(color: Colors.white)),
-              const SizedBox(height: 4),
-              Container(
-                decoration: BoxDecoration(
-                  color: Colors.grey[300],
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                child: DropdownButtonHideUnderline(
-                  child: DropdownButton<String>(
-                    value: selectedKain,
-                    isExpanded: true,
-                    icon: const Icon(Icons.arrow_drop_down,
-                        color: Colors.black, size: 32),
-                    hint: const Text('Pilih Kain'),
-                    items: kainList
-                        .map((e) => DropdownMenuItem(value: e, child: Text(e)))
-                        .toList(),
-                    onChanged: (val) => setState(() => selectedKain = val),
-                    dropdownColor: Colors.white,
-                    style: const TextStyle(color: Colors.black),
-                  ),
-                ),
-              ),
-              const SizedBox(height: 12),
-              _InputField(
-                  controller: panjangCelanaController, label: 'Panjang celana'),
-              const SizedBox(height: 12),
-              _InputField(
-                  controller: lingkarPinggangController,
-                  label: 'lingkar pinggang'),
-              const SizedBox(height: 12),
-              _InputField(
-                  controller: lingkarPinggulController,
-                  label: 'lingkar pinggul'),
-              const SizedBox(height: 12),
-              _InputField(
-                  controller: lingkarPesakController, label: 'lingkar pesak'),
-              const SizedBox(height: 12),
-              _InputField(
-                  controller: lingkarPahaController, label: 'lingkar paha'),
-              const SizedBox(height: 12),
-              _InputField(
-                  controller: lebarBawahCelanaController,
-                  label: 'lebar bawah celana'),
-              const SizedBox(height: 24),
-              SizedBox(
-                width: double.infinity,
-                child: ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.orange[700],
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                    padding: const EdgeInsets.symmetric(vertical: 14),
-                  ),
-                  onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) =>
-                            const KonfirmasiDesainBajuCustomerScreen(),
+                    color: Colors.white,
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withOpacity(0.05),
+                        blurRadius: 10,
+                        offset: const Offset(0, 2),
                       ),
-                    );
-                  },
-                  child: const Text('Simpan Data',
-                      style: TextStyle(fontWeight: FontWeight.bold)),
+                    ],
+                  ),
+                  child: Row(
+                    children: [
+                      Container(
+                        decoration: BoxDecoration(
+                          color: const Color(0xFFDE8500).withOpacity(0.1),
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        child: IconButton(
+                          icon: const Icon(Icons.arrow_back_ios_new,
+                              color: Color(0xFFDE8500)),
+                          onPressed: () {
+                            Navigator.pushReplacement(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) =>
+                                      const DesainCustomerScreen()),
+                            );
+                          },
+                        ),
+                      ),
+                      const Expanded(
+                        child: Text(
+                          'Ukuran Celana',
+                          style: TextStyle(
+                            fontSize: 20,
+                            fontWeight: FontWeight.w600,
+                            color: Colors.black,
+                            fontFamily: 'SF Pro Display',
+                          ),
+                          textAlign: TextAlign.center,
+                        ),
+                      ),
+                      const SizedBox(width: 48),
+                    ],
+                  ),
                 ),
-              ),
-              const SizedBox(height: 16),
-            ],
-          ),
+                Expanded(
+                  child: ListView(
+                    padding: const EdgeInsets.all(16),
+                    children: [
+                      Container(
+                        padding: const EdgeInsets.all(16),
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(16),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.black.withOpacity(0.05),
+                              blurRadius: 10,
+                              offset: const Offset(0, 2),
+                            ),
+                          ],
+                        ),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const Text(
+                              'Ukuran (cm)',
+                              style: TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.w600,
+                                color: Colors.black,
+                                fontFamily: 'SF Pro Display',
+                              ),
+                            ),
+                            const SizedBox(height: 16),
+                            _MeasurementField(
+                              label: 'Panjang Celana',
+                              controller: panjangCelanaController,
+                              icon: Icons.straighten,
+                            ),
+                            const SizedBox(height: 16),
+                            _MeasurementField(
+                              label: 'Lingkar Pinggang',
+                              controller: lingkarPinggangController,
+                              icon: Icons.straighten,
+                            ),
+                            const SizedBox(height: 16),
+                            _MeasurementField(
+                              label: 'Lingkar Pinggul',
+                              controller: lingkarPinggulController,
+                              icon: Icons.straighten,
+                            ),
+                            const SizedBox(height: 16),
+                            _MeasurementField(
+                              label: 'Lingkar Pesak',
+                              controller: lingkarPesakController,
+                              icon: Icons.straighten,
+                            ),
+                            const SizedBox(height: 16),
+                            _MeasurementField(
+                              label: 'Lingkar Paha',
+                              controller: lingkarPahaController,
+                              icon: Icons.straighten,
+                            ),
+                            const SizedBox(height: 16),
+                            _MeasurementField(
+                              label: 'Lebar Bawah Celana',
+                              controller: lebarBawahCelanaController,
+                              icon: Icons.straighten,
+                            ),
+                          ],
+                        ),
+                      ),
+                      const SizedBox(height: 24),
+                      ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: const Color(0xFFDE8500),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          padding: const EdgeInsets.symmetric(vertical: 16),
+                        ),
+                        onPressed: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) =>
+                                  const KonfirmasiDesainCelanaCustomerScreen(),
+                            ),
+                          );
+                        },
+                        child: const Text(
+                          'Lanjutkan',
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontWeight: FontWeight.w600,
+                            fontSize: 16,
+                            fontFamily: 'SF Pro Text',
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ],
         ),
       ),
     );
   }
 }
 
-class _InputField extends StatelessWidget {
-  final TextEditingController controller;
+class _MeasurementField extends StatelessWidget {
   final String label;
-  const _InputField({required this.controller, required this.label});
+  final TextEditingController controller;
+  final IconData icon;
+
+  const _MeasurementField({
+    required this.label,
+    required this.controller,
+    required this.icon,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -164,20 +212,33 @@ class _InputField extends StatelessWidget {
       children: [
         Text(
           label,
-          style: const TextStyle(color: Colors.white, fontSize: 14),
+          style: const TextStyle(
+            fontSize: 14,
+            fontWeight: FontWeight.w500,
+            color: Colors.grey,
+            fontFamily: 'SF Pro Text',
+          ),
         ),
-        const SizedBox(height: 4),
+        const SizedBox(height: 8),
         TextField(
           controller: controller,
+          keyboardType: TextInputType.number,
           decoration: InputDecoration(
+            prefixIcon: Icon(icon, color: const Color(0xFFDE8500)),
             filled: true,
-            fillColor: Colors.grey[300],
+            fillColor: Colors.grey[100],
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(8),
               borderSide: BorderSide.none,
             ),
             contentPadding:
                 const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+            hintText: 'Masukkan ukuran dalam cm',
+            hintStyle: TextStyle(
+              color: Colors.grey[400],
+              fontSize: 14,
+              fontFamily: 'SF Pro Text',
+            ),
           ),
         ),
       ],

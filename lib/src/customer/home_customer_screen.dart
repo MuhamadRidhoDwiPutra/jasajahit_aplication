@@ -11,6 +11,10 @@ import 'tracking_pesanan_customer_screen.dart';
 // ignore: unused_import
 import 'riwayat_customer_screen.dart';
 import 'desain_customer_screen.dart';
+// ignore: unused_import
+import 'package:jasa_jahit_aplication/src/theme/dynamic_theme.dart';
+// ignore: unused_import
+import 'package:jasa_jahit_aplication/src/theme/theme_switcher.dart';
 
 class HomeCustomerScreen extends StatefulWidget {
   const HomeCustomerScreen({super.key});
@@ -96,7 +100,6 @@ class _HomeCustomerScreenState extends State<HomeCustomerScreen> {
                       ),
                       Container(
                         decoration: BoxDecoration(
-                          // ignore: deprecated_member_use
                           color: const Color(0xFFDE8500).withOpacity(0.1),
                           borderRadius: BorderRadius.circular(12),
                         ),
@@ -120,62 +123,58 @@ class _HomeCustomerScreenState extends State<HomeCustomerScreen> {
           ],
         ),
       ),
-      bottomNavigationBar: CustomBottomNavBar(
-        selectedIndex: _selectedIndex,
-        onTap: _onItemTapped,
-      ),
-    );
-  }
-}
-
-class CustomBottomNavBar extends StatelessWidget {
-  final int selectedIndex;
-  final Function(int) onTap;
-  const CustomBottomNavBar({
-    super.key,
-    required this.selectedIndex,
-    required this.onTap,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      color: const Color(0xFFDE8500),
-      padding: const EdgeInsets.symmetric(vertical: 8),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-        children: [
-          _NavBarItem(
-            icon: Icons.home,
-            label: 'Beranda',
-            isActive: selectedIndex == 0,
-            onTap: () => onTap(0),
+      bottomNavigationBar: Container(
+        decoration: BoxDecoration(
+          color: Colors.white,
+          boxShadow: [
+            BoxShadow(
+              // ignore: deprecated_member_use
+              color: Colors.black.withOpacity(0.05),
+              blurRadius: 10,
+              offset: const Offset(0, -2),
+            ),
+          ],
+        ),
+        child: SafeArea(
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              children: [
+                _NavBarItem(
+                  icon: Icons.home_outlined,
+                  label: 'Beranda',
+                  isActive: _selectedIndex == 0,
+                  onTap: () => _onItemTapped(0),
+                ),
+                _NavBarItem(
+                  icon: Icons.shopping_bag_outlined,
+                  label: 'Pesan',
+                  isActive: _selectedIndex == 1,
+                  onTap: () => _onItemTapped(1),
+                ),
+                _NavBarItem(
+                  icon: Icons.local_shipping_outlined,
+                  label: 'Pelacakan',
+                  isActive: _selectedIndex == 2,
+                  onTap: () => _onItemTapped(2),
+                ),
+                _NavBarItem(
+                  icon: Icons.history,
+                  label: 'Riwayat',
+                  isActive: _selectedIndex == 3,
+                  onTap: () => _onItemTapped(3),
+                ),
+                _NavBarItem(
+                  icon: Icons.person_outline,
+                  label: 'Profil',
+                  isActive: _selectedIndex == 4,
+                  onTap: () => _onItemTapped(4),
+                ),
+              ],
+            ),
           ),
-          _NavBarItem(
-            icon: Icons.message,
-            label: 'Pesan',
-            isActive: selectedIndex == 1,
-            onTap: () => onTap(1),
-          ),
-          _NavBarItem(
-            icon: Icons.local_shipping,
-            label: 'Pelacakan',
-            isActive: selectedIndex == 2,
-            onTap: () => onTap(2),
-          ),
-          _NavBarItem(
-            icon: Icons.history,
-            label: 'Riwayat',
-            isActive: selectedIndex == 3,
-            onTap: () => onTap(3),
-          ),
-          _NavBarItem(
-            icon: Icons.person,
-            label: 'Profil',
-            isActive: selectedIndex == 4,
-            onTap: () => onTap(4),
-          ),
-        ],
+        ),
       ),
     );
   }
@@ -205,26 +204,25 @@ class _NavBarItem extends StatelessWidget {
           Container(
             padding: const EdgeInsets.all(8),
             decoration: BoxDecoration(
-              color: Colors.white,
+              color: isActive
+                  // ignore: deprecated_member_use
+                  ? const Color(0xFFDE8500).withOpacity(0.1)
+                  : Colors.transparent,
               borderRadius: BorderRadius.circular(8),
             ),
             child: Icon(
               icon,
-              color: Colors.black87,
-              size: 28,
+              color: isActive ? const Color(0xFFDE8500) : Colors.grey[600],
+              size: 24,
             ),
           ),
           const SizedBox(height: 4),
           Text(
             label,
             style: TextStyle(
-              color: Colors.white,
-              fontWeight: FontWeight.w500,
+              color: isActive ? const Color(0xFFDE8500) : Colors.grey[600],
+              fontWeight: isActive ? FontWeight.w600 : FontWeight.w500,
               fontSize: 12,
-              decoration:
-                  isActive ? TextDecoration.underline : TextDecoration.none,
-              decorationColor: Colors.white,
-              decorationThickness: 2,
             ),
           ),
         ],
@@ -287,34 +285,39 @@ class _HomeCustomerContent extends StatelessWidget {
           ),
         ),
         const SizedBox(height: 16),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            _CategoryCard(
-              icon: Icons.checkroom,
-              label: 'Seragam',
-              onTap: () {},
-            ),
-            _CategoryCard(
-              icon: Icons.checkroom,
-              label: 'Celana',
-              onTap: () {},
-            ),
-            _CategoryCard(
-              icon: Icons.checkroom,
-              label: 'Kemeja',
-              onTap: () {},
-            ),
-            _CategoryCard(
-              icon: Icons.checkroom,
-              label: 'Lainnya',
-              onTap: () {},
-            ),
-          ],
+        SingleChildScrollView(
+          scrollDirection: Axis.horizontal,
+          child: Row(
+            children: [
+              _CategoryCard(
+                icon: Icons.checkroom,
+                label: 'Baju',
+                onTap: () {},
+              ),
+              const SizedBox(width: 12),
+              _CategoryCard(
+                icon: Icons.accessibility_new,
+                label: 'Celana',
+                onTap: () {},
+              ),
+              const SizedBox(width: 12),
+              _CategoryCard(
+                icon: Icons.dry_cleaning,
+                label: 'Seragam',
+                onTap: () {},
+              ),
+              const SizedBox(width: 12),
+              _CategoryCard(
+                icon: Icons.work,
+                label: 'Jas',
+                onTap: () {},
+              ),
+            ],
+          ),
         ),
         const SizedBox(height: 24),
         const Text(
-          'Rekomendasi',
+          'Model Terbaru',
           style: TextStyle(
             fontSize: 18,
             fontWeight: FontWeight.w600,
@@ -323,16 +326,23 @@ class _HomeCustomerContent extends StatelessWidget {
           ),
         ),
         const SizedBox(height: 16),
-        const _RecommendationCard(
-          imageText: 'Gambar Seragam',
-          title: 'Seragam Sekolah',
-          price: 'Rp 150.000',
-        ),
-        const SizedBox(height: 16),
-        const _RecommendationCard(
-          imageText: 'Gambar Celana',
-          title: 'Celana Chino',
-          price: 'Rp 200.000',
+        GridView.builder(
+          shrinkWrap: true,
+          physics: const NeverScrollableScrollPhysics(),
+          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+            crossAxisCount: 2,
+            childAspectRatio: 0.75,
+            crossAxisSpacing: 16,
+            mainAxisSpacing: 16,
+          ),
+          itemCount: 4,
+          itemBuilder: (context, index) {
+            return _ModelCard(
+              imageUrl: 'https://via.placeholder.com/150',
+              title: 'Model ${index + 1}',
+              price: 'Rp ${(index + 1) * 100000}',
+            );
+          },
         ),
       ],
     );
@@ -404,13 +414,13 @@ class _CategoryCard extends StatelessWidget {
   }
 }
 
-class _RecommendationCard extends StatelessWidget {
-  final String imageText;
+class _ModelCard extends StatelessWidget {
+  final String imageUrl;
   final String title;
   final String price;
 
-  const _RecommendationCard({
-    required this.imageText,
+  const _ModelCard({
+    required this.imageUrl,
     required this.title,
     required this.price,
     // ignore: unused_element_parameter
@@ -435,23 +445,13 @@ class _RecommendationCard extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Container(
-            height: 200,
-            decoration: BoxDecoration(
-              // ignore: deprecated_member_use
-              color: const Color(0xFF8FBC8F).withOpacity(0.1),
-              borderRadius:
-                  const BorderRadius.vertical(top: Radius.circular(16)),
-            ),
-            child: Center(
-              child: Text(
-                imageText,
-                style: const TextStyle(
-                  color: Color(0xFF8FBC8F),
-                  fontSize: 16,
-                  fontFamily: 'SF Pro Text',
-                ),
-              ),
+          ClipRRect(
+            borderRadius: const BorderRadius.vertical(top: Radius.circular(16)),
+            child: Image.network(
+              imageUrl,
+              height: 150,
+              width: double.infinity,
+              fit: BoxFit.cover,
             ),
           ),
           Padding(

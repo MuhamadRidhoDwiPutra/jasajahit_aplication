@@ -1,5 +1,10 @@
+// ignore: unused_import
+import 'package:jasa_jahit_aplication/src/customer/konfirmasi_desain_baju_customer_screen.dart';
+
+// ignore: unused_import
 import 'cek_detail_pesanan_baju_screen.dart';
 import 'package:flutter/material.dart';
+// ignore: unused_import
 import 'berhasil_pesan_baju_customer_screen.dart';
 // ignore: unused_import
 import 'home_customer_screen.dart';
@@ -52,7 +57,7 @@ class PembayaranBajuCustomerScreen extends StatelessWidget {
                 children: [
                   // Model pakaian
                   const Text(
-                    'Model Pakaian : ',
+                    'Model Pakaian : Baju',
                     style: TextStyle(fontWeight: FontWeight.bold),
                   ),
                   const SizedBox(height: 8),
@@ -175,6 +180,98 @@ class PembayaranBajuCustomerScreen extends StatelessWidget {
               ),
             ),
             const SizedBox(height: 16),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+// ignore: unused_element
+class _PaymentMethodCard extends StatelessWidget {
+  final String title;
+  final String subtitle;
+  final IconData icon;
+  final bool isSelected;
+  final VoidCallback onTap;
+
+  const _PaymentMethodCard({
+    required this.title,
+    required this.subtitle,
+    required this.icon,
+    required this.isSelected,
+    required this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return InkWell(
+      onTap: onTap,
+      borderRadius: BorderRadius.circular(8),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(vertical: 8),
+        child: Row(
+          children: [
+            Container(
+              width: 40,
+              height: 40,
+              decoration: BoxDecoration(
+                // ignore: deprecated_member_use
+                color: const Color(0xFFDE8500).withOpacity(0.1),
+                borderRadius: BorderRadius.circular(8),
+              ),
+              child: Icon(
+                icon,
+                color: const Color(0xFFDE8500),
+                size: 24,
+              ),
+            ),
+            const SizedBox(width: 16),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    title,
+                    style: const TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w500,
+                      color: Colors.black,
+                      fontFamily: 'SF Pro Text',
+                    ),
+                  ),
+                  const SizedBox(height: 4),
+                  Text(
+                    subtitle,
+                    style: const TextStyle(
+                      fontSize: 14,
+                      color: Colors.grey,
+                      fontFamily: 'SF Pro Text',
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            Container(
+              width: 24,
+              height: 24,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                border: Border.all(
+                  color: isSelected ? const Color(0xFFDE8500) : Colors.grey,
+                  width: 2,
+                ),
+              ),
+              child: isSelected
+                  ? Container(
+                      margin: const EdgeInsets.all(4),
+                      decoration: const BoxDecoration(
+                        shape: BoxShape.circle,
+                        color: Color(0xFFDE8500),
+                      ),
+                    )
+                  : null,
+            ),
           ],
         ),
       ),

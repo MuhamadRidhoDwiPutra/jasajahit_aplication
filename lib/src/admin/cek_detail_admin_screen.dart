@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart'; // Untuk Clipboard
+// ignore: unused_import
+import 'package:jasa_jahit_aplication/src/theme/theme_switcher.dart';
 
 class CekDetailAdminScreen extends StatelessWidget {
   final String orderCode;
@@ -9,13 +11,13 @@ class CekDetailAdminScreen extends StatelessWidget {
   final String orderDate;
 
   const CekDetailAdminScreen({
-    Key? key,
+    super.key,
     required this.orderCode,
     required this.model,
     required this.fabricType,
     required this.productQuantity,
     required this.orderDate,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -95,6 +97,7 @@ class CekDetailAdminScreen extends StatelessWidget {
     );
   }
 
+  // ignore: unused_element
   Widget _buildInfoRow(BuildContext context,
       {required String label,
       required String value,
