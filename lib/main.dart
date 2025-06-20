@@ -1,4 +1,6 @@
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:jasa_jahit_aplication/firebase_options.dart';
 import 'package:jasa_jahit_aplication/src/theme/theme_provider.dart';
 // ignore: unused_import
 import 'src/theme/theme_switcher.dart';
@@ -8,14 +10,22 @@ import 'src/page/login_screen.dart';
 // ignore: unused_import
 import 'src/page/register_screen.dart';
 import 'package:provider/provider.dart';
+import 'package:jasa_jahit_aplication/Core/provider/auth_provider.dart';
 // import 'theme_provider.dart';
 // // ignore: unused_import
 // import 'theme_switcher.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
   runApp(
-    ChangeNotifierProvider(
-      create: (_) => ThemeProvider(),
+    MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (_) => ThemeProvider()),
+        ChangeNotifierProvider(create: (_) => AuthProvider()),
+      ],
       child: const MyApp(),
     ),
   );

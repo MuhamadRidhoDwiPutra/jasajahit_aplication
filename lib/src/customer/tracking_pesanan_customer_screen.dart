@@ -9,6 +9,10 @@ import 'riwayat_customer_screen.dart';
 import 'profile_customer_screen.dart';
 // ignore: unused_import
 import 'desain_customer_screen.dart';
+// ignore: unused_import
+import 'package:jasa_jahit_aplication/src/theme/dynamic_theme.dart';
+// ignore: unused_import
+import 'package:jasa_jahit_aplication/src/theme/theme_switcher.dart';
 
 class TrackingPesananCustomerScreen extends StatelessWidget {
   const TrackingPesananCustomerScreen({super.key});
@@ -16,24 +20,7 @@ class TrackingPesananCustomerScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     // Contoh data pesanan
-    final orders = [
-      {
-        'orderCode': 'ORD123456',
-        'imageText': 'Gambar Baju',
-        'orderDate': '12 Juni 2024',
-        'finishDate': '19 Juni 2024',
-        'productQuantity': 1,
-        'status': 'Diproses',
-      },
-      {
-        'orderCode': 'ORD654321',
-        'imageText': 'Gambar Celana',
-        'orderDate': '10 Juni 2024',
-        'finishDate': '18 Juni 2024',
-        'productQuantity': 2,
-        'status': 'Selesai',
-      },
-    ];
+    final orders = [];
     return Scaffold(
       backgroundColor: const Color(0xFF8FBC8F),
       body: SafeArea(

@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "620169373797",
+    "project_id": "aplication-jasa-jahit",
+    "storage_bucket": "aplication-jasa-jahit.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:620169373797:android:0c14f7dacc1886d59dfe8c",
+        "android_client_info": {
+          "package_name": "com.example.jasa_jahit_aplication"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAdnaGMEiKgvNt0QciVKluLLKYVK4cOIV0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

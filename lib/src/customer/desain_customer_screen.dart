@@ -6,6 +6,9 @@ import 'home_customer_screen.dart';
 import 'ukuran_celana_customer_screen.dart';
 // ignore: unused_import
 import 'package:jasa_jahit_aplication/src/theme/theme_switcher.dart';
+// ignore: unused_import
+import 'package:jasa_jahit_aplication/src/theme/dynamic_theme.dart';
+
 
 class DesainCustomerScreen extends StatefulWidget {
   const DesainCustomerScreen({super.key});

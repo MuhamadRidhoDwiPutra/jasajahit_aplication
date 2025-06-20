@@ -13,24 +13,7 @@ class StatusPesananAdminScreen extends StatefulWidget {
 
 class _StatusPesananAdminScreenState extends State<StatusPesananAdminScreen> {
   // Contoh data untuk pesanan
-  List<Map<String, dynamic>> orders = [
-    {
-      'orderCode': 'A876U6',
-      'imageText': 'Gambar Celana',
-      'orderDate': '12 Mei 2024',
-      'finishDate': '22 Mei 2024',
-      'productQuantity': 1,
-      'status': 'Pesanan telah selesai',
-    },
-    {
-      'orderCode': 'P45US8',
-      'imageText': 'Gambar Celana',
-      'orderDate': '12 Mei 2024',
-      'finishDate': '22 Mei 2024',
-      'productQuantity': 1,
-      'status': 'Sedang dikerjakan',
-    },
-  ];
+  List<Map<String, dynamic>> orders = [];
 
   List<String> statusOptions = [
     'Sedang dikerjakan',

@@ -11,6 +11,9 @@ import 'package:jasa_jahit_aplication/src/customer/tracking_pesanan_customer_scr
 import 'desain_customer_screen.dart';
 // ignore: unused_import
 import 'package:jasa_jahit_aplication/src/theme/theme_switcher.dart';
+// ignore: unused_import
+import 'package:jasa_jahit_aplication/src/theme/dynamic_theme.dart';
+// ignore: unused_import
 
 class RiwayatCustomerScreen extends StatelessWidget {
   const RiwayatCustomerScreen({super.key});
@@ -18,29 +21,7 @@ class RiwayatCustomerScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     // Dummy data for order history
-    final List<_OrderHistory> orders = [
-      _OrderHistory(
-        id: 'ORD123456',
-        item: 'Kaos lengan panjang',
-        date: '12 Juni 2024',
-        total: 'Rp 300.000',
-        status: OrderStatus.selesai,
-      ),
-      _OrderHistory(
-        id: 'ORD123457',
-        item: 'celana pendek',
-        date: '10 Juni 2024',
-        total: 'Rp 200.000',
-        status: OrderStatus.selesai,
-      ),
-      _OrderHistory(
-        id: 'ORD123458',
-        item: 'kaos lengan pendek',
-        date: '5 Juni 2024',
-        total: 'Rp 400.000',
-        status: OrderStatus.dibatalkan,
-      ),
-    ];
+    final List<_OrderHistory> orders = [];
     return Scaffold(
       backgroundColor: const Color(0xFF8FBC8F),
       body: SafeArea(
@@ -187,6 +168,7 @@ class RiwayatCustomerScreen extends StatelessWidget {
 
 enum OrderStatus { selesai, diproses, dibatalkan }
 
+// ignore: unused_element
 class _OrderHistory {
   final String id;
   final String item;

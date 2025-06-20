@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:jasa_jahit_aplication/src/admin/home_admin_screen.dart';
 import 'register_screen.dart';
 import 'package:jasa_jahit_aplication/src/customer/home_customer_screen.dart';
+import 'package:provider/provider.dart';
+import 'package:jasa_jahit_aplication/Core/provider/auth_provider.dart';
 // abaikan: import yang tidak digunakan
 
 class LoginScreen extends StatefulWidget {
@@ -13,28 +15,88 @@ class LoginScreen extends StatefulWidget {
 
 class _LoginScreenState extends State<LoginScreen> {
   bool _isLoading = false;
-  final TextEditingController _usernameController = TextEditingController();
+  final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
 
-  void _login() {
-    final username = _usernameController.text.trim();
+  // ignore: unused_element
+  void _showResetPasswordDialog() {
+    final TextEditingController emailController = TextEditingController();
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Reset Password'),
+        content: TextField(
+          controller: emailController,
+          decoration: const InputDecoration(
+            labelText: 'Masukkan email Anda',
+          ),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('Batal'),
+          ),
+          TextButton(
+            onPressed: () async {
+              final email = emailController.text.trim();
+              if (email.isEmpty) return;
+              final authProvider =
+                  Provider.of<AuthProvider>(context, listen: false);
+              try {
+                await authProvider.sendPasswordResetEmail(email);
+                Navigator.pop(context);
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(
+                      content: Text('Email reset password telah dikirim!')),
+                );
+              } catch (e) {
+                Navigator.pop(context);
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                      content: Text('Gagal mengirim email: ${e.toString()}')),
+                );
+              }
+            },
+            child: const Text('Kirim'),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _login() async {
+    final email = _emailController.text.trim();
     final password = _passwordController.text.trim();
 
-    if (username == 'admin' && password == 'admin123') {
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (context) => HomeAdminScreen()),
-      );
-    } else if (username == 'customer' && password == 'customer123') {
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (context) => HomeCustomerScreen()),
-      );
-    } else {
-      // Tampilkan pesan error jika login gagal
+    setState(() {
+      _isLoading = true;
+    });
+
+    final authProvider = Provider.of<AuthProvider>(context, listen: false);
+    authProvider.enteredEmail = email;
+    authProvider.enteredPassword = password;
+    authProvider.islogin = true;
+    try {
+      await authProvider.submit();
+      if (email == 'admin@domain.com') {
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => HomeAdminScreen()),
+        );
+      } else {
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => HomeCustomerScreen()),
+        );
+      }
+    } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Username atau password salah!')),
+        SnackBar(content: Text('Login gagal: ${e.toString()}')),
       );
+    } finally {
+      setState(() {
+        _isLoading = false;
+      });
     }
   }
 
@@ -120,12 +182,12 @@ class _LoginScreenState extends State<LoginScreen> {
                         ),
                       ),
                       const SizedBox(height: 24),
-                      // Kolom Username
+                      // Kolom Email
                       TextField(
-                        controller: _usernameController,
+                        controller: _emailController,
                         decoration: InputDecoration(
-                          labelText: 'Nama Pengguna',
-                          prefixIcon: const Icon(Icons.person_outline),
+                          labelText: 'Email',
+                          prefixIcon: const Icon(Icons.email_outlined),
                           border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(12),
                             borderSide: BorderSide.none,
@@ -172,14 +234,23 @@ class _LoginScreenState extends State<LoginScreen> {
                             elevation: 0,
                           ),
                           onPressed: _isLoading ? null : _login,
-                          child: const Text(
-                            'Masuk',
-                            style: TextStyle(
-                              fontSize: 16,
-                              fontWeight: FontWeight.bold,
-                              color: Colors.white,
-                            ),
-                          ),
+                          child: _isLoading
+                              ? const SizedBox(
+                                  width: 24,
+                                  height: 24,
+                                  child: CircularProgressIndicator(
+                                    color: Colors.white,
+                                    strokeWidth: 2,
+                                  ),
+                                )
+                              : const Text(
+                                  'Masuk',
+                                  style: TextStyle(
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.white,
+                                  ),
+                                ),
                         ),
                       ),
                     ],

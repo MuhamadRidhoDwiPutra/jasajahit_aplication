@@ -42,7 +42,7 @@ class _ProfileCustomerScreenState extends State<ProfileCustomerScreen> {
     // ignore: unused_local_variable
     final isDark = Theme.of(context).brightness == Brightness.dark;
     return Scaffold(
-      backgroundColor: const Color(0xFF8FBC8F),
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       body: SafeArea(
         child: Column(
           children: [
