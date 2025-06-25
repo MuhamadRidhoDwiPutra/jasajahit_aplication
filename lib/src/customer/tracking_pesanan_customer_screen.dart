@@ -1,28 +1,25 @@
 import 'package:flutter/material.dart';
-// ignore: unused_import
 import 'home_customer_screen.dart';
-// ignore: unused_import
 import 'pesan_customer_screen.dart';
-// ignore: unused_import
 import 'riwayat_customer_screen.dart';
-// ignore: unused_import
 import 'profile_customer_screen.dart';
-// ignore: unused_import
 import 'desain_customer_screen.dart';
-// ignore: unused_import
 import 'package:jasa_jahit_aplication/src/theme/dynamic_theme.dart';
-// ignore: unused_import
 import 'package:jasa_jahit_aplication/src/theme/theme_switcher.dart';
+import 'package:provider/provider.dart';
+import 'package:jasa_jahit_aplication/src/theme/theme_provider.dart';
 
 class TrackingPesananCustomerScreen extends StatelessWidget {
   const TrackingPesananCustomerScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     // Contoh data pesanan
     final orders = [];
     return Scaffold(
-      backgroundColor: const Color(0xFF8FBC8F),
+      backgroundColor:
+          isDark ? const Color(0xFF1A1A1A) : const Color(0xFF8FBC8F),
       body: SafeArea(
         child: Column(
           children: [
@@ -33,7 +30,7 @@ class TrackingPesananCustomerScreen extends StatelessWidget {
                 itemBuilder: (context, index) {
                   final order = orders[index];
                   return Card(
-                    color: Colors.white,
+                    color: isDark ? const Color(0xFF2A2A2A) : Colors.white,
                     elevation: 3,
                     margin: const EdgeInsets.only(bottom: 16),
                     shape: RoundedRectangleBorder(
@@ -46,28 +43,36 @@ class TrackingPesananCustomerScreen extends StatelessWidget {
                           Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              Text('Kode: ${order['orderCode'].toString()}',
-                                  style: const TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 16)),
+                              Text(
+                                'Kode: ${order['orderCode'].toString()}',
+                                style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 16,
+                                  color: isDark ? Colors.white : Colors.black,
+                                ),
+                              ),
                               Container(
                                 padding: const EdgeInsets.symmetric(
                                     horizontal: 12, vertical: 6),
                                 decoration: BoxDecoration(
                                   color:
-                                      // ignore: deprecated_member_use
                                       const Color(0xFFDE8500).withOpacity(0.1),
                                   borderRadius: BorderRadius.circular(8),
                                 ),
-                                child: Text(order['status'].toString(),
-                                    style: const TextStyle(
-                                        color: Color(0xFFDE8500),
-                                        fontWeight: FontWeight.w500,
-                                        fontSize: 12)),
+                                child: Text(
+                                  order['status'].toString(),
+                                  style: const TextStyle(
+                                    color: Color(0xFFDE8500),
+                                    fontWeight: FontWeight.w500,
+                                    fontSize: 12,
+                                  ),
+                                ),
                               ),
                             ],
                           ),
-                          const Divider(color: Colors.black12, height: 24),
+                          Divider(
+                              color: isDark ? Colors.white24 : Colors.black12,
+                              height: 24),
                           Row(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
@@ -76,43 +81,79 @@ class TrackingPesananCustomerScreen extends StatelessWidget {
                                 height: 80,
                                 decoration: BoxDecoration(
                                   color:
-                                      // ignore: deprecated_member_use
                                       const Color(0xFF8FBC8F).withOpacity(0.1),
                                   borderRadius: BorderRadius.circular(12),
                                 ),
                                 child: Center(
-                                    child: Text(order['imageText'].toString(),
-                                        style: const TextStyle(
-                                            color: Color(0xFF8FBC8F)))),
+                                  child: Text(
+                                    order['imageText'].toString(),
+                                    style: const TextStyle(
+                                      color: Color(0xFF8FBC8F),
+                                    ),
+                                  ),
+                                ),
                               ),
                               const SizedBox(width: 16),
                               Expanded(
                                 child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                    Text('Tanggal Pesan',
-                                        style: TextStyle(
-                                            color: Colors.grey[600],
-                                            fontSize: 12)),
-                                    Text(order['orderDate'].toString(),
-                                        style: const TextStyle(
-                                            fontWeight: FontWeight.w500)),
+                                    Text(
+                                      'Tanggal Pesan',
+                                      style: TextStyle(
+                                        color: isDark
+                                            ? Colors.white70
+                                            : Colors.grey[600],
+                                        fontSize: 12,
+                                      ),
+                                    ),
+                                    Text(
+                                      order['orderDate'].toString(),
+                                      style: TextStyle(
+                                        fontWeight: FontWeight.w500,
+                                        color: isDark
+                                            ? Colors.white
+                                            : Colors.black,
+                                      ),
+                                    ),
                                     const SizedBox(height: 8),
-                                    Text('Tanggal Selesai',
-                                        style: TextStyle(
-                                            color: Colors.grey[600],
-                                            fontSize: 12)),
-                                    Text(order['finishDate'].toString(),
-                                        style: const TextStyle(
-                                            fontWeight: FontWeight.w500)),
+                                    Text(
+                                      'Tanggal Selesai',
+                                      style: TextStyle(
+                                        color: isDark
+                                            ? Colors.white70
+                                            : Colors.grey[600],
+                                        fontSize: 12,
+                                      ),
+                                    ),
+                                    Text(
+                                      order['finishDate'].toString(),
+                                      style: TextStyle(
+                                        fontWeight: FontWeight.w500,
+                                        color: isDark
+                                            ? Colors.white
+                                            : Colors.black,
+                                      ),
+                                    ),
                                     const SizedBox(height: 8),
-                                    Text('Jumlah Produk',
-                                        style: TextStyle(
-                                            color: Colors.grey[600],
-                                            fontSize: 12)),
-                                    Text(order['productQuantity'].toString(),
-                                        style: const TextStyle(
-                                            fontWeight: FontWeight.w500)),
+                                    Text(
+                                      'Jumlah Produk',
+                                      style: TextStyle(
+                                        color: isDark
+                                            ? Colors.white70
+                                            : Colors.grey[600],
+                                        fontSize: 12,
+                                      ),
+                                    ),
+                                    Text(
+                                      order['productQuantity'].toString(),
+                                      style: TextStyle(
+                                        fontWeight: FontWeight.w500,
+                                        color: isDark
+                                            ? Colors.white
+                                            : Colors.black,
+                                      ),
+                                    ),
                                   ],
                                 ),
                               ),
@@ -131,10 +172,13 @@ class TrackingPesananCustomerScreen extends StatelessWidget {
                                       horizontal: 20, vertical: 10),
                                 ),
                                 onPressed: () {/* aksi detail */},
-                                child: const Text('Cek Detail',
-                                    style: TextStyle(
-                                        color: Colors.white,
-                                        fontWeight: FontWeight.bold)),
+                                child: const Text(
+                                  'Cek Detail',
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
                               ),
                             ],
                           ),
@@ -164,23 +208,24 @@ class _DetailRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
         Text(
           label,
-          style: const TextStyle(
+          style: TextStyle(
             fontSize: 14,
-            color: Colors.grey,
+            color: isDark ? Colors.white70 : Colors.grey,
             fontFamily: 'SF Pro Text',
           ),
         ),
         Text(
           value,
-          style: const TextStyle(
+          style: TextStyle(
             fontSize: 14,
             fontWeight: FontWeight.w500,
-            color: Colors.black,
+            color: isDark ? Colors.white : Colors.black,
             fontFamily: 'SF Pro Text',
           ),
         ),
@@ -201,48 +246,43 @@ class _ProgressStep extends StatelessWidget {
     required this.title,
     required this.subtitle,
     required this.isCompleted,
-    // ignore: unused_element_parameter
-    this.isFirst = false,
-    // ignore: unused_element_parameter
-    this.isLast = false,
+    required this.isFirst,
+    required this.isLast,
   });
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Row(
       children: [
-        SizedBox(
-          width: 24,
-          child: Column(
-            children: [
-              if (!isFirst)
-                Container(
-                  width: 2,
-                  height: 24,
-                  color:
-                      isCompleted ? const Color(0xFFDE8500) : Colors.grey[300],
-                ),
-              Container(
-                width: 24,
-                height: 24,
-                decoration: BoxDecoration(
-                  color:
-                      isCompleted ? const Color(0xFFDE8500) : Colors.grey[300],
-                  shape: BoxShape.circle,
-                ),
-                child: isCompleted
-                    ? const Icon(Icons.check, color: Colors.white, size: 16)
-                    : null,
+        Column(
+          children: [
+            Container(
+              width: 32,
+              height: 32,
+              decoration: BoxDecoration(
+                color: isCompleted
+                    ? const Color(0xFFDE8500)
+                    : (isDark ? Colors.grey[700] : Colors.grey[300]),
+                shape: BoxShape.circle,
               ),
-              if (!isLast)
-                Container(
-                  width: 2,
-                  height: 24,
-                  color:
-                      isCompleted ? const Color(0xFFDE8500) : Colors.grey[300],
-                ),
-            ],
-          ),
+              child: Icon(
+                isCompleted ? Icons.check : Icons.schedule,
+                color: isCompleted
+                    ? Colors.white
+                    : (isDark ? Colors.white70 : Colors.grey[600]),
+                size: 16,
+              ),
+            ),
+            if (!isLast)
+              Container(
+                width: 2,
+                height: 40,
+                color: isCompleted
+                    ? const Color(0xFFDE8500)
+                    : (isDark ? Colors.grey[700] : Colors.grey[300]),
+              ),
+          ],
         ),
         const SizedBox(width: 16),
         Expanded(
@@ -252,18 +292,20 @@ class _ProgressStep extends StatelessWidget {
               Text(
                 title,
                 style: TextStyle(
-                  fontSize: 14,
-                  fontWeight: FontWeight.w500,
-                  color: isCompleted ? Colors.black : Colors.grey[600],
-                  fontFamily: 'SF Pro Text',
+                  fontSize: 16,
+                  fontWeight: FontWeight.w600,
+                  color: isCompleted
+                      ? const Color(0xFFDE8500)
+                      : (isDark ? Colors.white : Colors.black),
+                  fontFamily: 'SF Pro Display',
                 ),
               ),
               const SizedBox(height: 4),
               Text(
                 subtitle,
                 style: TextStyle(
-                  fontSize: 12,
-                  color: Colors.grey[600],
+                  fontSize: 14,
+                  color: isDark ? Colors.white70 : Colors.grey[600],
                   fontFamily: 'SF Pro Text',
                 ),
               ),

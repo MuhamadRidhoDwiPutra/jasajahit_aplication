@@ -16,6 +16,7 @@ class ThemeSwitcher extends StatelessWidget {
             : mode == ThemeMode.dark
                 ? Icons.nightlight_round
                 : Icons.brightness_auto,
+        color: Theme.of(context).iconTheme.color,
       ),
       onSelected: (ThemeMode selectedMode) {
         themeProvider.setTheme(selectedMode);
@@ -27,7 +28,7 @@ class ThemeSwitcher extends StatelessWidget {
             children: const [
               Icon(Icons.wb_sunny_outlined),
               SizedBox(width: 8),
-              Text('Light'),
+              Text('Terang'),
             ],
           ),
         ),
@@ -37,7 +38,7 @@ class ThemeSwitcher extends StatelessWidget {
             children: const [
               Icon(Icons.nightlight_round),
               SizedBox(width: 8),
-              Text('Dark'),
+              Text('Gelap'),
             ],
           ),
         ),
@@ -47,7 +48,7 @@ class ThemeSwitcher extends StatelessWidget {
             children: const [
               Icon(Icons.brightness_auto),
               SizedBox(width: 8),
-              Text('Automatic'),
+              Text('Otomatis'),
             ],
           ),
         ),

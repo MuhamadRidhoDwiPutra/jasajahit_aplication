@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:jasa_jahit_aplication/src/admin/cek_detail_admin_screen.dart';
-// ignore: unused_import
 import 'package:jasa_jahit_aplication/src/theme/theme_switcher.dart';
+import 'package:provider/provider.dart';
+import 'package:jasa_jahit_aplication/src/theme/theme_provider.dart';
 
 class StatusPesananAdminScreen extends StatefulWidget {
   const StatusPesananAdminScreen({super.key});
@@ -24,13 +25,20 @@ class _StatusPesananAdminScreenState extends State<StatusPesananAdminScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Scaffold(
-      backgroundColor: const Color(0xFF8FBC8F),
+      backgroundColor:
+          isDark ? const Color(0xFF1A1A1A) : const Color(0xFF8FBC8F),
       appBar: AppBar(
-        backgroundColor: Colors.white,
+        backgroundColor: isDark ? const Color(0xFF2A2A2A) : Colors.white,
         elevation: 1,
-        title: const Text('Status Pesanan',
-            style: TextStyle(fontWeight: FontWeight.bold, color: Colors.black)),
+        title: Text(
+          'Status Pesanan',
+          style: TextStyle(
+            fontWeight: FontWeight.bold,
+            color: isDark ? Colors.white : Colors.black,
+          ),
+        ),
         iconTheme: const IconThemeData(color: Color(0xFFDE8500)),
       ),
       body: ListView.builder(
@@ -39,7 +47,7 @@ class _StatusPesananAdminScreenState extends State<StatusPesananAdminScreen> {
         itemBuilder: (context, index) {
           final order = orders[index];
           return Card(
-            color: Colors.white,
+            color: isDark ? const Color(0xFF2A2A2A) : Colors.white,
             elevation: 3,
             margin: const EdgeInsets.only(bottom: 16),
             shape:
@@ -52,9 +60,14 @@ class _StatusPesananAdminScreenState extends State<StatusPesananAdminScreen> {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Text('Kode: ${order['orderCode']}',
-                          style: const TextStyle(
-                              fontWeight: FontWeight.bold, fontSize: 16)),
+                      Text(
+                        'Kode: ${order['orderCode']}',
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 16,
+                          color: isDark ? Colors.white : Colors.black,
+                        ),
+                      ),
                       Container(
                         padding: const EdgeInsets.symmetric(
                             horizontal: 12, vertical: 6),
@@ -62,15 +75,21 @@ class _StatusPesananAdminScreenState extends State<StatusPesananAdminScreen> {
                           color: const Color(0xFFDE8500).withOpacity(0.1),
                           borderRadius: BorderRadius.circular(8),
                         ),
-                        child: Text(order['status'],
-                            style: const TextStyle(
-                                color: Color(0xFFDE8500),
-                                fontWeight: FontWeight.w500,
-                                fontSize: 12)),
+                        child: Text(
+                          order['status'],
+                          style: const TextStyle(
+                            color: Color(0xFFDE8500),
+                            fontWeight: FontWeight.w500,
+                            fontSize: 12,
+                          ),
+                        ),
                       ),
                     ],
                   ),
-                  const Divider(color: Colors.black12, height: 24),
+                  Divider(
+                    color: isDark ? Colors.white24 : Colors.black12,
+                    height: 24,
+                  ),
                   Row(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
@@ -82,35 +101,64 @@ class _StatusPesananAdminScreenState extends State<StatusPesananAdminScreen> {
                           borderRadius: BorderRadius.circular(12),
                         ),
                         child: Center(
-                            child: Text(order['imageText'],
-                                style:
-                                    const TextStyle(color: Color(0xFF8FBC8F)))),
+                          child: Text(
+                            order['imageText'],
+                            style: const TextStyle(color: Color(0xFF8FBC8F)),
+                          ),
+                        ),
                       ),
                       const SizedBox(width: 16),
                       Expanded(
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Text('Tanggal Pesan',
-                                style: TextStyle(
-                                    color: Colors.grey[600], fontSize: 12)),
-                            Text(order['orderDate'],
-                                style: const TextStyle(
-                                    fontWeight: FontWeight.w500)),
+                            Text(
+                              'Tanggal Pesan',
+                              style: TextStyle(
+                                color:
+                                    isDark ? Colors.white70 : Colors.grey[600],
+                                fontSize: 12,
+                              ),
+                            ),
+                            Text(
+                              order['orderDate'],
+                              style: TextStyle(
+                                fontWeight: FontWeight.w500,
+                                color: isDark ? Colors.white : Colors.black,
+                              ),
+                            ),
                             const SizedBox(height: 8),
-                            Text('Tanggal Selesai',
-                                style: TextStyle(
-                                    color: Colors.grey[600], fontSize: 12)),
-                            Text(order['finishDate'],
-                                style: const TextStyle(
-                                    fontWeight: FontWeight.w500)),
+                            Text(
+                              'Tanggal Selesai',
+                              style: TextStyle(
+                                color:
+                                    isDark ? Colors.white70 : Colors.grey[600],
+                                fontSize: 12,
+                              ),
+                            ),
+                            Text(
+                              order['finishDate'],
+                              style: TextStyle(
+                                fontWeight: FontWeight.w500,
+                                color: isDark ? Colors.white : Colors.black,
+                              ),
+                            ),
                             const SizedBox(height: 8),
-                            Text('Jumlah Produk',
-                                style: TextStyle(
-                                    color: Colors.grey[600], fontSize: 12)),
-                            Text(order['productQuantity'].toString(),
-                                style: const TextStyle(
-                                    fontWeight: FontWeight.w500)),
+                            Text(
+                              'Jumlah Produk',
+                              style: TextStyle(
+                                color:
+                                    isDark ? Colors.white70 : Colors.grey[600],
+                                fontSize: 12,
+                              ),
+                            ),
+                            Text(
+                              order['productQuantity'].toString(),
+                              style: TextStyle(
+                                fontWeight: FontWeight.w500,
+                                color: isDark ? Colors.white : Colors.black,
+                              ),
+                            ),
                           ],
                         ),
                       ),
@@ -142,10 +190,13 @@ class _StatusPesananAdminScreenState extends State<StatusPesananAdminScreen> {
                             ),
                           );
                         },
-                        child: const Text('Cek Detail',
-                            style: TextStyle(
-                                color: Colors.white,
-                                fontWeight: FontWeight.bold)),
+                        child: const Text(
+                          'Cek Detail',
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
                       ),
                     ],
                   ),

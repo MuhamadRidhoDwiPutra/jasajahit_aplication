@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
-// ignore: unused_import
 import 'package:jasa_jahit_aplication/src/page/login_screen.dart';
-// ignore: unused_import
 import 'package:jasa_jahit_aplication/src/theme/theme_switcher.dart';
 import 'package:provider/provider.dart';
 import 'package:jasa_jahit_aplication/src/theme/theme_provider.dart';
@@ -13,18 +11,25 @@ class ProfileAdminScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Scaffold(
-      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+      backgroundColor:
+          isDark ? const Color(0xFF1A1A1A) : const Color(0xFF8FBC8F),
       appBar: AppBar(
-        backgroundColor: Colors.white,
+        backgroundColor: isDark ? const Color(0xFF2A2A2A) : Colors.white,
         elevation: 1,
-        title: const Text('Profil Admin',
-            style: TextStyle(fontWeight: FontWeight.bold, color: Colors.black)),
+        title: Text(
+          'Profil Admin',
+          style: TextStyle(
+            fontWeight: FontWeight.bold,
+            color: isDark ? Colors.white : Colors.black,
+          ),
+        ),
         iconTheme: const IconThemeData(color: Color(0xFFDE8500)),
       ),
       body: Center(
         child: Card(
-          color: Colors.white,
+          color: isDark ? const Color(0xFF2A2A2A) : Colors.white,
           elevation: 3,
           margin: const EdgeInsets.all(24),
           shape:
@@ -38,18 +43,32 @@ class ProfileAdminScreen extends StatelessWidget {
                 const SizedBox(height: 16),
                 CircleAvatar(
                   radius: 40,
-                  backgroundColor: const Color(0xFF8FBC8F).withOpacity(0.2),
+                  backgroundColor: isDark
+                      ? const Color(0xFF8FBC8F).withOpacity(0.3)
+                      : const Color(0xFF8FBC8F).withOpacity(0.2),
                   child: const Icon(Icons.person,
                       size: 48, color: Color(0xFF8FBC8F)),
                 ),
                 const SizedBox(height: 16),
-                const Text('Admin Jahit',
-                    style:
-                        TextStyle(fontWeight: FontWeight.bold, fontSize: 20)),
+                Text(
+                  'Admin Jahit',
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 20,
+                    color: isDark ? Colors.white : Colors.black,
+                  ),
+                ),
                 const SizedBox(height: 8),
-                const Text('admin@email.com',
-                    style: TextStyle(color: Colors.grey)),
-                const Divider(height: 32, color: Colors.black12),
+                Text(
+                  'admin@email.com',
+                  style: TextStyle(
+                    color: isDark ? Colors.white70 : Colors.grey,
+                  ),
+                ),
+                Divider(
+                  height: 32,
+                  color: isDark ? Colors.white24 : Colors.black12,
+                ),
                 ElevatedButton(
                   style: ElevatedButton.styleFrom(
                     backgroundColor: const Color(0xFFDE8500),
@@ -59,9 +78,13 @@ class ProfileAdminScreen extends StatelessWidget {
                         horizontal: 32, vertical: 12),
                   ),
                   onPressed: () {/* aksi edit */},
-                  child: const Text('Edit Profil',
-                      style: TextStyle(
-                          color: Colors.white, fontWeight: FontWeight.bold)),
+                  child: const Text(
+                    'Edit Profil',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
                 ),
                 const SizedBox(height: 16),
                 OutlinedButton(
@@ -73,13 +96,64 @@ class ProfileAdminScreen extends StatelessWidget {
                         horizontal: 32, vertical: 12),
                   ),
                   onPressed: () {
-                    Navigator.pushNamedAndRemoveUntil(
-                        context, '/login', (route) => false);
+                    showDialog(
+                      context: context,
+                      builder: (BuildContext context) {
+                        return AlertDialog(
+                          backgroundColor:
+                              isDark ? const Color(0xFF2A2A2A) : Colors.white,
+                          title: Text(
+                            'Konfirmasi Logout',
+                            style: TextStyle(
+                              color: isDark ? Colors.white : Colors.black,
+                            ),
+                          ),
+                          content: Text(
+                            'Apakah Anda yakin ingin keluar dari aplikasi?',
+                            style: TextStyle(
+                              color: isDark ? Colors.white70 : Colors.black87,
+                            ),
+                          ),
+                          actions: [
+                            TextButton(
+                              child: Text(
+                                'Batal',
+                                style: TextStyle(
+                                  color: isDark
+                                      ? Colors.white70
+                                      : Colors.grey[600],
+                                ),
+                              ),
+                              onPressed: () => Navigator.of(context).pop(),
+                            ),
+                            ElevatedButton(
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: Colors.red,
+                              ),
+                              child: const Text('Logout'),
+                              onPressed: () {
+                                Navigator.of(context).pop(); // Close dialog
+                                Navigator.pushAndRemoveUntil(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) =>
+                                          const LoginScreen()),
+                                  (route) => false,
+                                );
+                              },
+                            ),
+                          ],
+                        );
+                      },
+                    );
                   },
-                  child: const Text('Logout',
-                      style: TextStyle(
-                          color: Color(0xFFDE8500),
-                          fontWeight: FontWeight.bold)),
+                  child: const Text(
+                    'Logout',
+                    style: TextStyle(
+                      color: Color(0xFFDE8500),
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
                 ),
               ],
             ),
@@ -91,15 +165,17 @@ class ProfileAdminScreen extends StatelessWidget {
 
   // ignore: unused_element
   Widget _buildProfileInfoRow({required String label, required String value}) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: isDark ? const Color(0xFF3A3A3A) : Colors.white,
         borderRadius: BorderRadius.circular(10),
         boxShadow: [
           BoxShadow(
-            // ignore: deprecated_member_use
-            color: Colors.black.withOpacity(0.05),
+            color: isDark
+                ? Colors.black.withOpacity(0.3)
+                : Colors.black.withOpacity(0.05),
             spreadRadius: 1,
             blurRadius: 3,
             offset: const Offset(0, 2),
@@ -111,15 +187,18 @@ class ProfileAdminScreen extends StatelessWidget {
         children: [
           Text(
             label,
-            style: const TextStyle(
+            style: TextStyle(
               fontWeight: FontWeight.bold,
               fontSize: 14,
-              color: Colors.black87,
+              color: isDark ? Colors.white : Colors.black87,
             ),
           ),
           Text(
             value,
-            style: const TextStyle(fontSize: 14, color: Colors.black),
+            style: TextStyle(
+              fontSize: 14,
+              color: isDark ? Colors.white70 : Colors.black,
+            ),
           ),
         ],
       ),
@@ -128,6 +207,7 @@ class ProfileAdminScreen extends StatelessWidget {
 
   // ignore: non_constant_identifier_names
   Widget _ThemeModeContainer(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     final themeProvider = Provider.of<ThemeProvider>(context);
     final mode = themeProvider.themeMode;
     IconData icon;
@@ -149,11 +229,13 @@ class ProfileAdminScreen extends StatelessWidget {
       margin: const EdgeInsets.symmetric(vertical: 16, horizontal: 0),
       padding: const EdgeInsets.symmetric(horizontal: 0),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: isDark ? const Color(0xFF3A3A3A) : Colors.white,
         borderRadius: BorderRadius.circular(12),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.07),
+            color: isDark
+                ? Colors.black.withOpacity(0.3)
+                : Colors.black.withOpacity(0.07),
             blurRadius: 8,
             offset: const Offset(0, 2),
           ),
@@ -161,12 +243,24 @@ class ProfileAdminScreen extends StatelessWidget {
       ),
       child: ListTile(
         contentPadding: const EdgeInsets.symmetric(horizontal: 16),
-        leading: Icon(icon, color: Colors.grey[700]),
-        title: Text(label),
-        trailing: const Icon(Icons.chevron_right),
+        leading: Icon(
+          icon,
+          color: isDark ? Colors.white70 : Colors.grey[700],
+        ),
+        title: Text(
+          label,
+          style: TextStyle(
+            color: isDark ? Colors.white : Colors.black,
+          ),
+        ),
+        trailing: Icon(
+          Icons.chevron_right,
+          color: isDark ? Colors.white70 : Colors.grey[600],
+        ),
         onTap: () async {
           final selected = await showModalBottomSheet<ThemeMode>(
             context: context,
+            backgroundColor: isDark ? const Color(0xFF2A2A2A) : Colors.white,
             builder: (context) => _ThemeModePicker(selected: mode),
           );
           if (selected != null) {
@@ -183,24 +277,49 @@ class _ThemeModePicker extends StatelessWidget {
   const _ThemeModePicker({required this.selected});
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
         ListTile(
-          leading: const Icon(Icons.wb_sunny_outlined),
-          title: const Text('Mode Terang'),
+          leading: Icon(
+            Icons.wb_sunny_outlined,
+            color: isDark ? Colors.white70 : Colors.grey[700],
+          ),
+          title: Text(
+            'Mode Terang',
+            style: TextStyle(
+              color: isDark ? Colors.white : Colors.black,
+            ),
+          ),
           selected: selected == ThemeMode.light,
           onTap: () => Navigator.pop(context, ThemeMode.light),
         ),
         ListTile(
-          leading: const Icon(Icons.nightlight_round),
-          title: const Text('Mode Gelap'),
+          leading: Icon(
+            Icons.nightlight_round,
+            color: isDark ? Colors.white70 : Colors.grey[700],
+          ),
+          title: Text(
+            'Mode Gelap',
+            style: TextStyle(
+              color: isDark ? Colors.white : Colors.black,
+            ),
+          ),
           selected: selected == ThemeMode.dark,
           onTap: () => Navigator.pop(context, ThemeMode.dark),
         ),
         ListTile(
-          leading: const Icon(Icons.brightness_auto),
-          title: const Text('Otomatis'),
+          leading: Icon(
+            Icons.brightness_auto,
+            color: isDark ? Colors.white70 : Colors.grey[700],
+          ),
+          title: Text(
+            'Otomatis',
+            style: TextStyle(
+              color: isDark ? Colors.white : Colors.black,
+            ),
+          ),
           selected: selected == ThemeMode.system,
           onTap: () => Navigator.pop(context, ThemeMode.system),
         ),

@@ -1,14 +1,11 @@
 import 'package:flutter/material.dart';
-// ignore: unused_import
 import 'ukuran_baju_customer_screen.dart';
 import 'home_customer_screen.dart';
-// ignore: unused_import
 import 'ukuran_celana_customer_screen.dart';
-// ignore: unused_import
 import 'package:jasa_jahit_aplication/src/theme/theme_switcher.dart';
-// ignore: unused_import
 import 'package:jasa_jahit_aplication/src/theme/dynamic_theme.dart';
-
+import 'package:provider/provider.dart';
+import 'package:jasa_jahit_aplication/src/theme/theme_provider.dart';
 
 class DesainCustomerScreen extends StatefulWidget {
   const DesainCustomerScreen({super.key});
@@ -20,6 +17,7 @@ class DesainCustomerScreen extends StatefulWidget {
 class _DesainCustomerScreenState extends State<DesainCustomerScreen> {
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return WillPopScope(
       onWillPop: () async {
         Navigator.pushReplacement(
@@ -29,7 +27,8 @@ class _DesainCustomerScreenState extends State<DesainCustomerScreen> {
         return false;
       },
       child: Scaffold(
-        backgroundColor: const Color(0xFF8FBC8F),
+        backgroundColor:
+            isDark ? const Color(0xFF1A1A1A) : const Color(0xFF8FBC8F),
         body: SafeArea(
           child: Stack(
             children: [
@@ -39,21 +38,21 @@ class _DesainCustomerScreenState extends State<DesainCustomerScreen> {
                     child: ListView(
                       padding: const EdgeInsets.all(16),
                       children: [
-                        const Text(
+                        Text(
                           'Lengkapi Form Pemesanan',
                           style: TextStyle(
                             fontSize: 18,
                             fontWeight: FontWeight.w600,
-                            color: Colors.black,
+                            color: isDark ? Colors.white : Colors.black,
                             fontFamily: 'SF Pro Display',
                           ),
                         ),
                         const SizedBox(height: 8),
-                        const Text(
+                        Text(
                           '',
                           style: TextStyle(
                             fontSize: 14,
-                            color: Colors.black54,
+                            color: isDark ? Colors.white70 : Colors.black54,
                             fontFamily: 'SF Pro Text',
                           ),
                         ),
@@ -104,12 +103,12 @@ class _DesainCustomerScreenState extends State<DesainCustomerScreen> {
                           },
                         ),
                         const SizedBox(height: 32),
-                        const Text(
+                        Text(
                           'Pilih Kain',
                           style: TextStyle(
                             fontSize: 16,
                             fontWeight: FontWeight.w600,
-                            color: Colors.black,
+                            color: isDark ? Colors.white : Colors.black,
                             fontFamily: 'SF Pro Display',
                           ),
                         ),
@@ -163,17 +162,20 @@ class _ModelCardModern extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return GestureDetector(
       onTap: onTap,
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 150),
         curve: Curves.easeInOut,
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: isDark ? const Color(0xFF2A2A2A) : Colors.white,
           borderRadius: BorderRadius.circular(18),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.07),
+              color: isDark
+                  ? Colors.black.withOpacity(0.3)
+                  : Colors.black.withOpacity(0.07),
               blurRadius: 12,
               offset: const Offset(0, 4),
             ),
@@ -187,50 +189,32 @@ class _ModelCardModern extends StatelessWidget {
               width: 80,
               height: 80,
               decoration: BoxDecoration(
-                color: Colors.grey[300],
+                color: isDark ? Colors.grey[700] : Colors.grey[300],
                 borderRadius: BorderRadius.circular(12),
               ),
               child: Center(
-                child: Icon(icon, color: Colors.black54, size: 40),
+                child: Icon(icon,
+                    color: isDark ? Colors.white70 : Colors.black54, size: 40),
               ),
             ),
             Text(
               title,
-              style: const TextStyle(
+              style: TextStyle(
                 fontWeight: FontWeight.w600,
                 fontSize: 16,
-                color: Colors.black,
+                color: isDark ? Colors.white : Colors.black,
                 fontFamily: 'SF Pro Display',
               ),
             ),
-            const SizedBox(height: 12),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 12),
-              child: SizedBox(
-                width: double.infinity,
-                child: ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color(0xFFDE8500),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                    padding: const EdgeInsets.symmetric(vertical: 10),
-                    elevation: 0,
-                  ),
-                  onPressed: onTap,
-                  child: const Text(
-                    'Buat Desain mu',
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontWeight: FontWeight.w600,
-                      fontSize: 14,
-                      fontFamily: 'SF Pro Text',
-                    ),
-                  ),
-                ),
+            const SizedBox(height: 4),
+            Text(
+              imageText,
+              style: TextStyle(
+                fontSize: 12,
+                color: isDark ? Colors.white60 : Colors.black54,
+                fontFamily: 'SF Pro Text',
               ),
             ),
-            const SizedBox(height: 10),
           ],
         ),
       ),
@@ -244,88 +228,100 @@ class _FabricCardModern extends StatelessWidget {
   final String price;
   final bool selected;
   final VoidCallback onTap;
-  const _FabricCardModern(
-      {required this.name,
-      required this.description,
-      required this.price,
-      required this.selected,
-      required this.onTap});
+
+  const _FabricCardModern({
+    required this.name,
+    required this.description,
+    required this.price,
+    required this.selected,
+    required this.onTap,
+  });
 
   @override
   Widget build(BuildContext context) {
-    return InkWell(
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    return GestureDetector(
       onTap: onTap,
-      borderRadius: BorderRadius.circular(12),
       child: AnimatedContainer(
-        duration: const Duration(milliseconds: 150),
+        duration: const Duration(milliseconds: 200),
         curve: Curves.easeInOut,
-        padding: const EdgeInsets.all(14),
         decoration: BoxDecoration(
           color: selected
-              ? const Color(0xFFDE8500).withOpacity(0.08)
-              : Colors.white,
-          borderRadius: BorderRadius.circular(12),
-          border: Border.all(
-            color: selected ? const Color(0xFFDE8500) : Colors.transparent,
-            width: 2,
-          ),
+              ? (isDark
+                  ? const Color(0xFFDE8500).withOpacity(0.2)
+                  : const Color(0xFFDE8500).withOpacity(0.1))
+              : (isDark ? const Color(0xFF2A2A2A) : Colors.white),
+          borderRadius: BorderRadius.circular(16),
+          border: selected
+              ? Border.all(
+                  color: const Color(0xFFDE8500),
+                  width: 2,
+                )
+              : null,
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.04),
+              color: isDark
+                  ? Colors.black.withOpacity(0.3)
+                  : Colors.black.withOpacity(0.05),
               blurRadius: 8,
               offset: const Offset(0, 2),
             ),
           ],
         ),
-        child: Row(
-          children: [
-            Container(
-              width: 44,
-              height: 44,
-              decoration: BoxDecoration(
-                color: const Color(0xFFDE8500).withOpacity(0.15),
-                borderRadius: BorderRadius.circular(8),
-              ),
-              child: const Icon(Icons.checkroom,
-                  color: Color(0xFFDE8500), size: 26),
-            ),
-            const SizedBox(width: 16),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    name,
-                    style: const TextStyle(
-                      fontWeight: FontWeight.w600,
-                      fontSize: 15,
-                      color: Colors.black,
-                      fontFamily: 'SF Pro Display',
+        child: Padding(
+          padding: const EdgeInsets.all(16),
+          child: Row(
+            children: [
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      name,
+                      style: TextStyle(
+                        fontWeight: FontWeight.w600,
+                        fontSize: 16,
+                        color: isDark ? Colors.white : Colors.black,
+                        fontFamily: 'SF Pro Display',
+                      ),
                     ),
-                  ),
-                  const SizedBox(height: 2),
-                  Text(
-                    description,
-                    style: const TextStyle(
-                      fontSize: 13,
-                      color: Colors.black54,
-                      fontFamily: 'SF Pro Text',
+                    const SizedBox(height: 4),
+                    Text(
+                      description,
+                      style: TextStyle(
+                        fontSize: 14,
+                        color: isDark ? Colors.white70 : Colors.black54,
+                        fontFamily: 'SF Pro Text',
+                      ),
                     ),
+                    const SizedBox(height: 8),
+                    Text(
+                      price,
+                      style: const TextStyle(
+                        fontWeight: FontWeight.w600,
+                        fontSize: 14,
+                        color: Color(0xFFDE8500),
+                        fontFamily: 'SF Pro Display',
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              if (selected)
+                Container(
+                  padding: const EdgeInsets.all(8),
+                  decoration: const BoxDecoration(
+                    color: Color(0xFFDE8500),
+                    shape: BoxShape.circle,
                   ),
-                ],
-              ),
-            ),
-            const SizedBox(width: 12),
-            Text(
-              price,
-              style: const TextStyle(
-                fontWeight: FontWeight.w600,
-                fontSize: 14,
-                color: Color(0xFFDE8500),
-                fontFamily: 'SF Pro Text',
-              ),
-            ),
-          ],
+                  child: const Icon(
+                    Icons.check,
+                    color: Colors.white,
+                    size: 16,
+                  ),
+                ),
+            ],
+          ),
         ),
       ),
     );

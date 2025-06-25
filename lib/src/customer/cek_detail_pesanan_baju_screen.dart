@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'pembayaran_baju_customer_screen.dart';
+import 'package:provider/provider.dart';
+import 'package:jasa_jahit_aplication/src/theme/theme_provider.dart';
 
 class CekDetailPesananBajuScreen extends StatelessWidget {
   // ignore: use_super_parameters
@@ -7,13 +9,17 @@ class CekDetailPesananBajuScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Scaffold(
-      backgroundColor: const Color(0xFF8FBC8F),
+      backgroundColor:
+          isDark ? const Color(0xFF1A1A1A) : const Color(0xFF8FBC8F),
       appBar: AppBar(
-        backgroundColor: const Color(0xFF8FBC8F),
+        backgroundColor:
+            isDark ? const Color(0xFF1A1A1A) : const Color(0xFF8FBC8F),
         elevation: 0,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Colors.black),
+          icon: Icon(Icons.arrow_back,
+              color: isDark ? Colors.white : Colors.black),
           onPressed: () {
             Navigator.pushReplacement(
               context,
@@ -23,9 +29,10 @@ class CekDetailPesananBajuScreen extends StatelessWidget {
             );
           },
         ),
-        title: const Text(
+        title: Text(
           'Detail Pesanan',
-          style: TextStyle(color: Colors.white, fontSize: 18),
+          style: TextStyle(
+              color: isDark ? Colors.white : Colors.white, fontSize: 18),
         ),
         centerTitle: true,
       ),
@@ -36,7 +43,10 @@ class CekDetailPesananBajuScreen extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               const SizedBox(height: 8),
-              const Text('Kode pesanan', style: TextStyle(color: Colors.white)),
+              Text(
+                'Kode pesanan',
+                style: TextStyle(color: isDark ? Colors.white : Colors.white),
+              ),
               const SizedBox(height: 4),
               Row(
                 children: [
@@ -44,9 +54,13 @@ class CekDetailPesananBajuScreen extends StatelessWidget {
                     child: TextField(
                       enabled: false,
                       controller: TextEditingController(text: ''),
+                      style: TextStyle(
+                        color: isDark ? Colors.white : Colors.black,
+                      ),
                       decoration: InputDecoration(
                         filled: true,
-                        fillColor: Colors.grey[300],
+                        fillColor:
+                            isDark ? const Color(0xFF2A2A2A) : Colors.grey[300],
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(8),
                           borderSide: BorderSide.none,
@@ -60,8 +74,9 @@ class CekDetailPesananBajuScreen extends StatelessWidget {
                   ElevatedButton(
                     onPressed: () {},
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.grey[300],
-                      foregroundColor: Colors.black,
+                      backgroundColor:
+                          isDark ? const Color(0xFF2A2A2A) : Colors.grey[300],
+                      foregroundColor: isDark ? Colors.white : Colors.black,
                       elevation: 0,
                       shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(6)),
@@ -73,14 +88,21 @@ class CekDetailPesananBajuScreen extends StatelessWidget {
                 ],
               ),
               const SizedBox(height: 14),
-              const Text('Model', style: TextStyle(color: Colors.white)),
+              Text(
+                'Model',
+                style: TextStyle(color: isDark ? Colors.white : Colors.white),
+              ),
               const SizedBox(height: 4),
               TextField(
                 enabled: false,
                 controller: TextEditingController(text: ''),
+                style: TextStyle(
+                  color: isDark ? Colors.white : Colors.black,
+                ),
                 decoration: InputDecoration(
                   filled: true,
-                  fillColor: Colors.grey[300],
+                  fillColor:
+                      isDark ? const Color(0xFF2A2A2A) : Colors.grey[300],
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(8),
                     borderSide: BorderSide.none,
@@ -90,14 +112,21 @@ class CekDetailPesananBajuScreen extends StatelessWidget {
                 ),
               ),
               const SizedBox(height: 14),
-              const Text('Jenis kain', style: TextStyle(color: Colors.white)),
+              Text(
+                'Jenis kain',
+                style: TextStyle(color: isDark ? Colors.white : Colors.white),
+              ),
               const SizedBox(height: 4),
               TextField(
                 enabled: false,
                 controller: TextEditingController(text: ''),
+                style: TextStyle(
+                  color: isDark ? Colors.white : Colors.black,
+                ),
                 decoration: InputDecoration(
                   filled: true,
-                  fillColor: Colors.grey[300],
+                  fillColor:
+                      isDark ? const Color(0xFF2A2A2A) : Colors.grey[300],
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(8),
                     borderSide: BorderSide.none,
@@ -107,15 +136,21 @@ class CekDetailPesananBajuScreen extends StatelessWidget {
                 ),
               ),
               const SizedBox(height: 14),
-              const Text('Jumlah produk',
-                  style: TextStyle(color: Colors.white)),
+              Text(
+                'Jumlah produk',
+                style: TextStyle(color: isDark ? Colors.white : Colors.white),
+              ),
               const SizedBox(height: 4),
               TextField(
                 enabled: false,
                 controller: TextEditingController(text: ''),
+                style: TextStyle(
+                  color: isDark ? Colors.white : Colors.black,
+                ),
                 decoration: InputDecoration(
                   filled: true,
-                  fillColor: Colors.grey[300],
+                  fillColor:
+                      isDark ? const Color(0xFF2A2A2A) : Colors.grey[300],
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(8),
                     borderSide: BorderSide.none,
@@ -127,39 +162,50 @@ class CekDetailPesananBajuScreen extends StatelessWidget {
               const SizedBox(height: 18),
               Center(
                 child: Column(
-                  children: const [
+                  children: [
                     SizedBox(
                       width: 120,
                       height: 80,
                       child: Card(
-                        color: Colors.grey,
+                        color: isDark ? Colors.grey[700] : Colors.grey,
                         child: Center(
                           child: Text(
                             'Gambar desain\nBaju yang dipesan',
                             textAlign: TextAlign.center,
-                            style: TextStyle(color: Colors.white, fontSize: 13),
+                            style: TextStyle(
+                              color: isDark ? Colors.white70 : Colors.white,
+                              fontSize: 13,
+                            ),
                           ),
                         ),
                       ),
                     ),
-                    SizedBox(height: 8),
+                    const SizedBox(height: 8),
                     Text(
                       'Tanggal Pemesanan\n',
-                      style: TextStyle(color: Colors.white),
+                      style: TextStyle(
+                          color: isDark ? Colors.white : Colors.white),
                       textAlign: TextAlign.center,
                     ),
                   ],
                 ),
               ),
               const SizedBox(height: 18),
-              const Text('Harga', style: TextStyle(color: Colors.white)),
+              Text(
+                'Harga',
+                style: TextStyle(color: isDark ? Colors.white : Colors.white),
+              ),
               const SizedBox(height: 4),
               TextField(
                 enabled: false,
                 controller: TextEditingController(text: ''),
+                style: TextStyle(
+                  color: isDark ? Colors.white : Colors.black,
+                ),
                 decoration: InputDecoration(
                   filled: true,
-                  fillColor: Colors.grey[300],
+                  fillColor:
+                      isDark ? const Color(0xFF2A2A2A) : Colors.grey[300],
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(8),
                     borderSide: BorderSide.none,

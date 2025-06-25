@@ -2,6 +2,8 @@
 import 'package:flutter/material.dart';
 import 'desain_customer_screen.dart';
 import 'konfirmasi_desain_baju_customer_screen.dart';
+import 'package:provider/provider.dart';
+import 'package:jasa_jahit_aplication/src/theme/theme_provider.dart';
 
 class UkuranBajuCustomerScreen extends StatefulWidget {
   // ignore: use_super_parameters
@@ -21,8 +23,9 @@ class _UkuranBajuCustomerScreenState extends State<UkuranBajuCustomerScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Scaffold(
-      backgroundColor: const Color(0xFF8FBC8F),
+      backgroundColor: isDark ? const Color(0xFF1A1A1A) : const Color(0xFF8FBC8F),
       body: SafeArea(
         child: Stack(
           children: [
@@ -31,10 +34,10 @@ class _UkuranBajuCustomerScreenState extends State<UkuranBajuCustomerScreen> {
                 Container(
                   padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                   decoration: BoxDecoration(
-                    color: Colors.white,
+                    color: isDark ? const Color(0xFF2A2A2A) : Colors.white,
                     boxShadow: [
                       BoxShadow(
-                        color: Colors.black.withOpacity(0.05),
+                        color: isDark ? Colors.black.withOpacity(0.3) : Colors.black.withOpacity(0.05),
                         blurRadius: 10,
                         offset: const Offset(0, 2),
                       ),
@@ -57,13 +60,13 @@ class _UkuranBajuCustomerScreenState extends State<UkuranBajuCustomerScreen> {
                           },
                         ),
                       ),
-                      const Expanded(
+                      Expanded(
                         child: Text(
                           'Ukuran Baju',
                           style: TextStyle(
                             fontSize: 20,
                             fontWeight: FontWeight.w600,
-                            color: Colors.black,
+                            color: isDark ? Colors.white : Colors.black,
                             fontFamily: 'SF Pro Display',
                           ),
                           textAlign: TextAlign.center,
@@ -80,11 +83,11 @@ class _UkuranBajuCustomerScreenState extends State<UkuranBajuCustomerScreen> {
                       Container(
                         padding: const EdgeInsets.all(16),
                         decoration: BoxDecoration(
-                          color: Colors.white,
+                          color: isDark ? const Color(0xFF2A2A2A) : Colors.white,
                           borderRadius: BorderRadius.circular(16),
                           boxShadow: [
                             BoxShadow(
-                              color: Colors.black.withOpacity(0.05),
+                              color: isDark ? Colors.black.withOpacity(0.3) : Colors.black.withOpacity(0.05),
                               blurRadius: 10,
                               offset: const Offset(0, 2),
                             ),
@@ -93,12 +96,12 @@ class _UkuranBajuCustomerScreenState extends State<UkuranBajuCustomerScreen> {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            const Text(
+                            Text(
                               'Ukuran (cm)',
                               style: TextStyle(
                                 fontSize: 16,
                                 fontWeight: FontWeight.w600,
-                                color: Colors.black,
+                                color: isDark ? Colors.white : Colors.black,
                                 fontFamily: 'SF Pro Display',
                               ),
                             ),
@@ -187,15 +190,16 @@ class _MeasurementField extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
           label,
-          style: const TextStyle(
+          style: TextStyle(
             fontSize: 14,
             fontWeight: FontWeight.w500,
-            color: Colors.grey,
+            color: isDark ? Colors.white70 : Colors.grey,
             fontFamily: 'SF Pro Text',
           ),
         ),
@@ -203,20 +207,36 @@ class _MeasurementField extends StatelessWidget {
         TextField(
           controller: controller,
           keyboardType: TextInputType.number,
+          style: TextStyle(
+            color: isDark ? Colors.white : Colors.black,
+            fontFamily: 'SF Pro Text',
+          ),
           decoration: InputDecoration(
-            prefixIcon: Icon(icon, color: const Color(0xFFDE8500)),
+            hintText: 'Masukkan ukuran',
+            hintStyle: TextStyle(
+              color: isDark ? Colors.white54 : Colors.grey[400],
+              fontFamily: 'SF Pro Text',
+            ),
+            prefixIcon: Icon(
+              icon,
+              color: const Color(0xFFDE8500),
+            ),
             filled: true,
-            fillColor: Colors.grey[100],
+            fillColor: isDark ? const Color(0xFF3A3A3A) : Colors.grey[100],
             border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(8),
+              borderRadius: BorderRadius.circular(12),
               borderSide: BorderSide.none,
             ),
-            contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-            hintText: 'Masukkan ukuran dalam cm',
-            hintStyle: TextStyle(
-              color: Colors.grey[400],
-              fontSize: 14,
-              fontFamily: 'SF Pro Text',
+            enabledBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(12),
+              borderSide: BorderSide.none,
+            ),
+            focusedBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(12),
+              borderSide: const BorderSide(
+                color: Color(0xFFDE8500),
+                width: 2,
+              ),
             ),
           ),
         ),

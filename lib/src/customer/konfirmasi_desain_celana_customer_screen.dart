@@ -1,16 +1,19 @@
 import 'package:flutter/material.dart';
 import 'ukuran_celana_customer_screen.dart';
-// ignore: unused_import
 import 'home_customer_screen.dart';
 import 'pembayaran_celana_customer_screen.dart';
+import 'package:provider/provider.dart';
+import 'package:jasa_jahit_aplication/src/theme/theme_provider.dart';
 
 class KonfirmasiDesainCelanaCustomerScreen extends StatelessWidget {
   const KonfirmasiDesainCelanaCustomerScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Scaffold(
-      backgroundColor: const Color(0xFF8FBC8F),
+      backgroundColor:
+          isDark ? const Color(0xFF1A1A1A) : const Color(0xFF8FBC8F),
       body: SafeArea(
         child: Stack(
           children: [
@@ -20,10 +23,12 @@ class KonfirmasiDesainCelanaCustomerScreen extends StatelessWidget {
                   padding:
                       const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                   decoration: BoxDecoration(
-                    color: Colors.white,
+                    color: isDark ? const Color(0xFF2A2A2A) : Colors.white,
                     boxShadow: [
                       BoxShadow(
-                        color: Colors.black.withOpacity(0.05),
+                        color: isDark
+                            ? Colors.black.withOpacity(0.3)
+                            : Colors.black.withOpacity(0.05),
                         blurRadius: 10,
                         offset: const Offset(0, 2),
                       ),
@@ -49,13 +54,13 @@ class KonfirmasiDesainCelanaCustomerScreen extends StatelessWidget {
                           },
                         ),
                       ),
-                      const Expanded(
+                      Expanded(
                         child: Text(
                           'Konfirmasi Desain Celana',
                           style: TextStyle(
                             fontSize: 20,
                             fontWeight: FontWeight.w600,
-                            color: Colors.black,
+                            color: isDark ? Colors.white : Colors.black,
                             fontFamily: 'SF Pro Display',
                           ),
                           textAlign: TextAlign.center,
@@ -72,11 +77,14 @@ class KonfirmasiDesainCelanaCustomerScreen extends StatelessWidget {
                       Container(
                         padding: const EdgeInsets.all(16),
                         decoration: BoxDecoration(
-                          color: Colors.white,
+                          color:
+                              isDark ? const Color(0xFF2A2A2A) : Colors.white,
                           borderRadius: BorderRadius.circular(16),
                           boxShadow: [
                             BoxShadow(
-                              color: Colors.black.withOpacity(0.05),
+                              color: isDark
+                                  ? Colors.black.withOpacity(0.3)
+                                  : Colors.black.withOpacity(0.05),
                               blurRadius: 10,
                               offset: const Offset(0, 2),
                             ),
@@ -85,12 +93,12 @@ class KonfirmasiDesainCelanaCustomerScreen extends StatelessWidget {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            const Text(
+                            Text(
                               'Detail Pesanan',
                               style: TextStyle(
                                 fontSize: 16,
                                 fontWeight: FontWeight.w600,
-                                color: Colors.black,
+                                color: isDark ? Colors.white : Colors.black,
                                 fontFamily: 'SF Pro Display',
                               ),
                             ),
@@ -100,13 +108,19 @@ class KonfirmasiDesainCelanaCustomerScreen extends StatelessWidget {
                               value: 'Celana',
                               icon: Icons.shopping_bag,
                             ),
-                            const Divider(height: 24, color: Colors.black12),
+                            Divider(
+                                height: 24,
+                                color:
+                                    isDark ? Colors.white24 : Colors.black12),
                             _DetailItem(
                               label: 'Kain',
                               value: 'Katun',
                               icon: Icons.checkroom,
                             ),
-                            const Divider(height: 24, color: Colors.black12),
+                            Divider(
+                                height: 24,
+                                color:
+                                    isDark ? Colors.white24 : Colors.black12),
                             _DetailItem(
                               label: 'Ukuran',
                               value:
@@ -120,11 +134,14 @@ class KonfirmasiDesainCelanaCustomerScreen extends StatelessWidget {
                       Container(
                         padding: const EdgeInsets.all(16),
                         decoration: BoxDecoration(
-                          color: Colors.white,
+                          color:
+                              isDark ? const Color(0xFF2A2A2A) : Colors.white,
                           borderRadius: BorderRadius.circular(16),
                           boxShadow: [
                             BoxShadow(
-                              color: Colors.black.withOpacity(0.05),
+                              color: isDark
+                                  ? Colors.black.withOpacity(0.3)
+                                  : Colors.black.withOpacity(0.05),
                               blurRadius: 10,
                               offset: const Offset(0, 2),
                             ),
@@ -133,12 +150,12 @@ class KonfirmasiDesainCelanaCustomerScreen extends StatelessWidget {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            const Text(
+                            Text(
                               'Total Pembayaran',
                               style: TextStyle(
                                 fontSize: 16,
                                 fontWeight: FontWeight.w600,
-                                color: Colors.black,
+                                color: isDark ? Colors.white : Colors.black,
                                 fontFamily: 'SF Pro Display',
                               ),
                             ),
@@ -146,11 +163,12 @@ class KonfirmasiDesainCelanaCustomerScreen extends StatelessWidget {
                             Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
-                                const Text(
+                                Text(
                                   'Subtotal',
                                   style: TextStyle(
                                     fontSize: 14,
-                                    color: Colors.grey,
+                                    color:
+                                        isDark ? Colors.white70 : Colors.grey,
                                     fontFamily: 'SF Pro Text',
                                   ),
                                 ),
@@ -158,7 +176,9 @@ class KonfirmasiDesainCelanaCustomerScreen extends StatelessWidget {
                                   'Rp 150.000',
                                   style: TextStyle(
                                     fontSize: 14,
-                                    color: Colors.grey[600],
+                                    color: isDark
+                                        ? Colors.white70
+                                        : Colors.grey[600],
                                     fontFamily: 'SF Pro Text',
                                   ),
                                 ),
@@ -168,12 +188,12 @@ class KonfirmasiDesainCelanaCustomerScreen extends StatelessWidget {
                             Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
-                                const Text(
+                                Text(
                                   'Total',
                                   style: TextStyle(
                                     fontSize: 16,
                                     fontWeight: FontWeight.w600,
-                                    color: Colors.black,
+                                    color: isDark ? Colors.white : Colors.black,
                                     fontFamily: 'SF Pro Display',
                                   ),
                                 ),
@@ -210,7 +230,7 @@ class KonfirmasiDesainCelanaCustomerScreen extends StatelessWidget {
                           );
                         },
                         child: const Text(
-                          'Konfirmasi Pesanan',
+                          'Lanjutkan ke Pembayaran',
                           style: TextStyle(
                             color: Colors.white,
                             fontWeight: FontWeight.w600,
@@ -244,12 +264,12 @@ class _DetailItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Container(
-          width: 40,
-          height: 40,
+          padding: const EdgeInsets.all(8),
           decoration: BoxDecoration(
             color: const Color(0xFFDE8500).withOpacity(0.1),
             borderRadius: BorderRadius.circular(8),
@@ -257,30 +277,29 @@ class _DetailItem extends StatelessWidget {
           child: Icon(
             icon,
             color: const Color(0xFFDE8500),
-            size: 24,
+            size: 20,
           ),
         ),
-        const SizedBox(width: 16),
+        const SizedBox(width: 12),
         Expanded(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
                 label,
-                style: const TextStyle(
+                style: TextStyle(
                   fontSize: 14,
                   fontWeight: FontWeight.w500,
-                  color: Colors.grey,
+                  color: isDark ? Colors.white70 : Colors.grey,
                   fontFamily: 'SF Pro Text',
                 ),
               ),
               const SizedBox(height: 4),
               Text(
                 value,
-                style: const TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.w500,
-                  color: Colors.black,
+                style: TextStyle(
+                  fontSize: 14,
+                  color: isDark ? Colors.white : Colors.black,
                   fontFamily: 'SF Pro Text',
                 ),
               ),

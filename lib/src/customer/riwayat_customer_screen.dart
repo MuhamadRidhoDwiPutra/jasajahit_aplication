@@ -1,29 +1,25 @@
 import 'package:flutter/material.dart';
-// ignore: unused_import
 import 'package:jasa_jahit_aplication/src/customer/home_customer_screen.dart';
-// ignore: unused_import
 import 'package:jasa_jahit_aplication/src/customer/pesan_customer_screen.dart';
-// ignore: unused_import
 import 'package:jasa_jahit_aplication/src/customer/profile_customer_screen.dart';
-// ignore: unused_import
 import 'package:jasa_jahit_aplication/src/customer/tracking_pesanan_customer_screen.dart';
-// ignore: unused_import
 import 'desain_customer_screen.dart';
-// ignore: unused_import
 import 'package:jasa_jahit_aplication/src/theme/theme_switcher.dart';
-// ignore: unused_import
 import 'package:jasa_jahit_aplication/src/theme/dynamic_theme.dart';
-// ignore: unused_import
+import 'package:provider/provider.dart';
+import 'package:jasa_jahit_aplication/src/theme/theme_provider.dart';
 
 class RiwayatCustomerScreen extends StatelessWidget {
   const RiwayatCustomerScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     // Dummy data for order history
     final List<_OrderHistory> orders = [];
     return Scaffold(
-      backgroundColor: const Color(0xFF8FBC8F),
+      backgroundColor:
+          isDark ? const Color(0xFF1A1A1A) : const Color(0xFF8FBC8F),
       body: SafeArea(
         child: Stack(
           children: [
@@ -38,11 +34,14 @@ class RiwayatCustomerScreen extends StatelessWidget {
                       return Container(
                         margin: const EdgeInsets.only(bottom: 16),
                         decoration: BoxDecoration(
-                          color: Colors.white,
+                          color:
+                              isDark ? const Color(0xFF2A2A2A) : Colors.white,
                           borderRadius: BorderRadius.circular(16),
                           boxShadow: [
                             BoxShadow(
-                              color: Colors.black.withOpacity(0.05),
+                              color: isDark
+                                  ? Colors.black.withOpacity(0.3)
+                                  : Colors.black.withOpacity(0.05),
                               blurRadius: 10,
                               offset: const Offset(0, 2),
                             ),
@@ -58,10 +57,11 @@ class RiwayatCustomerScreen extends StatelessWidget {
                                 children: [
                                   Text(
                                     order.id,
-                                    style: const TextStyle(
+                                    style: TextStyle(
                                       fontSize: 14,
                                       fontWeight: FontWeight.w500,
-                                      color: Colors.grey,
+                                      color:
+                                          isDark ? Colors.white70 : Colors.grey,
                                       fontFamily: 'SF Pro Text',
                                     ),
                                   ),
@@ -86,7 +86,10 @@ class RiwayatCustomerScreen extends StatelessWidget {
                                 ],
                               ),
                             ),
-                            const Divider(height: 1, color: Colors.black12),
+                            Divider(
+                                height: 1,
+                                color:
+                                    isDark ? Colors.white24 : Colors.black12),
                             Padding(
                               padding: const EdgeInsets.all(16),
                               child: Column(
@@ -94,10 +97,11 @@ class RiwayatCustomerScreen extends StatelessWidget {
                                 children: [
                                   Text(
                                     order.item,
-                                    style: const TextStyle(
+                                    style: TextStyle(
                                       fontSize: 16,
                                       fontWeight: FontWeight.w600,
-                                      color: Colors.black,
+                                      color:
+                                          isDark ? Colors.white : Colors.black,
                                       fontFamily: 'SF Pro Display',
                                     ),
                                   ),
@@ -108,9 +112,11 @@ class RiwayatCustomerScreen extends StatelessWidget {
                                     children: [
                                       Text(
                                         order.date,
-                                        style: const TextStyle(
+                                        style: TextStyle(
                                           fontSize: 14,
-                                          color: Colors.grey,
+                                          color: isDark
+                                              ? Colors.white70
+                                              : Colors.grey,
                                           fontFamily: 'SF Pro Text',
                                         ),
                                       ),
@@ -203,29 +209,31 @@ class _BottomNavIcon extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return InkWell(
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    return GestureDetector(
       onTap: onTap,
-      child: Container(
-        padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Icon(
-              icon,
-              color: isActive ? Colors.green[700] : Colors.grey[600],
-              size: 24,
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(
+            icon,
+            color: isActive
+                ? const Color(0xFFDE8500)
+                : (isDark ? Colors.white70 : Colors.grey),
+            size: 24,
+          ),
+          const SizedBox(height: 4),
+          Text(
+            label,
+            style: TextStyle(
+              fontSize: 12,
+              color: isActive
+                  ? const Color(0xFFDE8500)
+                  : (isDark ? Colors.white70 : Colors.grey),
+              fontFamily: 'SF Pro Text',
             ),
-            const SizedBox(height: 4),
-            Text(
-              label,
-              style: TextStyle(
-                fontSize: 12,
-                color: isActive ? Colors.green[700] : Colors.grey[600],
-                fontWeight: isActive ? FontWeight.bold : FontWeight.normal,
-              ),
-            ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }

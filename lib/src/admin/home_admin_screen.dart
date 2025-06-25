@@ -4,6 +4,9 @@ import 'package:jasa_jahit_aplication/src/admin/status_pesanan_admin_screen.dart
 import 'package:jasa_jahit_aplication/src/admin/riwayat_transaksi_admin_screen.dart';
 import 'package:jasa_jahit_aplication/src/admin/model_pakaian_admin_screen.dart';
 import 'package:jasa_jahit_aplication/src/admin/profile_admin_screen.dart';
+import 'package:jasa_jahit_aplication/src/theme/theme_switcher.dart';
+import 'package:provider/provider.dart';
+import 'package:jasa_jahit_aplication/src/theme/theme_provider.dart';
 
 class HomeAdminScreen extends StatefulWidget {
   const HomeAdminScreen({super.key});
@@ -39,18 +42,22 @@ class _HomeAdminScreenState extends State<HomeAdminScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Scaffold(
-      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+      backgroundColor:
+          isDark ? const Color(0xFF1A1A1A) : const Color(0xFF8FBC8F),
       body: SafeArea(
         child: Column(
           children: [
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
               decoration: BoxDecoration(
-                color: Colors.white,
+                color: isDark ? const Color(0xFF2A2A2A) : Colors.white,
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.black.withOpacity(0.05),
+                    color: isDark
+                        ? Colors.black.withOpacity(0.3)
+                        : Colors.black.withOpacity(0.05),
                     blurRadius: 10,
                     offset: const Offset(0, 2),
                   ),
@@ -73,10 +80,10 @@ class _HomeAdminScreenState extends State<HomeAdminScreen> {
                     child: Center(
                       child: Text(
                         _appBarTitles[_selectedIndex],
-                        style: const TextStyle(
+                        style: TextStyle(
                           fontSize: 20,
                           fontWeight: FontWeight.w600,
-                          color: Colors.black,
+                          color: isDark ? Colors.white : Colors.black,
                           fontFamily: 'SF Pro Display',
                         ),
                       ),
@@ -107,10 +114,12 @@ class _HomeAdminScreenState extends State<HomeAdminScreen> {
       ),
       bottomNavigationBar: Container(
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: isDark ? const Color(0xFF2A2A2A) : Colors.white,
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.05),
+              color: isDark
+                  ? Colors.black.withOpacity(0.3)
+                  : Colors.black.withOpacity(0.05),
               blurRadius: 10,
               offset: const Offset(0, -2),
             ),
@@ -184,6 +193,7 @@ class _BottomNavIcon extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     final isSelected = index == selectedIndex;
     return GestureDetector(
       onTap: () => onTap(index),
@@ -192,14 +202,18 @@ class _BottomNavIcon extends StatelessWidget {
         children: [
           Icon(
             icon,
-            color: isSelected ? const Color(0xFFDE8500) : Colors.grey[400],
+            color: isSelected
+                ? const Color(0xFFDE8500)
+                : (isDark ? Colors.grey[600] : Colors.grey[400]),
             size: 24,
           ),
           const SizedBox(height: 4),
           Text(
             label,
             style: TextStyle(
-              color: isSelected ? const Color(0xFFDE8500) : Colors.grey[400],
+              color: isSelected
+                  ? const Color(0xFFDE8500)
+                  : (isDark ? Colors.grey[600] : Colors.grey[400]),
               fontSize: 12,
               fontWeight: FontWeight.w500,
               fontFamily: 'SF Pro Text',
@@ -253,13 +267,16 @@ class _OrderCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Container(
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: isDark ? const Color(0xFF2A2A2A) : Colors.white,
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.05),
+            color: isDark
+                ? Colors.black.withOpacity(0.3)
+                : Colors.black.withOpacity(0.05),
             blurRadius: 10,
             offset: const Offset(0, 2),
           ),
@@ -275,10 +292,10 @@ class _OrderCard extends StatelessWidget {
               children: [
                 Text(
                   'Kode pesanan: $orderCode',
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontWeight: FontWeight.w600,
                     fontSize: 16,
-                    color: Colors.black,
+                    color: isDark ? Colors.white : Colors.black,
                     fontFamily: 'SF Pro Display',
                   ),
                 ),
@@ -301,7 +318,10 @@ class _OrderCard extends StatelessWidget {
                 ),
               ],
             ),
-            const Divider(color: Colors.black12, height: 24),
+            Divider(
+              color: isDark ? Colors.white24 : Colors.black12,
+              height: 24,
+            ),
             Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -331,7 +351,7 @@ class _OrderCard extends StatelessWidget {
                       Text(
                         'Tanggal Pesanan',
                         style: TextStyle(
-                          color: Colors.grey[600],
+                          color: isDark ? Colors.white70 : Colors.grey[600],
                           fontSize: 12,
                           fontFamily: 'SF Pro Text',
                         ),
@@ -339,10 +359,10 @@ class _OrderCard extends StatelessWidget {
                       const SizedBox(height: 4),
                       Text(
                         orderDate,
-                        style: const TextStyle(
+                        style: TextStyle(
                           fontSize: 14,
                           fontWeight: FontWeight.w500,
-                          color: Colors.black,
+                          color: isDark ? Colors.white : Colors.black,
                           fontFamily: 'SF Pro Text',
                         ),
                       ),
@@ -350,7 +370,7 @@ class _OrderCard extends StatelessWidget {
                       Text(
                         'Jumlah Produk',
                         style: TextStyle(
-                          color: Colors.grey[600],
+                          color: isDark ? Colors.white70 : Colors.grey[600],
                           fontSize: 12,
                           fontFamily: 'SF Pro Text',
                         ),
@@ -358,10 +378,10 @@ class _OrderCard extends StatelessWidget {
                       const SizedBox(height: 4),
                       Text(
                         '$productQuantity item',
-                        style: const TextStyle(
+                        style: TextStyle(
                           fontSize: 14,
                           fontWeight: FontWeight.w500,
-                          color: Colors.black,
+                          color: isDark ? Colors.white : Colors.black,
                           fontFamily: 'SF Pro Text',
                         ),
                       ),

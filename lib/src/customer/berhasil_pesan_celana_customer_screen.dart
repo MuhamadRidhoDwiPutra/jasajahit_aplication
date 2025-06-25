@@ -1,13 +1,17 @@
 import 'package:flutter/material.dart';
 import 'home_customer_screen.dart';
+import 'package:provider/provider.dart';
+import 'package:jasa_jahit_aplication/src/theme/theme_provider.dart';
 
 class BerhasilPesanCelanaCustomerScreen extends StatelessWidget {
   const BerhasilPesanCelanaCustomerScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Scaffold(
-      backgroundColor: const Color(0xFF8FBC8F),
+      backgroundColor:
+          isDark ? const Color(0xFF1A1A1A) : const Color(0xFF8FBC8F),
       body: SafeArea(
         child: Stack(
           children: [
@@ -17,10 +21,12 @@ class BerhasilPesanCelanaCustomerScreen extends StatelessWidget {
                   padding:
                       const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                   decoration: BoxDecoration(
-                    color: Colors.white,
+                    color: isDark ? const Color(0xFF2A2A2A) : Colors.white,
                     boxShadow: [
                       BoxShadow(
-                        color: Colors.black.withOpacity(0.05),
+                        color: isDark
+                            ? Colors.black.withOpacity(0.3)
+                            : Colors.black.withOpacity(0.05),
                         blurRadius: 10,
                         offset: const Offset(0, 2),
                       ),
@@ -46,13 +52,13 @@ class BerhasilPesanCelanaCustomerScreen extends StatelessWidget {
                           },
                         ),
                       ),
-                      const Expanded(
+                      Expanded(
                         child: Text(
                           'Pesanan Berhasil',
                           style: TextStyle(
                             fontSize: 20,
                             fontWeight: FontWeight.w600,
-                            color: Colors.black,
+                            color: isDark ? Colors.white : Colors.black,
                             fontFamily: 'SF Pro Display',
                           ),
                           textAlign: TextAlign.center,
@@ -69,11 +75,14 @@ class BerhasilPesanCelanaCustomerScreen extends StatelessWidget {
                       Container(
                         padding: const EdgeInsets.all(16),
                         decoration: BoxDecoration(
-                          color: Colors.white,
+                          color:
+                              isDark ? const Color(0xFF2A2A2A) : Colors.white,
                           borderRadius: BorderRadius.circular(16),
                           boxShadow: [
                             BoxShadow(
-                              color: Colors.black.withOpacity(0.05),
+                              color: isDark
+                                  ? Colors.black.withOpacity(0.3)
+                                  : Colors.black.withOpacity(0.05),
                               blurRadius: 10,
                               offset: const Offset(0, 2),
                             ),
@@ -95,22 +104,22 @@ class BerhasilPesanCelanaCustomerScreen extends StatelessWidget {
                               ),
                             ),
                             const SizedBox(height: 24),
-                            const Text(
+                            Text(
                               'Pesanan Berhasil',
                               style: TextStyle(
                                 fontSize: 24,
                                 fontWeight: FontWeight.w600,
-                                color: Colors.black,
+                                color: isDark ? Colors.white : Colors.black,
                                 fontFamily: 'SF Pro Display',
                               ),
                             ),
                             const SizedBox(height: 8),
-                            const Text(
+                            Text(
                               'Pesanan Anda telah berhasil dibuat dan sedang diproses',
                               textAlign: TextAlign.center,
                               style: TextStyle(
                                 fontSize: 16,
-                                color: Colors.grey,
+                                color: isDark ? Colors.white70 : Colors.grey,
                                 fontFamily: 'SF Pro Text',
                               ),
                             ),
@@ -120,13 +129,19 @@ class BerhasilPesanCelanaCustomerScreen extends StatelessWidget {
                               value: '#123456',
                               icon: Icons.receipt_long,
                             ),
-                            const Divider(height: 24, color: Colors.black12),
+                            Divider(
+                                height: 24,
+                                color:
+                                    isDark ? Colors.white24 : Colors.black12),
                             _DetailItem(
                               label: 'Tanggal',
                               value: '12 Mei 2024',
                               icon: Icons.calendar_today,
                             ),
-                            const Divider(height: 24, color: Colors.black12),
+                            Divider(
+                                height: 24,
+                                color:
+                                    isDark ? Colors.white24 : Colors.black12),
                             _DetailItem(
                               label: 'Total Pembayaran',
                               value: 'Rp 150.000',
@@ -187,6 +202,7 @@ class _DetailItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Row(
       children: [
         Container(
@@ -209,21 +225,21 @@ class _DetailItem extends StatelessWidget {
             children: [
               Text(
                 label,
-                style: const TextStyle(
+                style: TextStyle(
                   fontSize: 14,
                   fontWeight: FontWeight.w500,
-                  color: Colors.grey,
+                  color: isDark ? Colors.white70 : Colors.grey,
                   fontFamily: 'SF Pro Text',
                 ),
               ),
               const SizedBox(height: 4),
               Text(
                 value,
-                style: const TextStyle(
+                style: TextStyle(
                   fontSize: 16,
-                  fontWeight: FontWeight.w500,
-                  color: Colors.black,
-                  fontFamily: 'SF Pro Text',
+                  fontWeight: FontWeight.w600,
+                  color: isDark ? Colors.white : Colors.black,
+                  fontFamily: 'SF Pro Display',
                 ),
               ),
             ],

@@ -1,13 +1,11 @@
 // ignore: unused_import
 import 'package:jasa_jahit_aplication/src/customer/konfirmasi_desain_baju_customer_screen.dart';
-
-// ignore: unused_import
 import 'cek_detail_pesanan_baju_screen.dart';
 import 'package:flutter/material.dart';
-// ignore: unused_import
 import 'berhasil_pesan_baju_customer_screen.dart';
-// ignore: unused_import
 import 'home_customer_screen.dart';
+import 'package:provider/provider.dart';
+import 'package:jasa_jahit_aplication/src/theme/theme_provider.dart';
 
 class PembayaranBajuCustomerScreen extends StatelessWidget {
   // ignore: use_super_parameters
@@ -15,18 +13,23 @@ class PembayaranBajuCustomerScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Scaffold(
-      backgroundColor: const Color(0xFF8FBC8F),
+      backgroundColor:
+          isDark ? const Color(0xFF1A1A1A) : const Color(0xFF8FBC8F),
       appBar: AppBar(
-        backgroundColor: const Color(0xFF8FBC8F),
+        backgroundColor:
+            isDark ? const Color(0xFF1A1A1A) : const Color(0xFF8FBC8F),
         elevation: 0,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Colors.black),
+          icon: Icon(Icons.arrow_back,
+              color: isDark ? Colors.white : Colors.black),
           onPressed: () => Navigator.pop(context),
         ),
-        title: const Text(
+        title: Text(
           'Daftar Pesanan',
-          style: TextStyle(color: Colors.white, fontSize: 18),
+          style: TextStyle(
+              color: isDark ? Colors.white : Colors.white, fontSize: 18),
         ),
         centerTitle: true,
       ),
@@ -36,10 +39,10 @@ class PembayaranBajuCustomerScreen extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             const SizedBox(height: 8),
-            const Text(
+            Text(
               'Detail Pesanan',
               style: TextStyle(
-                  color: Colors.white,
+                  color: isDark ? Colors.white : Colors.white,
                   fontSize: 16,
                   fontWeight: FontWeight.bold),
             ),
@@ -49,16 +52,19 @@ class PembayaranBajuCustomerScreen extends StatelessWidget {
               width: double.infinity,
               padding: const EdgeInsets.all(12),
               decoration: BoxDecoration(
-                color: Colors.grey[300],
+                color: isDark ? const Color(0xFF2A2A2A) : Colors.grey[300],
                 borderRadius: BorderRadius.circular(10),
               ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   // Model pakaian
-                  const Text(
+                  Text(
                     'Model Pakaian : Baju',
-                    style: TextStyle(fontWeight: FontWeight.bold),
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      color: isDark ? Colors.white : Colors.black,
+                    ),
                   ),
                   const SizedBox(height: 8),
                   Row(
@@ -69,14 +75,17 @@ class PembayaranBajuCustomerScreen extends StatelessWidget {
                         width: 70,
                         height: 70,
                         decoration: BoxDecoration(
-                          color: Colors.grey[400],
+                          color: isDark ? Colors.grey[700] : Colors.grey[400],
                           borderRadius: BorderRadius.circular(8),
                         ),
-                        child: const Center(
+                        child: Center(
                           child: Text('Gambar pakaian',
                               textAlign: TextAlign.center,
                               style: TextStyle(
-                                  fontSize: 13, color: Colors.black54)),
+                                  fontSize: 13,
+                                  color: isDark
+                                      ? Colors.white70
+                                      : Colors.black54)),
                         ),
                       ),
                       const SizedBox(width: 12),
@@ -84,10 +93,25 @@ class PembayaranBajuCustomerScreen extends StatelessWidget {
                       Expanded(
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
-                          children: const [
-                            Text('Tanggal Pemesanan\n12 mei 2024'),
-                            Text('Jumlah Produk\n1'),
-                            Text('Harga:\nRp. 50.000'),
+                          children: [
+                            Text(
+                              'Tanggal Pemesanan\n12 mei 2024',
+                              style: TextStyle(
+                                color: isDark ? Colors.white : Colors.black,
+                              ),
+                            ),
+                            Text(
+                              'Jumlah Produk\n1',
+                              style: TextStyle(
+                                color: isDark ? Colors.white : Colors.black,
+                              ),
+                            ),
+                            Text(
+                              'Harga:\nRp. 50.000',
+                              style: TextStyle(
+                                color: isDark ? Colors.white : Colors.black,
+                              ),
+                            ),
                           ],
                         ),
                       ),
@@ -96,8 +120,13 @@ class PembayaranBajuCustomerScreen extends StatelessWidget {
                   const SizedBox(height: 8),
                   Row(
                     children: [
-                      const Expanded(
-                        child: Text('No. Rekening: 073253718293'),
+                      Expanded(
+                        child: Text(
+                          'No. Rekening: 073253718293',
+                          style: TextStyle(
+                            color: isDark ? Colors.white : Colors.black,
+                          ),
+                        ),
                       ),
                       GestureDetector(
                         onTap: () {
@@ -109,7 +138,7 @@ class PembayaranBajuCustomerScreen extends StatelessWidget {
                             ),
                           );
                         },
-                        child: const Text(
+                        child: Text(
                           'Cek detail',
                           style: TextStyle(
                             color: Colors.blue,
@@ -124,13 +153,16 @@ class PembayaranBajuCustomerScreen extends StatelessWidget {
             ),
             const SizedBox(height: 16),
             // Upload bukti pembayaran
-            const Text('Kirim bukti pembayaran',
-                style: TextStyle(color: Colors.white)),
+            Text(
+              'Kirim bukti pembayaran',
+              style: TextStyle(color: isDark ? Colors.white : Colors.white),
+            ),
             const SizedBox(height: 6),
             ElevatedButton(
               style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.grey[300],
-                foregroundColor: Colors.black,
+                backgroundColor:
+                    isDark ? const Color(0xFF2A2A2A) : Colors.grey[300],
+                foregroundColor: isDark ? Colors.white : Colors.black,
                 shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(6)),
                 elevation: 0,
@@ -140,19 +172,26 @@ class PembayaranBajuCustomerScreen extends StatelessWidget {
             ),
             const SizedBox(height: 18),
             // QRIS
-            const Text('QRIS', style: TextStyle(color: Colors.white)),
+            Text(
+              'QRIS',
+              style: TextStyle(color: isDark ? Colors.white : Colors.white),
+            ),
             const SizedBox(height: 6),
             Center(
               child: Container(
                 width: 120,
                 height: 90,
                 decoration: BoxDecoration(
-                  color: Colors.grey[300],
+                  color: isDark ? const Color(0xFF2A2A2A) : Colors.grey[300],
                   borderRadius: BorderRadius.circular(8),
                 ),
-                child: const Center(
-                  child: Text('Scan disini',
-                      style: TextStyle(color: Colors.black54)),
+                child: Center(
+                  child: Text(
+                    'Scan disini',
+                    style: TextStyle(
+                      color: isDark ? Colors.white70 : Colors.black54,
+                    ),
+                  ),
                 ),
               ),
             ),
@@ -205,18 +244,36 @@ class _PaymentMethodCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return InkWell(
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    return GestureDetector(
       onTap: onTap,
-      borderRadius: BorderRadius.circular(8),
-      child: Padding(
-        padding: const EdgeInsets.symmetric(vertical: 8),
+      child: Container(
+        padding: const EdgeInsets.all(16),
+        decoration: BoxDecoration(
+          color: isSelected
+              ? (isDark
+                  ? const Color(0xFFDE8500).withOpacity(0.2)
+                  : const Color(0xFFDE8500).withOpacity(0.1))
+              : (isDark ? const Color(0xFF2A2A2A) : Colors.white),
+          borderRadius: BorderRadius.circular(12),
+          border: isSelected
+              ? Border.all(color: const Color(0xFFDE8500), width: 2)
+              : null,
+          boxShadow: [
+            BoxShadow(
+              color: isDark
+                  ? Colors.black.withOpacity(0.3)
+                  : Colors.black.withOpacity(0.05),
+              blurRadius: 8,
+              offset: const Offset(0, 2),
+            ),
+          ],
+        ),
         child: Row(
           children: [
             Container(
-              width: 40,
-              height: 40,
+              padding: const EdgeInsets.all(8),
               decoration: BoxDecoration(
-                // ignore: deprecated_member_use
                 color: const Color(0xFFDE8500).withOpacity(0.1),
                 borderRadius: BorderRadius.circular(8),
               ),
@@ -226,52 +283,45 @@ class _PaymentMethodCard extends StatelessWidget {
                 size: 24,
               ),
             ),
-            const SizedBox(width: 16),
+            const SizedBox(width: 12),
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
                     title,
-                    style: const TextStyle(
+                    style: TextStyle(
+                      fontWeight: FontWeight.w600,
                       fontSize: 16,
-                      fontWeight: FontWeight.w500,
-                      color: Colors.black,
-                      fontFamily: 'SF Pro Text',
+                      color: isDark ? Colors.white : Colors.black,
+                      fontFamily: 'SF Pro Display',
                     ),
                   ),
                   const SizedBox(height: 4),
                   Text(
                     subtitle,
-                    style: const TextStyle(
+                    style: TextStyle(
                       fontSize: 14,
-                      color: Colors.grey,
+                      color: isDark ? Colors.white70 : Colors.grey[600],
                       fontFamily: 'SF Pro Text',
                     ),
                   ),
                 ],
               ),
             ),
-            Container(
-              width: 24,
-              height: 24,
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                border: Border.all(
-                  color: isSelected ? const Color(0xFFDE8500) : Colors.grey,
-                  width: 2,
+            if (isSelected)
+              Container(
+                padding: const EdgeInsets.all(4),
+                decoration: const BoxDecoration(
+                  color: Color(0xFFDE8500),
+                  shape: BoxShape.circle,
+                ),
+                child: const Icon(
+                  Icons.check,
+                  color: Colors.white,
+                  size: 16,
                 ),
               ),
-              child: isSelected
-                  ? Container(
-                      margin: const EdgeInsets.all(4),
-                      decoration: const BoxDecoration(
-                        shape: BoxShape.circle,
-                        color: Color(0xFFDE8500),
-                      ),
-                    )
-                  : null,
-            ),
           ],
         ),
       ),

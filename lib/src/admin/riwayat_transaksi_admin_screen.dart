@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
-// ignore: unused_import
 import 'package:jasa_jahit_aplication/src/theme/theme_switcher.dart';
+import 'package:provider/provider.dart';
+import 'package:jasa_jahit_aplication/src/theme/theme_provider.dart';
 
 class RiwayatTransaksiAdminScreen extends StatefulWidget {
   const RiwayatTransaksiAdminScreen({super.key});
@@ -21,6 +22,7 @@ class _RiwayatTransaksiAdminScreenState
       'finishDate': '22 Mei 2024',
       'productQuantity': 1,
       'totalPrice': 50000,
+      'status': 'Selesai',
     },
     {
       'orderCode': 'P45US8',
@@ -29,18 +31,26 @@ class _RiwayatTransaksiAdminScreenState
       'finishDate': '22 Mei 2024',
       'productQuantity': 1,
       'totalPrice': 50000,
+      'status': 'Selesai',
     },
   ];
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Scaffold(
-      backgroundColor: const Color(0xFF8FBC8F),
+      backgroundColor:
+          isDark ? const Color(0xFF1A1A1A) : const Color(0xFF8FBC8F),
       appBar: AppBar(
-        backgroundColor: Colors.white,
+        backgroundColor: isDark ? const Color(0xFF2A2A2A) : Colors.white,
         elevation: 1,
-        title: const Text('Riwayat Transaksi',
-            style: TextStyle(fontWeight: FontWeight.bold, color: Colors.black)),
+        title: Text(
+          'Riwayat Transaksi',
+          style: TextStyle(
+            fontWeight: FontWeight.bold,
+            color: isDark ? Colors.white : Colors.black,
+          ),
+        ),
         iconTheme: const IconThemeData(color: Color(0xFFDE8500)),
       ),
       body: Column(
@@ -53,9 +63,16 @@ class _RiwayatTransaksiAdminScreenState
                 Expanded(
                   child: TextField(
                     controller: searchController,
+                    style: TextStyle(
+                      color: isDark ? Colors.white : Colors.black,
+                    ),
                     decoration: InputDecoration(
                       hintText: 'Search...',
-                      fillColor: Colors.white,
+                      hintStyle: TextStyle(
+                        color: isDark ? Colors.white70 : Colors.grey[400],
+                      ),
+                      fillColor:
+                          isDark ? const Color(0xFF3A3A3A) : Colors.white,
                       filled: true,
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(8),
@@ -72,11 +89,14 @@ class _RiwayatTransaksiAdminScreenState
                 const SizedBox(width: 8),
                 Container(
                   decoration: BoxDecoration(
-                    color: Colors.white,
+                    color: isDark ? const Color(0xFF3A3A3A) : Colors.white,
                     borderRadius: BorderRadius.circular(8),
                   ),
                   child: IconButton(
-                    icon: const Icon(Icons.search),
+                    icon: Icon(
+                      Icons.search,
+                      color: isDark ? Colors.white70 : Colors.grey[600],
+                    ),
                     onPressed: () {
                       // Aksi pencarian
                     },
@@ -92,7 +112,7 @@ class _RiwayatTransaksiAdminScreenState
               itemBuilder: (context, index) {
                 final trx = transactions[index];
                 return Card(
-                  color: Colors.white,
+                  color: isDark ? const Color(0xFF2A2A2A) : Colors.white,
                   elevation: 3,
                   margin: const EdgeInsets.only(bottom: 16),
                   shape: RoundedRectangleBorder(
@@ -105,9 +125,14 @@ class _RiwayatTransaksiAdminScreenState
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            Text('Kode: ${trx['orderCode']}',
-                                style: const TextStyle(
-                                    fontWeight: FontWeight.bold, fontSize: 16)),
+                            Text(
+                              'Kode: ${trx['orderCode']}',
+                              style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                fontSize: 16,
+                                color: isDark ? Colors.white : Colors.black,
+                              ),
+                            ),
                             Container(
                               padding: const EdgeInsets.symmetric(
                                   horizontal: 12, vertical: 6),
@@ -115,15 +140,21 @@ class _RiwayatTransaksiAdminScreenState
                                 color: const Color(0xFFDE8500).withOpacity(0.1),
                                 borderRadius: BorderRadius.circular(8),
                               ),
-                              child: Text(trx['status'],
-                                  style: const TextStyle(
-                                      color: Color(0xFFDE8500),
-                                      fontWeight: FontWeight.w500,
-                                      fontSize: 12)),
+                              child: Text(
+                                trx['status'],
+                                style: const TextStyle(
+                                  color: Color(0xFFDE8500),
+                                  fontWeight: FontWeight.w500,
+                                  fontSize: 12,
+                                ),
+                              ),
                             ),
                           ],
                         ),
-                        const Divider(color: Colors.black12, height: 24),
+                        Divider(
+                          color: isDark ? Colors.white24 : Colors.black12,
+                          height: 24,
+                        ),
                         Row(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
@@ -135,38 +166,72 @@ class _RiwayatTransaksiAdminScreenState
                                 borderRadius: BorderRadius.circular(12),
                               ),
                               child: Center(
-                                  child: Text(trx['imageText'],
-                                      style: const TextStyle(
-                                          color: Color(0xFF8FBC8F)))),
+                                child: Text(
+                                  trx['imageText'],
+                                  style: const TextStyle(
+                                    color: Color(0xFF8FBC8F),
+                                  ),
+                                ),
+                              ),
                             ),
                             const SizedBox(width: 16),
                             Expanded(
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  Text('Tanggal Pesan',
-                                      style: TextStyle(
-                                          color: Colors.grey[600],
-                                          fontSize: 12)),
-                                  Text(trx['orderDate'],
-                                      style: const TextStyle(
-                                          fontWeight: FontWeight.w500)),
+                                  Text(
+                                    'Tanggal Pesan',
+                                    style: TextStyle(
+                                      color: isDark
+                                          ? Colors.white70
+                                          : Colors.grey[600],
+                                      fontSize: 12,
+                                    ),
+                                  ),
+                                  Text(
+                                    trx['orderDate'],
+                                    style: TextStyle(
+                                      fontWeight: FontWeight.w500,
+                                      color:
+                                          isDark ? Colors.white : Colors.black,
+                                    ),
+                                  ),
                                   const SizedBox(height: 8),
-                                  Text('Tanggal Selesai',
-                                      style: TextStyle(
-                                          color: Colors.grey[600],
-                                          fontSize: 12)),
-                                  Text(trx['finishDate'],
-                                      style: const TextStyle(
-                                          fontWeight: FontWeight.w500)),
+                                  Text(
+                                    'Tanggal Selesai',
+                                    style: TextStyle(
+                                      color: isDark
+                                          ? Colors.white70
+                                          : Colors.grey[600],
+                                      fontSize: 12,
+                                    ),
+                                  ),
+                                  Text(
+                                    trx['finishDate'],
+                                    style: TextStyle(
+                                      fontWeight: FontWeight.w500,
+                                      color:
+                                          isDark ? Colors.white : Colors.black,
+                                    ),
+                                  ),
                                   const SizedBox(height: 8),
-                                  Text('Jumlah Produk',
-                                      style: TextStyle(
-                                          color: Colors.grey[600],
-                                          fontSize: 12)),
-                                  Text(trx['productQuantity'].toString(),
-                                      style: const TextStyle(
-                                          fontWeight: FontWeight.w500)),
+                                  Text(
+                                    'Jumlah Produk',
+                                    style: TextStyle(
+                                      color: isDark
+                                          ? Colors.white70
+                                          : Colors.grey[600],
+                                      fontSize: 12,
+                                    ),
+                                  ),
+                                  Text(
+                                    trx['productQuantity'].toString(),
+                                    style: TextStyle(
+                                      fontWeight: FontWeight.w500,
+                                      color:
+                                          isDark ? Colors.white : Colors.black,
+                                    ),
+                                  ),
                                 ],
                               ),
                             ),
@@ -185,10 +250,13 @@ class _RiwayatTransaksiAdminScreenState
                                     horizontal: 20, vertical: 10),
                               ),
                               onPressed: () {/* aksi detail */},
-                              child: const Text('Cek Detail',
-                                  style: TextStyle(
-                                      color: Colors.white,
-                                      fontWeight: FontWeight.bold)),
+                              child: const Text(
+                                'Cek Detail',
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
                             ),
                           ],
                         ),

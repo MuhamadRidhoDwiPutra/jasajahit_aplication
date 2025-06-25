@@ -1,24 +1,15 @@
 import 'package:flutter/material.dart';
-// ignore: unused_import
 import 'package:jasa_jahit_aplication/src/theme/dynamic_theme.dart';
-// ignore: unused_import
 import 'home_customer_screen.dart';
-// ignore: unused_import
 import 'pesan_customer_screen.dart';
-// ignore: unused_import
 import 'tracking_pesanan_customer_screen.dart';
-// ignore: unused_import
 import 'riwayat_customer_screen.dart';
-// ignore: unused_import
 import 'desain_customer_screen.dart';
 import 'package:jasa_jahit_aplication/src/page/login_screen.dart';
-
 import 'ubah_password_customer_screen.dart';
 import 'tentang_aplikasi_customer_screen.dart';
 import 'dart:io';
-// ignore: depend_on_referenced_packages
 import 'package:image_picker/image_picker.dart';
-// ignore: unused_import
 import 'package:jasa_jahit_aplication/src/theme/theme_switcher.dart';
 import 'package:provider/provider.dart';
 import 'package:jasa_jahit_aplication/src/theme/theme_provider.dart';
@@ -39,10 +30,10 @@ class _ProfileCustomerScreenState extends State<ProfileCustomerScreen> {
 
   @override
   Widget build(BuildContext context) {
-    // ignore: unused_local_variable
     final isDark = Theme.of(context).brightness == Brightness.dark;
     return Scaffold(
-      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+      backgroundColor:
+          isDark ? const Color(0xFF1A1A1A) : const Color(0xFF8FBC8F),
       body: SafeArea(
         child: Column(
           children: [
@@ -81,11 +72,15 @@ class _ProfileCustomerScreenState extends State<ProfileCustomerScreen> {
                               child: Container(
                                 padding: const EdgeInsets.all(6),
                                 decoration: BoxDecoration(
-                                  color: Colors.white,
+                                  color: isDark
+                                      ? const Color(0xFF2A2A2A)
+                                      : Colors.white,
                                   shape: BoxShape.circle,
                                   boxShadow: [
                                     BoxShadow(
-                                      color: Colors.black.withOpacity(0.1),
+                                      color: isDark
+                                          ? Colors.black.withOpacity(0.3)
+                                          : Colors.black.withOpacity(0.1),
                                       blurRadius: 4,
                                     ),
                                   ],
@@ -100,10 +95,10 @@ class _ProfileCustomerScreenState extends State<ProfileCustomerScreen> {
                       const SizedBox(height: 12),
                       Text(
                         _name,
-                        style: const TextStyle(
+                        style: TextStyle(
                           fontWeight: FontWeight.bold,
                           fontSize: 22,
-                          color: Colors.black,
+                          color: isDark ? Colors.white : Colors.black,
                         ),
                       ),
                       const SizedBox(height: 4),
@@ -118,11 +113,14 @@ class _ProfileCustomerScreenState extends State<ProfileCustomerScreen> {
                       Container(
                         padding: const EdgeInsets.all(16),
                         decoration: BoxDecoration(
-                          color: Colors.white,
+                          color:
+                              isDark ? const Color(0xFF2A2A2A) : Colors.white,
                           borderRadius: BorderRadius.circular(12),
                           boxShadow: [
                             BoxShadow(
-                              color: Colors.black.withOpacity(0.04),
+                              color: isDark
+                                  ? Colors.black.withOpacity(0.3)
+                                  : Colors.black.withOpacity(0.04),
                               blurRadius: 8,
                               offset: const Offset(0, 2),
                             ),
@@ -163,36 +161,136 @@ class _ProfileCustomerScreenState extends State<ProfileCustomerScreen> {
                               final unitCtrl =
                                   TextEditingController(text: _unit);
                               return AlertDialog(
-                                title: const Text('Edit Profil'),
+                                backgroundColor: isDark
+                                    ? const Color(0xFF2A2A2A)
+                                    : Colors.white,
+                                title: Text(
+                                  'Edit Profil',
+                                  style: TextStyle(
+                                    color: isDark ? Colors.white : Colors.black,
+                                  ),
+                                ),
                                 content: SingleChildScrollView(
                                   child: Column(
                                     children: [
                                       TextField(
-                                          controller: nameCtrl,
-                                          decoration: const InputDecoration(
-                                              labelText: 'Nama')),
+                                        controller: nameCtrl,
+                                        style: TextStyle(
+                                          color: isDark
+                                              ? Colors.white
+                                              : Colors.black,
+                                        ),
+                                        decoration: InputDecoration(
+                                          labelText: 'Nama',
+                                          labelStyle: TextStyle(
+                                            color: isDark
+                                                ? Colors.white70
+                                                : Colors.grey[600],
+                                          ),
+                                          filled: true,
+                                          fillColor: isDark
+                                              ? const Color(0xFF3A3A3A)
+                                              : Colors.grey[100],
+                                          border: OutlineInputBorder(
+                                            borderRadius:
+                                                BorderRadius.circular(8),
+                                            borderSide: BorderSide.none,
+                                          ),
+                                        ),
+                                      ),
                                       const SizedBox(height: 8),
                                       TextField(
-                                          controller: nipCtrl,
-                                          decoration: const InputDecoration(
-                                              labelText: 'NIP')),
+                                        controller: nipCtrl,
+                                        style: TextStyle(
+                                          color: isDark
+                                              ? Colors.white
+                                              : Colors.black,
+                                        ),
+                                        decoration: InputDecoration(
+                                          labelText: 'NIP',
+                                          labelStyle: TextStyle(
+                                            color: isDark
+                                                ? Colors.white70
+                                                : Colors.grey[600],
+                                          ),
+                                          filled: true,
+                                          fillColor: isDark
+                                              ? const Color(0xFF3A3A3A)
+                                              : Colors.grey[100],
+                                          border: OutlineInputBorder(
+                                            borderRadius:
+                                                BorderRadius.circular(8),
+                                            borderSide: BorderSide.none,
+                                          ),
+                                        ),
+                                      ),
                                       const SizedBox(height: 8),
                                       TextField(
-                                          controller: posisiCtrl,
-                                          decoration: const InputDecoration(
-                                              labelText: 'Posisi')),
+                                        controller: posisiCtrl,
+                                        style: TextStyle(
+                                          color: isDark
+                                              ? Colors.white
+                                              : Colors.black,
+                                        ),
+                                        decoration: InputDecoration(
+                                          labelText: 'Posisi',
+                                          labelStyle: TextStyle(
+                                            color: isDark
+                                                ? Colors.white70
+                                                : Colors.grey[600],
+                                          ),
+                                          filled: true,
+                                          fillColor: isDark
+                                              ? const Color(0xFF3A3A3A)
+                                              : Colors.grey[100],
+                                          border: OutlineInputBorder(
+                                            borderRadius:
+                                                BorderRadius.circular(8),
+                                            borderSide: BorderSide.none,
+                                          ),
+                                        ),
+                                      ),
                                       const SizedBox(height: 8),
                                       TextField(
-                                          controller: unitCtrl,
-                                          decoration: const InputDecoration(
-                                              labelText: 'Unit')),
+                                        controller: unitCtrl,
+                                        style: TextStyle(
+                                          color: isDark
+                                              ? Colors.white
+                                              : Colors.black,
+                                        ),
+                                        decoration: InputDecoration(
+                                          labelText: 'Unit',
+                                          labelStyle: TextStyle(
+                                            color: isDark
+                                                ? Colors.white70
+                                                : Colors.grey[600],
+                                          ),
+                                          filled: true,
+                                          fillColor: isDark
+                                              ? const Color(0xFF3A3A3A)
+                                              : Colors.grey[100],
+                                          border: OutlineInputBorder(
+                                            borderRadius:
+                                                BorderRadius.circular(8),
+                                            borderSide: BorderSide.none,
+                                          ),
+                                        ),
+                                      ),
                                     ],
                                   ),
                                 ),
                                 actions: [
                                   TextButton(
-                                      onPressed: () => Navigator.pop(context),
-                                      child: const Text('Batal')),
+                                    onPressed: () => Navigator.pop(context),
+                                    child: Text(
+                                      'Batal',
+                                      style: TextStyle(
+                                        color: isDark
+                                            ? Colors.white70
+                                            : Colors.grey[600],
+                                      ),
+                                    ),
+                                  ),
                                   ElevatedButton(
                                     style: ElevatedButton.styleFrom(
                                         backgroundColor:
@@ -286,16 +384,26 @@ class _ProfileInfoRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Row(
       children: [
         SizedBox(
             width: 90,
-            child: Text(label, style: const TextStyle(color: Colors.black54))),
+            child: Text(
+              label,
+              style: TextStyle(
+                color: isDark ? Colors.white70 : Colors.black54,
+              ),
+            )),
         const SizedBox(width: 8),
         Expanded(
-            child: Text(value,
-                style: const TextStyle(
-                    color: Colors.black, fontWeight: FontWeight.w500))),
+            child: Text(
+          value,
+          style: TextStyle(
+            color: isDark ? Colors.white : Colors.black,
+            fontWeight: FontWeight.w500,
+          ),
+        )),
       ],
     );
   }
@@ -314,8 +422,9 @@ class _ProfileMenuItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Material(
-      color: Colors.white,
+      color: isDark ? const Color(0xFF2A2A2A) : Colors.white,
       borderRadius: BorderRadius.circular(8),
       child: InkWell(
         borderRadius: BorderRadius.circular(8),
@@ -324,18 +433,24 @@ class _ProfileMenuItem extends StatelessWidget {
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
           child: Row(
             children: [
-              Icon(icon, color: color ?? Colors.black54),
+              Icon(
+                icon,
+                color: color ?? (isDark ? Colors.white70 : Colors.black54),
+              ),
               const SizedBox(width: 16),
               Expanded(
                 child: Text(
                   label,
                   style: TextStyle(
-                    color: color ?? Colors.black87,
+                    color: color ?? (isDark ? Colors.white : Colors.black87),
                     fontWeight: FontWeight.w500,
                   ),
                 ),
               ),
-              const Icon(Icons.chevron_right, color: Colors.black26),
+              Icon(
+                Icons.chevron_right,
+                color: isDark ? Colors.white54 : Colors.black26,
+              ),
             ],
           ),
         ),
@@ -391,6 +506,7 @@ class _BottomNavIcon extends StatelessWidget {
 }
 
 Widget _ThemeModeContainer(BuildContext context) {
+  final isDark = Theme.of(context).brightness == Brightness.dark;
   final themeProvider = Provider.of<ThemeProvider>(context);
   final mode = themeProvider.themeMode;
   IconData icon;
@@ -412,11 +528,13 @@ Widget _ThemeModeContainer(BuildContext context) {
     margin: const EdgeInsets.symmetric(vertical: 16, horizontal: 0),
     padding: const EdgeInsets.symmetric(horizontal: 0),
     decoration: BoxDecoration(
-      color: Colors.white,
+      color: isDark ? const Color(0xFF2A2A2A) : Colors.white,
       borderRadius: BorderRadius.circular(12),
       boxShadow: [
         BoxShadow(
-          color: Colors.black.withOpacity(0.07),
+          color: isDark
+              ? Colors.black.withOpacity(0.3)
+              : Colors.black.withOpacity(0.07),
           blurRadius: 8,
           offset: const Offset(0, 2),
         ),
@@ -424,12 +542,24 @@ Widget _ThemeModeContainer(BuildContext context) {
     ),
     child: ListTile(
       contentPadding: const EdgeInsets.symmetric(horizontal: 16),
-      leading: Icon(icon, color: Colors.grey[700]),
-      title: Text(label),
-      trailing: const Icon(Icons.chevron_right),
+      leading: Icon(
+        icon,
+        color: isDark ? Colors.white70 : Colors.grey[700],
+      ),
+      title: Text(
+        label,
+        style: TextStyle(
+          color: isDark ? Colors.white : Colors.black,
+        ),
+      ),
+      trailing: Icon(
+        Icons.chevron_right,
+        color: isDark ? Colors.white70 : Colors.grey[600],
+      ),
       onTap: () async {
         final selected = await showModalBottomSheet<ThemeMode>(
           context: context,
+          backgroundColor: isDark ? const Color(0xFF2A2A2A) : Colors.white,
           builder: (context) => _ThemeModePicker(selected: mode),
         );
         if (selected != null) {
@@ -445,24 +575,49 @@ class _ThemeModePicker extends StatelessWidget {
   const _ThemeModePicker({required this.selected});
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
         ListTile(
-          leading: const Icon(Icons.wb_sunny_outlined),
-          title: const Text('Mode Terang'),
+          leading: Icon(
+            Icons.wb_sunny_outlined,
+            color: isDark ? Colors.white70 : Colors.grey[700],
+          ),
+          title: Text(
+            'Mode Terang',
+            style: TextStyle(
+              color: isDark ? Colors.white : Colors.black,
+            ),
+          ),
           selected: selected == ThemeMode.light,
           onTap: () => Navigator.pop(context, ThemeMode.light),
         ),
         ListTile(
-          leading: const Icon(Icons.nightlight_round),
-          title: const Text('Mode Gelap'),
+          leading: Icon(
+            Icons.nightlight_round,
+            color: isDark ? Colors.white70 : Colors.grey[700],
+          ),
+          title: Text(
+            'Mode Gelap',
+            style: TextStyle(
+              color: isDark ? Colors.white : Colors.black,
+            ),
+          ),
           selected: selected == ThemeMode.dark,
           onTap: () => Navigator.pop(context, ThemeMode.dark),
         ),
         ListTile(
-          leading: const Icon(Icons.brightness_auto),
-          title: const Text('Otomatis'),
+          leading: Icon(
+            Icons.brightness_auto,
+            color: isDark ? Colors.white70 : Colors.grey[700],
+          ),
+          title: Text(
+            'Otomatis',
+            style: TextStyle(
+              color: isDark ? Colors.white : Colors.black,
+            ),
+          ),
           selected: selected == ThemeMode.system,
           onTap: () => Navigator.pop(context, ThemeMode.system),
         ),

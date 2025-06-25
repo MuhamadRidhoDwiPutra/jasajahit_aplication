@@ -1,20 +1,15 @@
 import 'package:flutter/material.dart';
-// ignore: unused_import
 import 'package:jasa_jahit_aplication/src/customer/home_customer_screen.dart';
-// ignore: unused_import
 import 'package:jasa_jahit_aplication/src/admin/home_admin_screen.dart';
 import 'profile_customer_screen.dart';
-// ignore: unused_import
 import 'pesan_customer_screen.dart';
-// ignore: unused_import
 import 'tracking_pesanan_customer_screen.dart';
-// ignore: unused_import
 import 'riwayat_customer_screen.dart';
 import 'desain_customer_screen.dart';
-// ignore: unused_import
 import 'package:jasa_jahit_aplication/src/theme/dynamic_theme.dart';
-// ignore: unused_import
 import 'package:jasa_jahit_aplication/src/theme/theme_switcher.dart';
+import 'package:provider/provider.dart';
+import 'package:jasa_jahit_aplication/src/theme/theme_provider.dart';
 
 class HomeCustomerScreen extends StatefulWidget {
   const HomeCustomerScreen({super.key});
@@ -50,8 +45,10 @@ class _HomeCustomerScreenState extends State<HomeCustomerScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Scaffold(
-      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+      backgroundColor:
+          isDark ? const Color(0xFF1A1A1A) : const Color(0xFF8FBC8F),
       body: SafeArea(
         child: Stack(
           children: [
@@ -61,11 +58,12 @@ class _HomeCustomerScreenState extends State<HomeCustomerScreen> {
                   padding:
                       const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                   decoration: BoxDecoration(
-                    color: Colors.white,
+                    color: isDark ? const Color(0xFF2A2A2A) : Colors.white,
                     boxShadow: [
                       BoxShadow(
-                        // ignore: deprecated_member_use
-                        color: Colors.black.withOpacity(0.05),
+                        color: isDark
+                            ? Colors.black.withOpacity(0.3)
+                            : Colors.black.withOpacity(0.05),
                         blurRadius: 10,
                         offset: const Offset(0, 2),
                       ),
@@ -75,7 +73,6 @@ class _HomeCustomerScreenState extends State<HomeCustomerScreen> {
                     children: [
                       Container(
                         decoration: BoxDecoration(
-                          // ignore: deprecated_member_use
                           color: const Color(0xFFDE8500).withOpacity(0.1),
                           borderRadius: BorderRadius.circular(12),
                         ),
@@ -89,10 +86,10 @@ class _HomeCustomerScreenState extends State<HomeCustomerScreen> {
                         child: Center(
                           child: Text(
                             _appBarTitles[_selectedIndex],
-                            style: const TextStyle(
+                            style: TextStyle(
                               fontSize: 20,
                               fontWeight: FontWeight.w600,
-                              color: Colors.black,
+                              color: isDark ? Colors.white : Colors.black,
                               fontFamily: 'SF Pro Display',
                             ),
                           ),
@@ -125,11 +122,12 @@ class _HomeCustomerScreenState extends State<HomeCustomerScreen> {
       ),
       bottomNavigationBar: Container(
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: isDark ? const Color(0xFF2A2A2A) : Colors.white,
           boxShadow: [
             BoxShadow(
-              // ignore: deprecated_member_use
-              color: Colors.black.withOpacity(0.05),
+              color: isDark
+                  ? Colors.black.withOpacity(0.3)
+                  : Colors.black.withOpacity(0.05),
               blurRadius: 10,
               offset: const Offset(0, -2),
             ),
@@ -186,7 +184,6 @@ class _NavBarItem extends StatelessWidget {
   final bool isActive;
   final VoidCallback onTap;
   const _NavBarItem({
-    // ignore: unused_element_parameter
     super.key,
     required this.icon,
     required this.label,
@@ -196,6 +193,7 @@ class _NavBarItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return GestureDetector(
       onTap: onTap,
       child: Column(
@@ -205,14 +203,15 @@ class _NavBarItem extends StatelessWidget {
             padding: const EdgeInsets.all(8),
             decoration: BoxDecoration(
               color: isActive
-                  // ignore: deprecated_member_use
                   ? const Color(0xFFDE8500).withOpacity(0.1)
                   : Colors.transparent,
               borderRadius: BorderRadius.circular(8),
             ),
             child: Icon(
               icon,
-              color: isActive ? const Color(0xFFDE8500) : Colors.grey[600],
+              color: isActive
+                  ? const Color(0xFFDE8500)
+                  : (isDark ? Colors.grey[600] : Colors.grey[600]),
               size: 24,
             ),
           ),
@@ -220,7 +219,9 @@ class _NavBarItem extends StatelessWidget {
           Text(
             label,
             style: TextStyle(
-              color: isActive ? const Color(0xFFDE8500) : Colors.grey[600],
+              color: isActive
+                  ? const Color(0xFFDE8500)
+                  : (isDark ? Colors.grey[600] : Colors.grey[600]),
               fontWeight: isActive ? FontWeight.w600 : FontWeight.w500,
               fontSize: 12,
             ),
@@ -232,23 +233,24 @@ class _NavBarItem extends StatelessWidget {
 }
 
 class _HomeCustomerContent extends StatelessWidget {
-  // ignore: unused_element_parameter
   const _HomeCustomerContent({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return ListView(
       padding: const EdgeInsets.all(16.0),
       children: [
         Container(
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
           decoration: BoxDecoration(
-            color: Colors.white,
+            color: isDark ? const Color(0xFF2A2A2A) : Colors.white,
             borderRadius: BorderRadius.circular(16),
             boxShadow: [
               BoxShadow(
-                // ignore: deprecated_member_use
-                color: Colors.black.withOpacity(0.05),
+                color: isDark
+                    ? Colors.black.withOpacity(0.3)
+                    : Colors.black.withOpacity(0.05),
                 blurRadius: 10,
                 offset: const Offset(0, 2),
               ),
@@ -260,10 +262,13 @@ class _HomeCustomerContent extends StatelessWidget {
               const SizedBox(width: 12),
               Expanded(
                 child: TextField(
+                  style: TextStyle(
+                    color: isDark ? Colors.white : Colors.black,
+                  ),
                   decoration: InputDecoration(
                     hintText: 'Cari model pakaian...',
                     hintStyle: TextStyle(
-                      color: Colors.grey[400],
+                      color: isDark ? Colors.white70 : Colors.grey[400],
                       fontSize: 14,
                       fontFamily: 'SF Pro Text',
                     ),
@@ -275,12 +280,12 @@ class _HomeCustomerContent extends StatelessWidget {
           ),
         ),
         const SizedBox(height: 24),
-        const Text(
+        Text(
           'Kategori',
           style: TextStyle(
             fontSize: 18,
             fontWeight: FontWeight.w600,
-            color: Colors.black,
+            color: isDark ? Colors.white : Colors.black,
             fontFamily: 'SF Pro Display',
           ),
         ),
@@ -316,12 +321,12 @@ class _HomeCustomerContent extends StatelessWidget {
           ),
         ),
         const SizedBox(height: 24),
-        const Text(
+        Text(
           'Model Terbaru',
           style: TextStyle(
             fontSize: 18,
             fontWeight: FontWeight.w600,
-            color: Colors.black,
+            color: isDark ? Colors.white : Colors.black,
             fontFamily: 'SF Pro Display',
           ),
         ),
@@ -358,24 +363,25 @@ class _CategoryCard extends StatelessWidget {
     required this.icon,
     required this.label,
     required this.onTap,
-    // ignore: unused_element_parameter
     super.key,
   });
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return GestureDetector(
       onTap: onTap,
       child: Container(
         width: 80,
         padding: const EdgeInsets.symmetric(vertical: 12),
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: isDark ? const Color(0xFF2A2A2A) : Colors.white,
           borderRadius: BorderRadius.circular(16),
           boxShadow: [
             BoxShadow(
-              // ignore: deprecated_member_use
-              color: Colors.black.withOpacity(0.05),
+              color: isDark
+                  ? Colors.black.withOpacity(0.3)
+                  : Colors.black.withOpacity(0.05),
               blurRadius: 10,
               offset: const Offset(0, 2),
             ),
@@ -387,7 +393,6 @@ class _CategoryCard extends StatelessWidget {
             Container(
               padding: const EdgeInsets.all(12),
               decoration: BoxDecoration(
-                // ignore: deprecated_member_use
                 color: const Color(0xFFDE8500).withOpacity(0.1),
                 shape: BoxShape.circle,
               ),
@@ -400,10 +405,10 @@ class _CategoryCard extends StatelessWidget {
             const SizedBox(height: 8),
             Text(
               label,
-              style: const TextStyle(
+              style: TextStyle(
                 fontSize: 12,
                 fontWeight: FontWeight.w500,
-                color: Colors.black,
+                color: isDark ? Colors.white : Colors.black,
                 fontFamily: 'SF Pro Text',
               ),
             ),
@@ -423,20 +428,21 @@ class _ModelCard extends StatelessWidget {
     required this.imageUrl,
     required this.title,
     required this.price,
-    // ignore: unused_element_parameter
     super.key,
   });
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Container(
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: isDark ? const Color(0xFF2A2A2A) : Colors.white,
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
-            // ignore: deprecated_member_use
-            color: Colors.black.withOpacity(0.05),
+            color: isDark
+                ? Colors.black.withOpacity(0.3)
+                : Colors.black.withOpacity(0.05),
             blurRadius: 10,
             offset: const Offset(0, 2),
           ),
@@ -461,10 +467,10 @@ class _ModelCard extends StatelessWidget {
               children: [
                 Text(
                   title,
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontSize: 16,
                     fontWeight: FontWeight.w600,
-                    color: Colors.black,
+                    color: isDark ? Colors.white : Colors.black,
                     fontFamily: 'SF Pro Display',
                   ),
                 ),

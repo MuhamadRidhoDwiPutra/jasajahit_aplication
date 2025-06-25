@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart'; // Untuk Clipboard
-// ignore: unused_import
 import 'package:jasa_jahit_aplication/src/theme/theme_switcher.dart';
+import 'package:provider/provider.dart';
+import 'package:jasa_jahit_aplication/src/theme/theme_provider.dart';
 
 class CekDetailAdminScreen extends StatelessWidget {
   final String orderCode;
@@ -21,18 +22,25 @@ class CekDetailAdminScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Scaffold(
-      backgroundColor: const Color(0xFF8FBC8F),
+      backgroundColor:
+          isDark ? const Color(0xFF1A1A1A) : const Color(0xFF8FBC8F),
       appBar: AppBar(
-        backgroundColor: Colors.white,
+        backgroundColor: isDark ? const Color(0xFF2A2A2A) : Colors.white,
         elevation: 1,
-        title: const Text('Detail Pesanan',
-            style: TextStyle(fontWeight: FontWeight.bold, color: Colors.black)),
+        title: Text(
+          'Detail Pesanan',
+          style: TextStyle(
+            fontWeight: FontWeight.bold,
+            color: isDark ? Colors.white : Colors.black,
+          ),
+        ),
         iconTheme: const IconThemeData(color: Color(0xFFDE8500)),
       ),
       body: Center(
         child: Card(
-          color: Colors.white,
+          color: isDark ? const Color(0xFF2A2A2A) : Colors.white,
           elevation: 3,
           margin: const EdgeInsets.all(24),
           shape:
@@ -43,36 +51,98 @@ class CekDetailAdminScreen extends StatelessWidget {
               mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Text('Kode Pesanan',
-                    style:
-                        TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+                Text(
+                  'Kode Pesanan',
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 16,
+                    color: isDark ? Colors.white : Colors.black,
+                  ),
+                ),
                 const SizedBox(height: 4),
-                Text(orderCode, style: const TextStyle(fontSize: 16)),
-                const Divider(height: 24, color: Colors.black12),
-                const Text('Model',
-                    style:
-                        TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+                Text(
+                  orderCode,
+                  style: TextStyle(
+                    fontSize: 16,
+                    color: isDark ? Colors.white70 : Colors.black87,
+                  ),
+                ),
+                Divider(
+                    height: 24,
+                    color: isDark ? Colors.white24 : Colors.black12),
+                Text(
+                  'Model',
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 16,
+                    color: isDark ? Colors.white : Colors.black,
+                  ),
+                ),
                 const SizedBox(height: 4),
-                Text(model, style: const TextStyle(fontSize: 16)),
-                const Divider(height: 24, color: Colors.black12),
-                const Text('Jenis Kain',
-                    style:
-                        TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+                Text(
+                  model,
+                  style: TextStyle(
+                    fontSize: 16,
+                    color: isDark ? Colors.white70 : Colors.black87,
+                  ),
+                ),
+                Divider(
+                    height: 24,
+                    color: isDark ? Colors.white24 : Colors.black12),
+                Text(
+                  'Jenis Kain',
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 16,
+                    color: isDark ? Colors.white : Colors.black,
+                  ),
+                ),
                 const SizedBox(height: 4),
-                Text(fabricType, style: const TextStyle(fontSize: 16)),
-                const Divider(height: 24, color: Colors.black12),
-                const Text('Jumlah Produk',
-                    style:
-                        TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+                Text(
+                  fabricType,
+                  style: TextStyle(
+                    fontSize: 16,
+                    color: isDark ? Colors.white70 : Colors.black87,
+                  ),
+                ),
+                Divider(
+                    height: 24,
+                    color: isDark ? Colors.white24 : Colors.black12),
+                Text(
+                  'Jumlah Produk',
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 16,
+                    color: isDark ? Colors.white : Colors.black,
+                  ),
+                ),
                 const SizedBox(height: 4),
-                Text(productQuantity.toString(),
-                    style: const TextStyle(fontSize: 16)),
-                const Divider(height: 24, color: Colors.black12),
-                const Text('Tanggal Pesan',
-                    style:
-                        TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+                Text(
+                  productQuantity.toString(),
+                  style: TextStyle(
+                    fontSize: 16,
+                    color: isDark ? Colors.white70 : Colors.black87,
+                  ),
+                ),
+                Divider(
+                    height: 24,
+                    color: isDark ? Colors.white24 : Colors.black12),
+                Text(
+                  'Tanggal Pesan',
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 16,
+                    color: isDark ? Colors.white : Colors.black,
+                  ),
+                ),
                 const SizedBox(height: 4),
-                Text(orderDate, style: const TextStyle(fontSize: 16)),
+                Text(
+                  orderDate,
+                  style: TextStyle(
+                    fontSize: 16,
+                    color: isDark ? Colors.white70 : Colors.black87,
+                  ),
+                ),
                 const SizedBox(height: 24),
                 Center(
                   child: ElevatedButton(
@@ -84,9 +154,13 @@ class CekDetailAdminScreen extends StatelessWidget {
                           horizontal: 32, vertical: 12),
                     ),
                     onPressed: () {/* aksi kembali */},
-                    child: const Text('Kembali',
-                        style: TextStyle(
-                            color: Colors.white, fontWeight: FontWeight.bold)),
+                    child: const Text(
+                      'Kembali',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
                   ),
                 ),
               ],
@@ -102,27 +176,29 @@ class CekDetailAdminScreen extends StatelessWidget {
       {required String label,
       required String value,
       bool hasCopyButton = false}) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
           label,
-          style: const TextStyle(
+          style: TextStyle(
             fontSize: 14,
             fontWeight: FontWeight.bold,
-            color: Colors.black87, // Warna teks label
+            color: isDark ? Colors.white : Colors.black87,
           ),
         ),
         const SizedBox(height: 4),
         Container(
-          padding: const EdgeInsets.symmetric(
-              horizontal: 16, vertical: 12), // Padding lebih proporsional
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
           decoration: BoxDecoration(
-            color: Colors.white, // Warna latar belakang container
-            borderRadius: BorderRadius.circular(10), // Sudut lebih membulat
+            color: isDark ? const Color(0xFF3A3A3A) : Colors.white,
+            borderRadius: BorderRadius.circular(10),
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withOpacity(0.05),
+                color: isDark
+                    ? Colors.black.withOpacity(0.3)
+                    : Colors.black.withOpacity(0.05),
                 spreadRadius: 1,
                 blurRadius: 3,
                 offset: const Offset(0, 2),
@@ -134,8 +210,10 @@ class CekDetailAdminScreen extends StatelessWidget {
               Expanded(
                 child: Text(
                   value,
-                  style: const TextStyle(
-                      fontSize: 16, color: Colors.black), // Warna teks nilai
+                  style: TextStyle(
+                    fontSize: 16,
+                    color: isDark ? Colors.white : Colors.black,
+                  ),
                 ),
               ),
               if (hasCopyButton)
@@ -149,8 +227,9 @@ class CekDetailAdminScreen extends StatelessWidget {
                   child: Text(
                     'Salin',
                     style: TextStyle(
-                        color: Colors.blue[700],
-                        fontWeight: FontWeight.bold), // Gaya teks tombol salin
+                      color: Colors.blue[400],
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
                 ),
             ],
