@@ -3,5 +3,9 @@
     "cSpell.words": [
         "Desainsemantics",
         "Riwayat"
-    ]
+    ],
+    "files.autoSaveDelay": 500,
+    "files.autoSave": "afterDelay",
+    "dart.flutterHotReloadOnSave": "manual",
+    "dart.hotReloadOnSave": "never"
 }

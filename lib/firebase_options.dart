@@ -72,4 +72,5 @@ class DefaultFirebaseOptions {
     storageBucket: 'aplication-jasa-jahit.firebasestorage.app',
     iosBundleId: 'com.example.jasaJahitAplication',
   );
+
 }
