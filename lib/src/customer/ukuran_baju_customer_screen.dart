@@ -1,9 +1,12 @@
 // ignore: file_names
+import 'package:cloud_firestore/cloud_firestore.dart' hide Order;
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'desain_customer_screen.dart';
 import 'konfirmasi_desain_baju_customer_screen.dart';
 import 'package:provider/provider.dart';
 import 'package:jasa_jahit_aplication/src/theme/theme_provider.dart';
+import 'package:jasa_jahit_aplication/src/model/order_model.dart';
 
 class UkuranBajuCustomerScreen extends StatefulWidget {
   // ignore: use_super_parameters
@@ -25,19 +28,23 @@ class _UkuranBajuCustomerScreenState extends State<UkuranBajuCustomerScreen> {
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     return Scaffold(
-      backgroundColor: isDark ? const Color(0xFF1A1A1A) : const Color(0xFF8FBC8F),
+      backgroundColor:
+          isDark ? const Color(0xFF1A1A1A) : const Color(0xFF8FBC8F),
       body: SafeArea(
         child: Stack(
           children: [
             Column(
               children: [
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                   decoration: BoxDecoration(
                     color: isDark ? const Color(0xFF2A2A2A) : Colors.white,
                     boxShadow: [
                       BoxShadow(
-                        color: isDark ? Colors.black.withOpacity(0.3) : Colors.black.withOpacity(0.05),
+                        color: isDark
+                            ? Colors.black.withOpacity(0.3)
+                            : Colors.black.withOpacity(0.05),
                         blurRadius: 10,
                         offset: const Offset(0, 2),
                       ),
@@ -51,11 +58,14 @@ class _UkuranBajuCustomerScreenState extends State<UkuranBajuCustomerScreen> {
                           borderRadius: BorderRadius.circular(12),
                         ),
                         child: IconButton(
-                          icon: const Icon(Icons.arrow_back_ios_new, color: Color(0xFFDE8500)),
+                          icon: const Icon(Icons.arrow_back_ios_new,
+                              color: Color(0xFFDE8500)),
                           onPressed: () {
                             Navigator.pushReplacement(
                               context,
-                              MaterialPageRoute(builder: (context) => const DesainCustomerScreen()),
+                              MaterialPageRoute(
+                                  builder: (context) =>
+                                      const DesainCustomerScreen()),
                             );
                           },
                         ),
@@ -83,11 +93,14 @@ class _UkuranBajuCustomerScreenState extends State<UkuranBajuCustomerScreen> {
                       Container(
                         padding: const EdgeInsets.all(16),
                         decoration: BoxDecoration(
-                          color: isDark ? const Color(0xFF2A2A2A) : Colors.white,
+                          color:
+                              isDark ? const Color(0xFF2A2A2A) : Colors.white,
                           borderRadius: BorderRadius.circular(16),
                           boxShadow: [
                             BoxShadow(
-                              color: isDark ? Colors.black.withOpacity(0.3) : Colors.black.withOpacity(0.05),
+                              color: isDark
+                                  ? Colors.black.withOpacity(0.3)
+                                  : Colors.black.withOpacity(0.05),
                               blurRadius: 10,
                               offset: const Offset(0, 2),
                             ),
@@ -148,10 +161,40 @@ class _UkuranBajuCustomerScreenState extends State<UkuranBajuCustomerScreen> {
                           padding: const EdgeInsets.symmetric(vertical: 16),
                         ),
                         onPressed: () {
+                          final user = FirebaseAuth.instance.currentUser;
+                          if (user == null) {
+                            // Handle user not logged in case
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(
+                                  content: Text(
+                                      'Anda harus login untuk membuat pesanan.')),
+                            );
+                            return;
+                          }
+
+                          final measurements = {
+                            'lingkarDada': lingkarDadaController.text,
+                            'lebarBahu': lebarBahuController.text,
+                            'panjangBaju': panjangBajuController.text,
+                            'panjangLengan': panjangLenganController.text,
+                            'lebarLengan': lebarLenganController.text,
+                          };
+
+                          final order = Order(
+                            userId: user.uid,
+                            userName:
+                                user.displayName ?? user.email ?? 'No Name',
+                            orderType: 'Baju',
+                            measurements: measurements,
+                            orderDate: Timestamp.now(),
+                          );
+
                           Navigator.push(
                             context,
                             MaterialPageRoute(
-                              builder: (context) => const KonfirmasiDesainBajuCustomerScreen(),
+                              builder: (context) =>
+                                  KonfirmasiDesainBajuCustomerScreen(
+                                      order: order),
                             ),
                           );
                         },

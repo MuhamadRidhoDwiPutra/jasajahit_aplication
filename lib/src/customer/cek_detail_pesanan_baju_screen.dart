@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:jasa_jahit_aplication/src/model/order_model.dart';
 import 'pembayaran_baju_customer_screen.dart';
 import 'package:provider/provider.dart';
 import 'package:jasa_jahit_aplication/src/theme/theme_provider.dart';
 
 class CekDetailPesananBajuScreen extends StatelessWidget {
-  // ignore: use_super_parameters
-  const CekDetailPesananBajuScreen({Key? key}) : super(key: key);
+  final Order order;
+  const CekDetailPesananBajuScreen({Key? key, required this.order})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -24,7 +26,8 @@ class CekDetailPesananBajuScreen extends StatelessWidget {
             Navigator.pushReplacement(
               context,
               MaterialPageRoute(
-                builder: (context) => const PembayaranBajuCustomerScreen(),
+                builder: (context) =>
+                    PembayaranBajuCustomerScreen(order: order),
               ),
             );
           },
@@ -53,7 +56,8 @@ class CekDetailPesananBajuScreen extends StatelessWidget {
                   Expanded(
                     child: TextField(
                       enabled: false,
-                      controller: TextEditingController(text: ''),
+                      controller:
+                          TextEditingController(text: order.id ?? 'N/A'),
                       style: TextStyle(
                         color: isDark ? Colors.white : Colors.black,
                       ),
@@ -95,7 +99,7 @@ class CekDetailPesananBajuScreen extends StatelessWidget {
               const SizedBox(height: 4),
               TextField(
                 enabled: false,
-                controller: TextEditingController(text: ''),
+                controller: TextEditingController(text: order.model),
                 style: TextStyle(
                   color: isDark ? Colors.white : Colors.black,
                 ),
@@ -119,7 +123,7 @@ class CekDetailPesananBajuScreen extends StatelessWidget {
               const SizedBox(height: 4),
               TextField(
                 enabled: false,
-                controller: TextEditingController(text: ''),
+                controller: TextEditingController(text: order.fabric),
                 style: TextStyle(
                   color: isDark ? Colors.white : Colors.black,
                 ),
@@ -143,7 +147,7 @@ class CekDetailPesananBajuScreen extends StatelessWidget {
               const SizedBox(height: 4),
               TextField(
                 enabled: false,
-                controller: TextEditingController(text: ''),
+                controller: TextEditingController(text: '1'),
                 style: TextStyle(
                   color: isDark ? Colors.white : Colors.black,
                 ),
@@ -182,7 +186,7 @@ class CekDetailPesananBajuScreen extends StatelessWidget {
                     ),
                     const SizedBox(height: 8),
                     Text(
-                      'Tanggal Pemesanan\n',
+                      'Tanggal Pemesanan\n${order.orderDate.toDate().day} ${_getMonth(order.orderDate.toDate().month)} ${order.orderDate.toDate().year}',
                       style: TextStyle(
                           color: isDark ? Colors.white : Colors.white),
                       textAlign: TextAlign.center,
@@ -198,7 +202,8 @@ class CekDetailPesananBajuScreen extends StatelessWidget {
               const SizedBox(height: 4),
               TextField(
                 enabled: false,
-                controller: TextEditingController(text: ''),
+                controller: TextEditingController(
+                    text: 'Rp ${order.price.toStringAsFixed(0)}'),
                 style: TextStyle(
                   color: isDark ? Colors.white : Colors.black,
                 ),
@@ -220,4 +225,22 @@ class CekDetailPesananBajuScreen extends StatelessWidget {
       ),
     );
   }
+}
+
+String _getMonth(int month) {
+  const months = [
+    'Januari',
+    'Februari',
+    'Maret',
+    'April',
+    'Mei',
+    'Juni',
+    'Juli',
+    'Agustus',
+    'September',
+    'Oktober',
+    'November',
+    'Desember'
+  ];
+  return months[month - 1];
 }

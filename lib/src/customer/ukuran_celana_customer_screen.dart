@@ -4,6 +4,9 @@ import 'konfirmasi_desain_baju_customer_screen.dart';
 import 'konfirmasi_desain_celana_customer_screen.dart';
 import 'package:provider/provider.dart';
 import 'package:jasa_jahit_aplication/src/theme/theme_provider.dart';
+import 'package:cloud_firestore/cloud_firestore.dart' as fs;
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:jasa_jahit_aplication/src/model/order_model.dart' as model;
 
 class UkuranCelanaCustomerScreen extends StatefulWidget {
   const UkuranCelanaCustomerScreen({super.key});
@@ -172,11 +175,40 @@ class _UkuranCelanaCustomerScreenState
                           padding: const EdgeInsets.symmetric(vertical: 16),
                         ),
                         onPressed: () {
+                          final user = FirebaseAuth.instance.currentUser;
+                          if (user == null) {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(
+                                  content: Text(
+                                      'Anda harus login untuk membuat pesanan.')),
+                            );
+                            return;
+                          }
+
+                          final measurements = {
+                            'panjangCelana': panjangCelanaController.text,
+                            'lingkarPinggang': lingkarPinggangController.text,
+                            'lingkarPinggul': lingkarPinggulController.text,
+                            'lingkarPesak': lingkarPesakController.text,
+                            'lingkarPaha': lingkarPahaController.text,
+                            'lebarBawahCelana': lebarBawahCelanaController.text,
+                          };
+
+                          final order = model.Order(
+                            userId: user.uid,
+                            userName:
+                                user.displayName ?? user.email ?? 'No Name',
+                            orderType: 'Celana',
+                            measurements: measurements,
+                            orderDate: fs.Timestamp.now(),
+                          );
+
                           Navigator.push(
                             context,
                             MaterialPageRoute(
                               builder: (context) =>
-                                  const KonfirmasiDesainCelanaCustomerScreen(),
+                                  KonfirmasiDesainCelanaCustomerScreen(
+                                      order: order),
                             ),
                           );
                         },

@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:jasa_jahit_aplication/src/admin/cek_detail_admin_screen.dart';
 import 'package:jasa_jahit_aplication/src/theme/theme_switcher.dart';
@@ -13,15 +14,28 @@ class StatusPesananAdminScreen extends StatefulWidget {
 }
 
 class _StatusPesananAdminScreenState extends State<StatusPesananAdminScreen> {
-  // Contoh data untuk pesanan
-  List<Map<String, dynamic>> orders = [];
+  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
   List<String> statusOptions = [
+    'Menunggu Konfirmasi',
     'Sedang dikerjakan',
     'Pesanan Dikonfirmasi',
     'Pesanan telah selesai',
     'Pesanan Diterima',
   ];
+
+  Future<void> _updateOrderStatus(String docId, String status) async {
+    try {
+      await _firestore
+          .collection('orders')
+          .doc(docId)
+          .update({'status': status});
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Gagal memperbarui status: $e')),
+      );
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -41,168 +55,214 @@ class _StatusPesananAdminScreenState extends State<StatusPesananAdminScreen> {
         ),
         iconTheme: const IconThemeData(color: Color(0xFFDE8500)),
       ),
-      body: ListView.builder(
-        padding: const EdgeInsets.all(16),
-        itemCount: orders.length,
-        itemBuilder: (context, index) {
-          final order = orders[index];
-          return Card(
-            color: isDark ? const Color(0xFF2A2A2A) : Colors.white,
-            elevation: 3,
-            margin: const EdgeInsets.only(bottom: 16),
-            shape:
-                RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-            child: Padding(
-              padding: const EdgeInsets.all(16),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text(
-                        'Kode: ${order['orderCode']}',
-                        style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          fontSize: 16,
-                          color: isDark ? Colors.white : Colors.black,
-                        ),
-                      ),
-                      Container(
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 12, vertical: 6),
-                        decoration: BoxDecoration(
-                          color: const Color(0xFFDE8500).withOpacity(0.1),
-                          borderRadius: BorderRadius.circular(8),
-                        ),
-                        child: Text(
-                          order['status'],
-                          style: const TextStyle(
-                            color: Color(0xFFDE8500),
-                            fontWeight: FontWeight.w500,
-                            fontSize: 12,
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                  Divider(
-                    color: isDark ? Colors.white24 : Colors.black12,
-                    height: 24,
-                  ),
-                  Row(
+      body: StreamBuilder<QuerySnapshot>(
+        stream: _firestore.collection('orders').snapshots(),
+        builder: (context, snapshot) {
+          if (snapshot.hasError) {
+            return Center(child: Text('Terjadi kesalahan: ${snapshot.error}'));
+          }
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const Center(child: CircularProgressIndicator());
+          }
+
+          final orders = snapshot.data!.docs;
+
+          if (orders.isEmpty) {
+            return const Center(child: Text('Belum ada pesanan.'));
+          }
+
+          return ListView.builder(
+            padding: const EdgeInsets.all(16),
+            itemCount: orders.length,
+            itemBuilder: (context, index) {
+              final order = orders[index];
+              final orderData = order.data() as Map<String, dynamic>;
+              final String currentStatus =
+                  orderData['status'] ?? 'Menunggu Konfirmasi';
+
+              // Ensure currentStatus is a valid option
+              final statusValue = statusOptions.contains(currentStatus)
+                  ? currentStatus
+                  : statusOptions.first;
+
+              return Card(
+                color: isDark ? const Color(0xFF2A2A2A) : Colors.white,
+                elevation: 3,
+                margin: const EdgeInsets.only(bottom: 16),
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(16)),
+                child: Padding(
+                  padding: const EdgeInsets.all(16),
+                  child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Container(
-                        width: 80,
-                        height: 80,
-                        decoration: BoxDecoration(
-                          color: const Color(0xFF8FBC8F).withOpacity(0.1),
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                        child: Center(
-                          child: Text(
-                            order['imageText'],
-                            style: const TextStyle(color: Color(0xFF8FBC8F)),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Flexible(
+                            child: Text(
+                              'Kode: ${order.id}',
+                              style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                fontSize: 16,
+                                color: isDark ? Colors.white : Colors.black,
+                              ),
+                              overflow: TextOverflow.ellipsis,
+                            ),
                           ),
-                        ),
+                          Container(
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 12, vertical: 6),
+                            decoration: BoxDecoration(
+                              color: const Color(0xFFDE8500).withOpacity(0.1),
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                            child: Text(
+                              currentStatus,
+                              style: const TextStyle(
+                                color: Color(0xFFDE8500),
+                                fontWeight: FontWeight.w500,
+                                fontSize: 12,
+                              ),
+                            ),
+                          ),
+                        ],
                       ),
-                      const SizedBox(width: 16),
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              'Tanggal Pesan',
-                              style: TextStyle(
-                                color:
-                                    isDark ? Colors.white70 : Colors.grey[600],
-                                fontSize: 12,
+                      Divider(
+                        color: isDark ? Colors.white24 : Colors.black12,
+                        height: 24,
+                      ),
+                      Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Container(
+                            width: 80,
+                            height: 80,
+                            decoration: BoxDecoration(
+                              color: const Color(0xFF8FBC8F).withOpacity(0.1),
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                            child: const Center(
+                              child: Text(
+                                'Baju', // Placeholder
+                                style: TextStyle(color: Color(0xFF8FBC8F)),
                               ),
                             ),
-                            Text(
-                              order['orderDate'],
+                          ),
+                          const SizedBox(width: 16),
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  'Nama Pelanggan',
+                                  style: TextStyle(
+                                    color: isDark
+                                        ? Colors.white70
+                                        : Colors.grey[600],
+                                    fontSize: 12,
+                                  ),
+                                ),
+                                Text(
+                                  orderData['userName'] ?? 'Tanpa Nama',
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.w500,
+                                    color: isDark ? Colors.white : Colors.black,
+                                  ),
+                                ),
+                                const SizedBox(height: 8),
+                                Text(
+                                  'Tanggal Pesan',
+                                  style: TextStyle(
+                                    color: isDark
+                                        ? Colors.white70
+                                        : Colors.grey[600],
+                                    fontSize: 12,
+                                  ),
+                                ),
+                                Text(
+                                  (orderData['orderDate'] as Timestamp)
+                                      .toDate()
+                                      .toString(),
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.w500,
+                                    color: isDark ? Colors.white : Colors.black,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 16),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Expanded(
+                            child: DropdownButton<String>(
+                              value: statusValue,
+                              isExpanded: true,
+                              dropdownColor: isDark
+                                  ? const Color(0xFF2A2A2A)
+                                  : Colors.white,
                               style: TextStyle(
-                                fontWeight: FontWeight.w500,
                                 color: isDark ? Colors.white : Colors.black,
                               ),
+                              items: statusOptions
+                                  .map((status) => DropdownMenuItem(
+                                        value: status,
+                                        child: Text(status),
+                                      ))
+                                  .toList(),
+                              onChanged: (value) {
+                                if (value != null) {
+                                  _updateOrderStatus(order.id, value);
+                                }
+                              },
                             ),
-                            const SizedBox(height: 8),
-                            Text(
-                              'Tanggal Selesai',
+                          ),
+                          const SizedBox(width: 16),
+                          ElevatedButton(
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: const Color(0xFFDE8500),
+                              shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(8)),
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 20, vertical: 10),
+                            ),
+                            onPressed: () {
+                              // Dummy data for now, will be replaced with real data
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => CekDetailAdminScreen(
+                                    orderCode: order.id,
+                                    model: orderData['model'] ?? '',
+                                    fabricType: orderData['fabric'] ?? '',
+                                    productQuantity: 1, // Placeholder
+                                    orderDate:
+                                        (orderData['orderDate'] as Timestamp)
+                                            .toDate()
+                                            .toString(),
+                                  ),
+                                ),
+                              );
+                            },
+                            child: const Text(
+                              'Cek Detail',
                               style: TextStyle(
-                                color:
-                                    isDark ? Colors.white70 : Colors.grey[600],
-                                fontSize: 12,
+                                color: Colors.white,
+                                fontWeight: FontWeight.bold,
                               ),
                             ),
-                            Text(
-                              order['finishDate'],
-                              style: TextStyle(
-                                fontWeight: FontWeight.w500,
-                                color: isDark ? Colors.white : Colors.black,
-                              ),
-                            ),
-                            const SizedBox(height: 8),
-                            Text(
-                              'Jumlah Produk',
-                              style: TextStyle(
-                                color:
-                                    isDark ? Colors.white70 : Colors.grey[600],
-                                fontSize: 12,
-                              ),
-                            ),
-                            Text(
-                              order['productQuantity'].toString(),
-                              style: TextStyle(
-                                fontWeight: FontWeight.w500,
-                                color: isDark ? Colors.white : Colors.black,
-                              ),
-                            ),
-                          ],
-                        ),
+                          ),
+                        ],
                       ),
                     ],
                   ),
-                  const SizedBox(height: 16),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    children: [
-                      ElevatedButton(
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: const Color(0xFFDE8500),
-                          shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(8)),
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 20, vertical: 10),
-                        ),
-                        onPressed: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => CekDetailAdminScreen(
-                                orderCode: order['orderCode'],
-                                model: 'Seragam',
-                                fabricType: 'Katun',
-                                productQuantity: order['productQuantity'],
-                                orderDate: order['orderDate'],
-                              ),
-                            ),
-                          );
-                        },
-                        child: const Text(
-                          'Cek Detail',
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                ],
-              ),
-            ),
+                ),
+              );
+            },
           );
         },
       ),

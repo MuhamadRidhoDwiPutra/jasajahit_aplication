@@ -4,9 +4,14 @@ import 'berhasil_pesan_celana_customer_screen.dart';
 import 'home_customer_screen.dart';
 import 'package:provider/provider.dart';
 import 'package:jasa_jahit_aplication/src/theme/theme_provider.dart';
+import 'package:jasa_jahit_aplication/src/model/order_model.dart';
+import 'package:jasa_jahit_aplication/src/services/firestore_service.dart';
 
 class PembayaranCelanaCustomerScreen extends StatelessWidget {
-  const PembayaranCelanaCustomerScreen({super.key});
+  final Order order;
+  final FirestoreService _firestoreService = FirestoreService();
+
+  PembayaranCelanaCustomerScreen({super.key, required this.order});
 
   @override
   Widget build(BuildContext context) {
@@ -92,7 +97,7 @@ class PembayaranCelanaCustomerScreen extends StatelessWidget {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              'Tanggal Pemesanan\n12 mei 2024',
+                              'Tanggal Pemesanan\n${order.orderDate.toDate().day} ${_getMonth(order.orderDate.toDate().month)} ${order.orderDate.toDate().year}',
                               style: TextStyle(
                                 color: isDark ? Colors.white : Colors.black,
                               ),
@@ -104,7 +109,7 @@ class PembayaranCelanaCustomerScreen extends StatelessWidget {
                               ),
                             ),
                             Text(
-                              'Harga:\nRp. 50.000',
+                              'Harga:\nRp. ${order.price.toStringAsFixed(0)}',
                               style: TextStyle(
                                 color: isDark ? Colors.white : Colors.black,
                               ),
@@ -131,7 +136,7 @@ class PembayaranCelanaCustomerScreen extends StatelessWidget {
                             context,
                             MaterialPageRoute(
                               builder: (context) =>
-                                  const CekDetailPesananCelanaScreen(),
+                                  CekDetailPesananCelanaScreen(order: order),
                             ),
                           );
                         },
@@ -203,13 +208,22 @@ class PembayaranCelanaCustomerScreen extends StatelessWidget {
                   ),
                   padding: const EdgeInsets.symmetric(vertical: 14),
                 ),
-                onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) =>
-                            const BerhasilPesanCelanaCustomerScreen()),
-                  );
+                onPressed: () async {
+                  try {
+                    await _firestoreService.saveOrder(order);
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) =>
+                              const BerhasilPesanCelanaCustomerScreen()),
+                    );
+                  } catch (e) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text('Gagal menyimpan pesanan: $e'),
+                      ),
+                    );
+                  }
                 },
                 child: const Text('Bayar',
                     style: TextStyle(fontWeight: FontWeight.bold)),
@@ -221,4 +235,22 @@ class PembayaranCelanaCustomerScreen extends StatelessWidget {
       ),
     );
   }
+}
+
+String _getMonth(int month) {
+  const months = [
+    'Januari',
+    'Februari',
+    'Maret',
+    'April',
+    'Mei',
+    'Juni',
+    'Juli',
+    'Agustus',
+    'September',
+    'Oktober',
+    'November',
+    'Desember'
+  ];
+  return months[month - 1];
 }

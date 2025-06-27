@@ -1,5 +1,7 @@
 // ignore: unused_import
 import 'package:jasa_jahit_aplication/src/customer/konfirmasi_desain_baju_customer_screen.dart';
+import 'package:jasa_jahit_aplication/src/model/order_model.dart';
+import 'package:jasa_jahit_aplication/src/services/firestore_service.dart';
 import 'cek_detail_pesanan_baju_screen.dart';
 import 'package:flutter/material.dart';
 import 'berhasil_pesan_baju_customer_screen.dart';
@@ -8,8 +10,11 @@ import 'package:provider/provider.dart';
 import 'package:jasa_jahit_aplication/src/theme/theme_provider.dart';
 
 class PembayaranBajuCustomerScreen extends StatelessWidget {
-  // ignore: use_super_parameters
-  const PembayaranBajuCustomerScreen({Key? key}) : super(key: key);
+  final Order order;
+  final FirestoreService _firestoreService = FirestoreService();
+
+  PembayaranBajuCustomerScreen({Key? key, required this.order})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -95,7 +100,7 @@ class PembayaranBajuCustomerScreen extends StatelessWidget {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              'Tanggal Pemesanan\n12 mei 2024',
+                              'Tanggal Pemesanan\n${order.orderDate.toDate().day} ${_getMonth(order.orderDate.toDate().month)} ${order.orderDate.toDate().year}',
                               style: TextStyle(
                                 color: isDark ? Colors.white : Colors.black,
                               ),
@@ -107,7 +112,7 @@ class PembayaranBajuCustomerScreen extends StatelessWidget {
                               ),
                             ),
                             Text(
-                              'Harga:\nRp. 50.000',
+                              'Harga:\nRp. ${order.price.toStringAsFixed(0)}',
                               style: TextStyle(
                                 color: isDark ? Colors.white : Colors.black,
                               ),
@@ -134,7 +139,7 @@ class PembayaranBajuCustomerScreen extends StatelessWidget {
                             context,
                             MaterialPageRoute(
                               builder: (context) =>
-                                  const CekDetailPesananBajuScreen(),
+                                  CekDetailPesananBajuScreen(order: order),
                             ),
                           );
                         },
@@ -206,13 +211,22 @@ class PembayaranBajuCustomerScreen extends StatelessWidget {
                   ),
                   padding: const EdgeInsets.symmetric(vertical: 14),
                 ),
-                onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) =>
-                            const BerhasilPesanBajuCustomerScreen()),
-                  );
+                onPressed: () async {
+                  try {
+                    await _firestoreService.saveOrder(order);
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) =>
+                              const BerhasilPesanBajuCustomerScreen()),
+                    );
+                  } catch (e) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text('Gagal menyimpan pesanan: $e'),
+                      ),
+                    );
+                  }
                 },
                 child: const Text('Bayar',
                     style: TextStyle(fontWeight: FontWeight.bold)),
@@ -224,6 +238,24 @@ class PembayaranBajuCustomerScreen extends StatelessWidget {
       ),
     );
   }
+}
+
+String _getMonth(int month) {
+  const months = [
+    'Januari',
+    'Februari',
+    'Maret',
+    'April',
+    'Mei',
+    'Juni',
+    'Juli',
+    'Agustus',
+    'September',
+    'Oktober',
+    'November',
+    'Desember'
+  ];
+  return months[month - 1];
 }
 
 // ignore: unused_element

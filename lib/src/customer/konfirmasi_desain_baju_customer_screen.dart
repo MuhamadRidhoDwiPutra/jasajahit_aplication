@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:jasa_jahit_aplication/src/model/order_model.dart';
 import 'ukuran_baju_customer_screen.dart';
 import 'home_customer_screen.dart';
 import 'pembayaran_baju_customer_screen.dart';
@@ -7,7 +8,8 @@ import 'package:provider/provider.dart';
 import 'package:jasa_jahit_aplication/src/theme/theme_provider.dart';
 
 class KonfirmasiDesainBajuCustomerScreen extends StatelessWidget {
-  const KonfirmasiDesainBajuCustomerScreen({super.key});
+  final Order order;
+  const KonfirmasiDesainBajuCustomerScreen({super.key, required this.order});
 
   @override
   Widget build(BuildContext context) {
@@ -106,7 +108,7 @@ class KonfirmasiDesainBajuCustomerScreen extends StatelessWidget {
                             const SizedBox(height: 16),
                             _DetailItem(
                               label: 'Model',
-                              value: 'Model 1',
+                              value: order.model,
                               icon: Icons.checkroom,
                             ),
                             Divider(
@@ -115,7 +117,7 @@ class KonfirmasiDesainBajuCustomerScreen extends StatelessWidget {
                                     isDark ? Colors.white24 : Colors.black12),
                             _DetailItem(
                               label: 'Kain',
-                              value: 'Katun',
+                              value: order.fabric,
                               icon: Icons.checkroom,
                             ),
                             Divider(
@@ -125,7 +127,7 @@ class KonfirmasiDesainBajuCustomerScreen extends StatelessWidget {
                             _DetailItem(
                               label: 'Ukuran',
                               value:
-                                  'Lingkar Dada: 100cm\nLebar Bahu: 45cm\nPanjang Baju: 65cm\nPanjang Lengan: 60cm\nLebar Lengan: 25cm',
+                                  'Lingkar Dada: ${order.measurements['lingkarDada']}cm\nLebar Bahu: ${order.measurements['lebarBahu']}cm\nPanjang Baju: ${order.measurements['panjangBaju']}cm\nPanjang Lengan: ${order.measurements['panjangLengan']}cm\nLebar Lengan: ${order.measurements['lebarLengan']}cm',
                               icon: Icons.straighten,
                             ),
                           ],
@@ -174,7 +176,7 @@ class KonfirmasiDesainBajuCustomerScreen extends StatelessWidget {
                                   ),
                                 ),
                                 Text(
-                                  'Rp 150.000',
+                                  'Rp ${order.price.toStringAsFixed(0)}',
                                   style: TextStyle(
                                     fontSize: 14,
                                     color: isDark
@@ -226,7 +228,7 @@ class KonfirmasiDesainBajuCustomerScreen extends StatelessWidget {
                             context,
                             MaterialPageRoute(
                               builder: (context) =>
-                                  const PembayaranBajuCustomerScreen(),
+                                  PembayaranBajuCustomerScreen(order: order),
                             ),
                           );
                         },

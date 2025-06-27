@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:jasa_jahit_aplication/src/model/order_model.dart';
 import 'ukuran_celana_customer_screen.dart';
 import 'home_customer_screen.dart';
 import 'pembayaran_celana_customer_screen.dart';
@@ -6,7 +7,8 @@ import 'package:provider/provider.dart';
 import 'package:jasa_jahit_aplication/src/theme/theme_provider.dart';
 
 class KonfirmasiDesainCelanaCustomerScreen extends StatelessWidget {
-  const KonfirmasiDesainCelanaCustomerScreen({super.key});
+  final Order order;
+  const KonfirmasiDesainCelanaCustomerScreen({super.key, required this.order});
 
   @override
   Widget build(BuildContext context) {
@@ -105,7 +107,7 @@ class KonfirmasiDesainCelanaCustomerScreen extends StatelessWidget {
                             const SizedBox(height: 16),
                             _DetailItem(
                               label: 'Model',
-                              value: 'Celana',
+                              value: order.model,
                               icon: Icons.shopping_bag,
                             ),
                             Divider(
@@ -114,7 +116,7 @@ class KonfirmasiDesainCelanaCustomerScreen extends StatelessWidget {
                                     isDark ? Colors.white24 : Colors.black12),
                             _DetailItem(
                               label: 'Kain',
-                              value: 'Katun',
+                              value: order.fabric,
                               icon: Icons.checkroom,
                             ),
                             Divider(
@@ -124,7 +126,7 @@ class KonfirmasiDesainCelanaCustomerScreen extends StatelessWidget {
                             _DetailItem(
                               label: 'Ukuran',
                               value:
-                                  'Panjang Celana: 100cm\nLingkar Pinggang: 80cm\nLingkar Pinggul: 90cm\nLingkar Pesak: 60cm\nLingkar Paha: 55cm\nLebar Bawah Celana: 20cm',
+                                  'Panjang Celana: ${order.measurements['panjangCelana']}cm\nLingkar Pinggang: ${order.measurements['lingkarPinggang']}cm\nLingkar Pinggul: ${order.measurements['lingkarPinggul']}cm\nLingkar Pesak: ${order.measurements['lingkarPesak']}cm\nLingkar Paha: ${order.measurements['lingkarPaha']}cm\nLebar Bawah Celana: ${order.measurements['lebarBawahCelana']}cm',
                               icon: Icons.straighten,
                             ),
                           ],
@@ -173,7 +175,7 @@ class KonfirmasiDesainCelanaCustomerScreen extends StatelessWidget {
                                   ),
                                 ),
                                 Text(
-                                  'Rp 150.000',
+                                  'Rp ${order.price.toStringAsFixed(0)}',
                                   style: TextStyle(
                                     fontSize: 14,
                                     color: isDark
@@ -197,9 +199,9 @@ class KonfirmasiDesainCelanaCustomerScreen extends StatelessWidget {
                                     fontFamily: 'SF Pro Display',
                                   ),
                                 ),
-                                const Text(
-                                  'Rp 150.000',
-                                  style: TextStyle(
+                                Text(
+                                  'Rp ${order.price.toStringAsFixed(0)}',
+                                  style: const TextStyle(
                                     fontSize: 16,
                                     fontWeight: FontWeight.w600,
                                     color: Color(0xFFDE8500),
@@ -225,7 +227,7 @@ class KonfirmasiDesainCelanaCustomerScreen extends StatelessWidget {
                             context,
                             MaterialPageRoute(
                               builder: (context) =>
-                                  const PembayaranCelanaCustomerScreen(),
+                                  PembayaranCelanaCustomerScreen(order: order),
                             ),
                           );
                         },
