@@ -51,7 +51,7 @@ class KonfirmasiDesainCelanaCustomerScreen extends StatelessWidget {
                               context,
                               MaterialPageRoute(
                                   builder: (context) =>
-                                      const UkuranCelanaCustomerScreen()),
+                                      const UkuranCelanaCustomerScreen(selectedFabric: '',)),
                             );
                           },
                         ),

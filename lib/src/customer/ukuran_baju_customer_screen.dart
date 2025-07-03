@@ -9,8 +9,9 @@ import 'package:jasa_jahit_aplication/src/theme/theme_provider.dart';
 import 'package:jasa_jahit_aplication/src/model/order_model.dart';
 
 class UkuranBajuCustomerScreen extends StatefulWidget {
-  // ignore: use_super_parameters
-  const UkuranBajuCustomerScreen({Key? key}) : super(key: key);
+  final String selectedFabric;
+  const UkuranBajuCustomerScreen({Key? key, required this.selectedFabric})
+      : super(key: key);
 
   @override
   State<UkuranBajuCustomerScreen> createState() =>
@@ -186,6 +187,7 @@ class _UkuranBajuCustomerScreenState extends State<UkuranBajuCustomerScreen> {
                                 user.displayName ?? user.email ?? 'No Name',
                             orderType: 'Baju',
                             measurements: measurements,
+                            fabric: widget.selectedFabric,
                             orderDate: Timestamp.now(),
                           );
 

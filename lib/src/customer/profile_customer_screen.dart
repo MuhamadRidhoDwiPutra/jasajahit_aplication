@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:jasa_jahit_aplication/src/theme/dynamic_theme.dart';
 import 'home_customer_screen.dart';
-import 'pesan_customer_screen.dart';
-import 'tracking_pesanan_customer_screen.dart';
+
+import 'status_pesanan_customer_screen.dart';
 import 'riwayat_customer_screen.dart';
 import 'desain_customer_screen.dart';
 import 'package:jasa_jahit_aplication/src/page/login_screen.dart';

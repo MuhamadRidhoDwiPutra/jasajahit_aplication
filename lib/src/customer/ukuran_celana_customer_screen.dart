@@ -9,7 +9,9 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:jasa_jahit_aplication/src/model/order_model.dart' as model;
 
 class UkuranCelanaCustomerScreen extends StatefulWidget {
-  const UkuranCelanaCustomerScreen({super.key});
+  final String selectedFabric;
+  const UkuranCelanaCustomerScreen({Key? key, required this.selectedFabric})
+      : super(key: key);
 
   @override
   State<UkuranCelanaCustomerScreen> createState() =>
@@ -200,6 +202,7 @@ class _UkuranCelanaCustomerScreenState
                                 user.displayName ?? user.email ?? 'No Name',
                             orderType: 'Celana',
                             measurements: measurements,
+                            fabric: widget.selectedFabric,
                             orderDate: fs.Timestamp.now(),
                           );
 

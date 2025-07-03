@@ -211,12 +211,12 @@ class PembayaranCelanaCustomerScreen extends StatelessWidget {
                 onPressed: () async {
                   try {
                     await _firestoreService.saveOrder(order);
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) =>
-                              const BerhasilPesanCelanaCustomerScreen()),
-                    );
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) =>
+                            const BerhasilPesanCelanaCustomerScreen()),
+                  );
                   } catch (e) {
                     ScaffoldMessenger.of(context).showSnackBar(
                       SnackBar(

@@ -15,6 +15,8 @@ class DesainCustomerScreen extends StatefulWidget {
 }
 
 class _DesainCustomerScreenState extends State<DesainCustomerScreen> {
+  String _selectedFabric = 'Katun';
+
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
@@ -79,7 +81,8 @@ class _DesainCustomerScreenState extends State<DesainCustomerScreen> {
                                     context,
                                     MaterialPageRoute(
                                       builder: (context) =>
-                                          const UkuranBajuCustomerScreen(),
+                                          UkuranBajuCustomerScreen(
+                                              selectedFabric: _selectedFabric),
                                     ),
                                   );
                                 },
@@ -94,7 +97,8 @@ class _DesainCustomerScreenState extends State<DesainCustomerScreen> {
                                     context,
                                     MaterialPageRoute(
                                       builder: (context) =>
-                                          const UkuranCelanaCustomerScreen(),
+                                          UkuranCelanaCustomerScreen(
+                                              selectedFabric: _selectedFabric),
                                     ),
                                   );
                                 },
@@ -117,24 +121,36 @@ class _DesainCustomerScreenState extends State<DesainCustomerScreen> {
                           name: 'Katun',
                           description: 'Nyaman dan menyerap keringat',
                           price: 'Rp 50.000/meter',
-                          selected: true,
-                          onTap: () {},
+                          selected: _selectedFabric == 'Katun',
+                          onTap: () {
+                            setState(() {
+                              _selectedFabric = 'Katun';
+                            });
+                          },
                         ),
                         const SizedBox(height: 12),
                         _FabricCardModern(
                           name: 'Polyester',
                           description: 'Tahan lama dan mudah dirawat',
                           price: 'Rp 45.000/meter',
-                          selected: false,
-                          onTap: () {},
+                          selected: _selectedFabric == 'Polyester',
+                          onTap: () {
+                            setState(() {
+                              _selectedFabric = 'Polyester';
+                            });
+                          },
                         ),
                         const SizedBox(height: 12),
                         _FabricCardModern(
                           name: 'Rayon',
                           description: 'Halus dan mengalir',
                           price: 'Rp 55.000/meter',
-                          selected: false,
-                          onTap: () {},
+                          selected: _selectedFabric == 'Rayon',
+                          onTap: () {
+                            setState(() {
+                              _selectedFabric = 'Rayon';
+                            });
+                          },
                         ),
                       ],
                     ),

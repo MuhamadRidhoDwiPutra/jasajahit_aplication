@@ -2,8 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:jasa_jahit_aplication/src/customer/home_customer_screen.dart';
 import 'package:jasa_jahit_aplication/src/admin/home_admin_screen.dart';
 import 'profile_customer_screen.dart';
-import 'pesan_customer_screen.dart';
-import 'tracking_pesanan_customer_screen.dart';
+import 'status_pesanan_customer_screen.dart';
 import 'riwayat_customer_screen.dart';
 import 'desain_customer_screen.dart';
 import 'package:jasa_jahit_aplication/src/theme/dynamic_theme.dart';
@@ -24,7 +23,7 @@ class _HomeCustomerScreenState extends State<HomeCustomerScreen> {
   final List<Widget> _customerScreens = [
     _HomeCustomerContent(),
     DesainCustomerScreen(),
-    TrackingPesananCustomerScreen(),
+    StatusPesananCustomerScreen(),
     RiwayatCustomerScreen(),
     ProfileCustomerScreen(),
   ];

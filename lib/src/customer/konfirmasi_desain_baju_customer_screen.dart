@@ -52,7 +52,7 @@ class KonfirmasiDesainBajuCustomerScreen extends StatelessWidget {
                               context,
                               MaterialPageRoute(
                                   builder: (context) =>
-                                      const UkuranBajuCustomerScreen()),
+                                      const UkuranBajuCustomerScreen(selectedFabric: '',)),
                             );
                           },
                         ),

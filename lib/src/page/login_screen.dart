@@ -18,6 +18,8 @@ class _LoginScreenState extends State<LoginScreen> {
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
 
+  bool _obscurePassword = true;
+
   // ignore: unused_element
   void _showResetPasswordDialog() {
     final TextEditingController emailController = TextEditingController();
@@ -164,7 +166,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     borderRadius: BorderRadius.circular(20),
                     boxShadow: [
                       BoxShadow(
-                        color: Colors.black.withOpacity(0.1),
+                        color: Colors.white.withOpacity(0.1),
                         blurRadius: 10,
                         offset: const Offset(0, 4),
                       ),
@@ -185,9 +187,12 @@ class _LoginScreenState extends State<LoginScreen> {
                       // Kolom Email
                       TextField(
                         controller: _emailController,
+                        style: const TextStyle(color: Colors.black),
                         decoration: InputDecoration(
                           labelText: 'Email',
-                          prefixIcon: const Icon(Icons.email_outlined),
+                          labelStyle: const TextStyle(color: Colors.black54),
+                          prefixIcon: const Icon(Icons.email_outlined,
+                              color: Colors.black54),
                           border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(12),
                             borderSide: BorderSide.none,
@@ -204,10 +209,26 @@ class _LoginScreenState extends State<LoginScreen> {
                       // Kolom Password
                       TextField(
                         controller: _passwordController,
-                        obscureText: true,
+                        obscureText: _obscurePassword,
+                        style: const TextStyle(color: Colors.black),
                         decoration: InputDecoration(
                           labelText: 'Kata Sandi',
-                          prefixIcon: const Icon(Icons.lock_outline),
+                          labelStyle: const TextStyle(color: Colors.black54),
+                          prefixIcon: const Icon(Icons.lock_outline,
+                              color: Colors.black54),
+                          suffixIcon: IconButton(
+                            icon: Icon(
+                              _obscurePassword
+                                  ? Icons.visibility_off
+                                  : Icons.visibility,
+                              color: Colors.black54,
+                            ),
+                            onPressed: () {
+                              setState(() {
+                                _obscurePassword = !_obscurePassword;
+                              });
+                            },
+                          ),
                           border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(12),
                             borderSide: BorderSide.none,
