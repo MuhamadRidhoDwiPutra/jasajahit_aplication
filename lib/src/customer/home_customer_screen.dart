@@ -9,6 +9,7 @@ import 'package:jasa_jahit_aplication/src/theme/dynamic_theme.dart';
 import 'package:jasa_jahit_aplication/src/theme/theme_switcher.dart';
 import 'package:provider/provider.dart';
 import 'package:jasa_jahit_aplication/src/theme/theme_provider.dart';
+import 'package:jasa_jahit_aplication/src/customer/whatsapp_chat_helper.dart';
 
 class HomeCustomerScreen extends StatefulWidget {
   const HomeCustomerScreen({super.key});
@@ -100,9 +101,11 @@ class _HomeCustomerScreenState extends State<HomeCustomerScreen> {
                           borderRadius: BorderRadius.circular(12),
                         ),
                         child: IconButton(
-                          icon: const Icon(Icons.account_circle_outlined,
-                              color: Color(0xFFDE8500)),
-                          onPressed: () {},
+                          icon:
+                              const Icon(Icons.chat, color: Color(0xFF25D366)),
+                          onPressed: () {
+                            WhatsAppChatHelper.openWhatsAppChat();
+                          },
                         ),
                       ),
                     ],
