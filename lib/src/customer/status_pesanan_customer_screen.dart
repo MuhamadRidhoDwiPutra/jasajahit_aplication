@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:jasa_jahit_aplication/src/customer/cek_detail_status_pesanan_customer_screen.dart';
 import 'home_customer_screen.dart';
 import 'riwayat_customer_screen.dart';
 import 'profile_customer_screen.dart';
@@ -228,7 +229,16 @@ class StatusPesananCustomerScreen extends StatelessWidget {
                                       padding: const EdgeInsets.symmetric(
                                           horizontal: 20, vertical: 10),
                                     ),
-                                    onPressed: () {/* aksi detail */},
+                                    onPressed: () {
+                                      Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (context) =>
+                                              CekDetailStatusPesananCustomerScreen(
+                                                  order: order),
+                                        ),
+                                      );
+                                    },
                                     child: const Text(
                                       'Cek Detail',
                                       style: TextStyle(

@@ -218,6 +218,48 @@ class CekDetailPesananCelanaScreen extends StatelessWidget {
                       const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                 ),
               ),
+              const SizedBox(height: 18),
+              Text(
+                'Ukuran',
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 16,
+                  color: isDark ? Colors.white : Colors.black,
+                ),
+              ),
+              const SizedBox(height: 4),
+              Text(
+                [
+                  if (order.measurements['panjangCelana'] != null &&
+                      order.measurements['panjangCelana'].toString().isNotEmpty)
+                    'Panjang Celana: ${order.measurements['panjangCelana']} cm',
+                  if (order.measurements['lingkarPinggang'] != null &&
+                      order.measurements['lingkarPinggang']
+                          .toString()
+                          .isNotEmpty)
+                    'Lingkar Pinggang: ${order.measurements['lingkarPinggang']} cm',
+                  if (order.measurements['lingkarPinggul'] != null &&
+                      order.measurements['lingkarPinggul']
+                          .toString()
+                          .isNotEmpty)
+                    'Lingkar Pinggul: ${order.measurements['lingkarPinggul']} cm',
+                  if (order.measurements['lingkarPesak'] != null &&
+                      order.measurements['lingkarPesak'].toString().isNotEmpty)
+                    'Lingkar Pesak: ${order.measurements['lingkarPesak']} cm',
+                  if (order.measurements['lingkarPaha'] != null &&
+                      order.measurements['lingkarPaha'].toString().isNotEmpty)
+                    'Lingkar Paha: ${order.measurements['lingkarPaha']} cm',
+                  if (order.measurements['lebarBawahCelana'] != null &&
+                      order.measurements['lebarBawahCelana']
+                          .toString()
+                          .isNotEmpty)
+                    'Lebar Bawah Celana: ${order.measurements['lebarBawahCelana']} cm',
+                ].join('\n'),
+                style: TextStyle(
+                  fontSize: 16,
+                  color: isDark ? Colors.white70 : Colors.black87,
+                ),
+              ),
             ],
           ),
         ),

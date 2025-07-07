@@ -219,6 +219,39 @@ class CekDetailPesananBajuScreen extends StatelessWidget {
                       const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                 ),
               ),
+              const SizedBox(height: 18),
+              Text(
+                'Ukuran',
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 16,
+                  color: isDark ? Colors.white : Colors.black,
+                ),
+              ),
+              const SizedBox(height: 4),
+              Text(
+                [
+                  if (order.measurements['lingkarDada'] != null &&
+                      order.measurements['lingkarDada'].toString().isNotEmpty)
+                    'Lingkar Dada: ${order.measurements['lingkarDada']} cm',
+                  if (order.measurements['lebarBahu'] != null &&
+                      order.measurements['lebarBahu'].toString().isNotEmpty)
+                    'Lebar Bahu: ${order.measurements['lebarBahu']} cm',
+                  if (order.measurements['panjangBaju'] != null &&
+                      order.measurements['panjangBaju'].toString().isNotEmpty)
+                    'Panjang Baju: ${order.measurements['panjangBaju']} cm',
+                  if (order.measurements['panjangLengan'] != null &&
+                      order.measurements['panjangLengan'].toString().isNotEmpty)
+                    'Panjang Lengan: ${order.measurements['panjangLengan']} cm',
+                  if (order.measurements['lebarLengan'] != null &&
+                      order.measurements['lebarLengan'].toString().isNotEmpty)
+                    'Lebar Lengan: ${order.measurements['lebarLengan']} cm',
+                ].join('\n'),
+                style: TextStyle(
+                  fontSize: 16,
+                  color: isDark ? Colors.white70 : Colors.black87,
+                ),
+              ),
             ],
           ),
         ),

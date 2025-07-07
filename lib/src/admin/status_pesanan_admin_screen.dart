@@ -231,7 +231,6 @@ class _StatusPesananAdminScreenState extends State<StatusPesananAdminScreen> {
                                   horizontal: 20, vertical: 10),
                             ),
                             onPressed: () {
-                              // Dummy data for now, will be replaced with real data
                               Navigator.push(
                                 context,
                                 MaterialPageRoute(
@@ -244,6 +243,9 @@ class _StatusPesananAdminScreenState extends State<StatusPesananAdminScreen> {
                                         (orderData['orderDate'] as Timestamp)
                                             .toDate()
                                             .toString(),
+                                    measurements:
+                                        orderData['measurements'] ?? {},
+                                    orderType: orderData['orderType'] ?? '',
                                   ),
                                 ),
                               );

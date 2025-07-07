@@ -400,7 +400,7 @@ class _OrderCard extends StatelessWidget {
                           model: 'Seragam',
                           fabricType: 'Katun',
                           productQuantity: productQuantity,
-                          orderDate: orderDate,
+                          orderDate: orderDate, measurements: {}, orderType: '',
                         ),
                       ),
                     );
