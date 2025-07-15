@@ -14,6 +14,22 @@ import 'package:jasa_jahit_aplication/src/model/order_model.dart' as model;
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
+Color getStatusColor(String status) {
+  status = status.toLowerCase();
+  if (status.contains('menunggu konfirmasi')) {
+    return Colors.orange; // #FFA500
+  } else if (status.contains('dikonfirmasi')) {
+    return Colors.blue; // #2196F3
+  } else if (status.contains('sedang dikerjakan')) {
+    return Colors.amber; // #FFC107
+  } else if (status.contains('selesai')) {
+    return Colors.green; // #4CAF50
+  } else if (status.contains('batal')) {
+    return Colors.red; // #F44336
+  }
+  return Colors.grey; // Default
+}
+
 class StatusPesananCustomerScreen extends StatelessWidget {
   const StatusPesananCustomerScreen({super.key});
 
@@ -90,14 +106,14 @@ class StatusPesananCustomerScreen extends StatelessWidget {
                                     padding: const EdgeInsets.symmetric(
                                         horizontal: 12, vertical: 6),
                                     decoration: BoxDecoration(
-                                      color: const Color(0xFFDE8500)
+                                      color: getStatusColor(order.status)
                                           .withOpacity(0.1),
                                       borderRadius: BorderRadius.circular(8),
                                     ),
                                     child: Text(
                                       order.status,
-                                      style: const TextStyle(
-                                        color: Color(0xFFDE8500),
+                                      style: TextStyle(
+                                        color: getStatusColor(order.status),
                                         fontWeight: FontWeight.w500,
                                         fontSize: 12,
                                       ),

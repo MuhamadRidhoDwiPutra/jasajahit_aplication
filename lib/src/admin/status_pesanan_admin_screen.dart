@@ -24,6 +24,22 @@ class _StatusPesananAdminScreenState extends State<StatusPesananAdminScreen> {
     'Pesanan Diterima',
   ];
 
+  Color getStatusColor(String status) {
+    status = status.toLowerCase();
+    if (status.contains('menunggu konfirmasi')) {
+      return Colors.orange; // #FFA500
+    } else if (status.contains('dikonfirmasi')) {
+      return Colors.blue; // #2196F3
+    } else if (status.contains('sedang dikerjakan')) {
+      return Colors.amber; // #FFC107
+    } else if (status.contains('selesai')) {
+      return Colors.green; // #4CAF50
+    } else if (status.contains('batal')) {
+      return Colors.red; // #F44336
+    }
+    return Colors.grey; // Default
+  }
+
   Future<void> _updateOrderStatus(String docId, String status) async {
     try {
       await _firestore
@@ -114,13 +130,14 @@ class _StatusPesananAdminScreenState extends State<StatusPesananAdminScreen> {
                             padding: const EdgeInsets.symmetric(
                                 horizontal: 12, vertical: 6),
                             decoration: BoxDecoration(
-                              color: const Color(0xFFDE8500).withOpacity(0.1),
+                              color: getStatusColor(currentStatus)
+                                  .withOpacity(0.1),
                               borderRadius: BorderRadius.circular(8),
                             ),
                             child: Text(
                               currentStatus,
-                              style: const TextStyle(
-                                color: Color(0xFFDE8500),
+                              style: TextStyle(
+                                color: getStatusColor(currentStatus),
                                 fontWeight: FontWeight.w500,
                                 fontSize: 12,
                               ),

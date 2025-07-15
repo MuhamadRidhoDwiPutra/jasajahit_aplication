@@ -32,7 +32,7 @@ class _HomeCustomerScreenState extends State<HomeCustomerScreen> {
   final List<String> _appBarTitles = const [
     'Beranda',
     'Pesan',
-    'Pelacakan',
+    'Status Pesanan',
     'Riwayat',
     'Profil',
   ];
@@ -154,8 +154,8 @@ class _HomeCustomerScreenState extends State<HomeCustomerScreen> {
                   onTap: () => _onItemTapped(1),
                 ),
                 _NavBarItem(
-                  icon: Icons.local_shipping_outlined,
-                  label: 'Pelacakan',
+                  icon: Icons.email_outlined,
+                  label: 'Status Pesanan',
                   isActive: _selectedIndex == 2,
                   onTap: () => _onItemTapped(2),
                 ),
