@@ -7,6 +7,7 @@ import 'konfirmasi_desain_baju_customer_screen.dart';
 import 'package:provider/provider.dart';
 import 'package:jasa_jahit_aplication/src/theme/theme_provider.dart';
 import 'package:jasa_jahit_aplication/src/model/order_model.dart';
+import 'pilih_kain_customer_screen.dart';
 
 class UkuranBajuCustomerScreen extends StatefulWidget {
   final String selectedFabric;
@@ -61,19 +62,19 @@ class _UkuranBajuCustomerScreenState extends State<UkuranBajuCustomerScreen> {
                         child: IconButton(
                           icon: const Icon(Icons.arrow_back_ios_new,
                               color: Color(0xFFDE8500)),
-                          onPressed: () {
-                            Navigator.pushReplacement(
-                              context,
-                              MaterialPageRoute(
+          onPressed: () {
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(
                                   builder: (context) =>
                                       const DesainCustomerScreen()),
-                            );
-                          },
-                        ),
+            );
+          },
+        ),
                       ),
                       Expanded(
                         child: Text(
-                          'Ukuran Baju',
+          'Ukuran Baju',
                           style: TextStyle(
                             fontSize: 20,
                             fontWeight: FontWeight.w600,
@@ -82,10 +83,10 @@ class _UkuranBajuCustomerScreenState extends State<UkuranBajuCustomerScreen> {
                           ),
                           textAlign: TextAlign.center,
                         ),
-                      ),
+        ),
                       const SizedBox(width: 48),
                     ],
-                  ),
+      ),
                 ),
                 Expanded(
                   child: ListView(
@@ -107,9 +108,9 @@ class _UkuranBajuCustomerScreenState extends State<UkuranBajuCustomerScreen> {
                             ),
                           ],
                         ),
-                        child: Column(
+        child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
+          children: [
                             Text(
                               'Ukuran (cm)',
                               style: TextStyle(
@@ -130,7 +131,7 @@ class _UkuranBajuCustomerScreenState extends State<UkuranBajuCustomerScreen> {
                               label: 'Lebar Bahu',
                               controller: lebarBahuController,
                               icon: Icons.straighten,
-                            ),
+                ),
                             const SizedBox(height: 16),
                             _MeasurementField(
                               label: 'Panjang Baju',
@@ -148,20 +149,20 @@ class _UkuranBajuCustomerScreenState extends State<UkuranBajuCustomerScreen> {
                               label: 'Lebar Lengan',
                               controller: lebarLenganController,
                               icon: Icons.straighten,
-                            ),
+                  ),
                           ],
-                        ),
-                      ),
-                      const SizedBox(height: 24),
+              ),
+            ),
+            const SizedBox(height: 24),
                       ElevatedButton(
-                        style: ElevatedButton.styleFrom(
+                style: ElevatedButton.styleFrom(
                           backgroundColor: const Color(0xFFDE8500),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(8),
-                          ),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(8),
+                  ),
                           padding: const EdgeInsets.symmetric(vertical: 16),
-                        ),
-                        onPressed: () {
+                ),
+                onPressed: () {
                           final user = FirebaseAuth.instance.currentUser;
                           if (user == null) {
                             // Handle user not logged in case
@@ -181,37 +182,38 @@ class _UkuranBajuCustomerScreenState extends State<UkuranBajuCustomerScreen> {
                             'lebarLengan': lebarLenganController.text,
                           };
 
-                          final order = Order(
-                            userId: user.uid,
-                            userName:
-                                user.displayName ?? user.email ?? 'No Name',
-                            orderType: 'Baju',
-                            measurements: measurements,
-                            fabric: widget.selectedFabric,
-                            orderDate: Timestamp.now(),
-                          );
-
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) =>
-                                  KonfirmasiDesainBajuCustomerScreen(
-                                      order: order),
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                              builder: (context) => PilihKainCustomerScreen(
+                                onKainSelected: (kain) {
+                                  Navigator.pushReplacement(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) => KonfirmasiDesainBajuCustomerScreen(
+                                        order: Order(
+                                          userId: user.uid,
+                                          userName: user.displayName ?? user.email ?? 'No Name',
+                                          orderType: 'Baju',
+                                          measurements: measurements,
+                                          fabric: kain.nama,
+                                          orderDate: Timestamp.now(),
+                                        ),
+                                      ),
+                                    ),
+                                  );
+                                },
+                              ),
                             ),
-                          );
-                        },
+                  );
+                },
                         child: const Text(
-                          'Lanjutkan',
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontWeight: FontWeight.w600,
-                            fontSize: 16,
-                            fontFamily: 'SF Pro Text',
-                          ),
+                          'Lanjut',
+                          style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.white),
                         ),
-                      ),
+              ),
                     ],
-                  ),
+            ),
                 ),
               ],
             ),

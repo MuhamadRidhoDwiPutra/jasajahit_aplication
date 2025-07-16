@@ -7,6 +7,7 @@ import 'package:jasa_jahit_aplication/src/theme/theme_provider.dart';
 import 'package:cloud_firestore/cloud_firestore.dart' as fs;
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:jasa_jahit_aplication/src/model/order_model.dart' as model;
+import 'pilih_kain_customer_screen.dart';
 
 class UkuranCelanaCustomerScreen extends StatefulWidget {
   final String selectedFabric;
@@ -196,33 +197,40 @@ class _UkuranCelanaCustomerScreenState
                             'lebarBawahCelana': lebarBawahCelanaController.text,
                           };
 
-                          final order = model.Order(
-                            userId: user.uid,
-                            userName:
-                                user.displayName ?? user.email ?? 'No Name',
-                            orderType: 'Celana',
-                            measurements: measurements,
-                            fabric: widget.selectedFabric,
-                            orderDate: fs.Timestamp.now(),
-                          );
-
                           Navigator.push(
                             context,
                             MaterialPageRoute(
-                              builder: (context) =>
-                                  KonfirmasiDesainCelanaCustomerScreen(
-                                      order: order),
+                              builder: (context) => PilihKainCustomerScreen(
+                                onKainSelected: (kain) {
+                                  Navigator.pushReplacement(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) =>
+                                          KonfirmasiDesainCelanaCustomerScreen(
+                                        order: model.Order(
+                                          userId: user.uid,
+                                          userName: user.displayName ??
+                                              user.email ??
+                                              'No Name',
+                                          orderType: 'Celana',
+                                          measurements: measurements,
+                                          fabric: kain.nama,
+                                          orderDate: fs.Timestamp.now(),
+                                        ),
+                                      ),
+                                    ),
+                                  );
+                                },
+                              ),
                             ),
                           );
                         },
                         child: const Text(
-                          'Lanjutkan',
+                          'Lanjut',
                           style: TextStyle(
-                            color: Colors.white,
-                            fontWeight: FontWeight.w600,
-                            fontSize: 16,
-                            fontFamily: 'SF Pro Text',
-                          ),
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.white),
                         ),
                       ),
                     ],
