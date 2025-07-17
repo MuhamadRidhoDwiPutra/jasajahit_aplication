@@ -32,8 +32,9 @@ class _ProfileCustomerScreenState extends State<ProfileCustomerScreen> {
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     return Scaffold(
-      backgroundColor:
-          isDark ? const Color(0xFF1A1A1A) : const Color(0xFF8FBC8F),
+      backgroundColor: isDark
+          ? const Color(0xFF1A1A1A)
+          : const Color(0xFF8FBC8F),
       body: SafeArea(
         child: Column(
           children: [
@@ -51,8 +52,9 @@ class _ProfileCustomerScreenState extends State<ProfileCustomerScreen> {
                             backgroundImage: _profileImage != null
                                 ? FileImage(_profileImage!)
                                 : const AssetImage(
-                                        'assets/avatar_placeholder.png')
-                                    as ImageProvider,
+                                        'assets/avatar_placeholder.png',
+                                      )
+                                      as ImageProvider,
                             backgroundColor: Colors.grey,
                           ),
                           Positioned(
@@ -62,7 +64,8 @@ class _ProfileCustomerScreenState extends State<ProfileCustomerScreen> {
                               onTap: () async {
                                 final picker = ImagePicker();
                                 final picked = await picker.pickImage(
-                                    source: ImageSource.gallery);
+                                  source: ImageSource.gallery,
+                                );
                                 if (picked != null) {
                                   setState(() {
                                     _profileImage = File(picked.path);
@@ -85,8 +88,11 @@ class _ProfileCustomerScreenState extends State<ProfileCustomerScreen> {
                                     ),
                                   ],
                                 ),
-                                child: const Icon(Icons.camera_alt,
-                                    color: Color(0xFFDE8500), size: 22),
+                                child: const Icon(
+                                  Icons.camera_alt,
+                                  color: Color(0xFFDE8500),
+                                  size: 22,
+                                ),
                               ),
                             ),
                           ),
@@ -113,8 +119,9 @@ class _ProfileCustomerScreenState extends State<ProfileCustomerScreen> {
                       Container(
                         padding: const EdgeInsets.all(16),
                         decoration: BoxDecoration(
-                          color:
-                              isDark ? const Color(0xFF2A2A2A) : Colors.white,
+                          color: isDark
+                              ? const Color(0xFF2A2A2A)
+                              : Colors.white,
                           borderRadius: BorderRadius.circular(12),
                           boxShadow: [
                             BoxShadow(
@@ -147,19 +154,24 @@ class _ProfileCustomerScreenState extends State<ProfileCustomerScreen> {
                             borderRadius: BorderRadius.circular(8),
                           ),
                           padding: const EdgeInsets.symmetric(
-                              horizontal: 24, vertical: 12),
+                            horizontal: 24,
+                            vertical: 12,
+                          ),
                         ),
                         onPressed: () async {
                           final result = await showDialog<Map<String, String>>(
                             context: context,
                             builder: (context) {
-                              final nameCtrl =
-                                  TextEditingController(text: _name);
+                              final nameCtrl = TextEditingController(
+                                text: _name,
+                              );
                               final nipCtrl = TextEditingController(text: _nip);
-                              final posisiCtrl =
-                                  TextEditingController(text: _posisi);
-                              final unitCtrl =
-                                  TextEditingController(text: _unit);
+                              final posisiCtrl = TextEditingController(
+                                text: _posisi,
+                              );
+                              final unitCtrl = TextEditingController(
+                                text: _unit,
+                              );
                               return AlertDialog(
                                 backgroundColor: isDark
                                     ? const Color(0xFF2A2A2A)
@@ -192,8 +204,9 @@ class _ProfileCustomerScreenState extends State<ProfileCustomerScreen> {
                                               ? const Color(0xFF3A3A3A)
                                               : Colors.grey[100],
                                           border: OutlineInputBorder(
-                                            borderRadius:
-                                                BorderRadius.circular(8),
+                                            borderRadius: BorderRadius.circular(
+                                              8,
+                                            ),
                                             borderSide: BorderSide.none,
                                           ),
                                         ),
@@ -218,8 +231,9 @@ class _ProfileCustomerScreenState extends State<ProfileCustomerScreen> {
                                               ? const Color(0xFF3A3A3A)
                                               : Colors.grey[100],
                                           border: OutlineInputBorder(
-                                            borderRadius:
-                                                BorderRadius.circular(8),
+                                            borderRadius: BorderRadius.circular(
+                                              8,
+                                            ),
                                             borderSide: BorderSide.none,
                                           ),
                                         ),
@@ -244,8 +258,9 @@ class _ProfileCustomerScreenState extends State<ProfileCustomerScreen> {
                                               ? const Color(0xFF3A3A3A)
                                               : Colors.grey[100],
                                           border: OutlineInputBorder(
-                                            borderRadius:
-                                                BorderRadius.circular(8),
+                                            borderRadius: BorderRadius.circular(
+                                              8,
+                                            ),
                                             borderSide: BorderSide.none,
                                           ),
                                         ),
@@ -270,8 +285,9 @@ class _ProfileCustomerScreenState extends State<ProfileCustomerScreen> {
                                               ? const Color(0xFF3A3A3A)
                                               : Colors.grey[100],
                                           border: OutlineInputBorder(
-                                            borderRadius:
-                                                BorderRadius.circular(8),
+                                            borderRadius: BorderRadius.circular(
+                                              8,
+                                            ),
                                             borderSide: BorderSide.none,
                                           ),
                                         ),
@@ -293,8 +309,8 @@ class _ProfileCustomerScreenState extends State<ProfileCustomerScreen> {
                                   ),
                                   ElevatedButton(
                                     style: ElevatedButton.styleFrom(
-                                        backgroundColor:
-                                            const Color(0xFFDE8500)),
+                                      backgroundColor: const Color(0xFFDE8500),
+                                    ),
                                     onPressed: () {
                                       Navigator.pop(context, {
                                         'name': nameCtrl.text,
@@ -318,10 +334,13 @@ class _ProfileCustomerScreenState extends State<ProfileCustomerScreen> {
                             });
                           }
                         },
-                        label: const Text('Edit Profil',
-                            style: TextStyle(
-                                color: Colors.white,
-                                fontWeight: FontWeight.w600)),
+                        label: const Text(
+                          'Edit Profil',
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
                       ),
                       const SizedBox(height: 24),
                       _ProfileMenuItem(
@@ -331,8 +350,9 @@ class _ProfileCustomerScreenState extends State<ProfileCustomerScreen> {
                           Navigator.push(
                             context,
                             MaterialPageRoute(
-                                builder: (context) =>
-                                    const UbahPasswordCustomerScreen()),
+                              builder: (context) =>
+                                  const UbahPasswordCustomerScreen(),
+                            ),
                           );
                         },
                       ),
@@ -344,8 +364,9 @@ class _ProfileCustomerScreenState extends State<ProfileCustomerScreen> {
                           Navigator.push(
                             context,
                             MaterialPageRoute(
-                                builder: (context) =>
-                                    const TentangAplikasiCustomerScreen()),
+                              builder: (context) =>
+                                  const TentangAplikasiCustomerScreen(),
+                            ),
                           );
                         },
                       ),
@@ -356,11 +377,62 @@ class _ProfileCustomerScreenState extends State<ProfileCustomerScreen> {
                         icon: Icons.logout,
                         label: 'Keluar',
                         onTap: () {
-                          Navigator.pushAndRemoveUntil(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => const LoginScreen()),
-                            (route) => false,
+                          showDialog(
+                            context: context,
+                            builder: (BuildContext context) {
+                              return AlertDialog(
+                                backgroundColor: isDark
+                                    ? const Color(0xFF2A2A2A)
+                                    : Colors.white,
+                                title: Text(
+                                  'Konfirmasi Logout',
+                                  style: TextStyle(
+                                    color: isDark ? Colors.white : Colors.black,
+                                  ),
+                                ),
+                                content: Text(
+                                  'Apakah Anda yakin ingin keluar dari aplikasi?',
+                                  style: TextStyle(
+                                    color: isDark
+                                        ? Colors.white70
+                                        : Colors.black87,
+                                  ),
+                                ),
+                                actions: [
+                                  TextButton(
+                                    child: Text(
+                                      'Batal',
+                                      style: TextStyle(
+                                        color: isDark
+                                            ? Colors.white70
+                                            : Colors.grey[600],
+                                      ),
+                                    ),
+                                    onPressed: () =>
+                                        Navigator.of(context).pop(),
+                                  ),
+                                  ElevatedButton(
+                                    style: ElevatedButton.styleFrom(
+                                      backgroundColor: Colors.red,
+                                    ),
+                                    child: const Text('Logout'),
+                                    onPressed: () {
+                                      Navigator.of(
+                                        context,
+                                      ).pop(); // Close dialog
+                                      Navigator.pushAndRemoveUntil(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (context) =>
+                                              const LoginScreen(),
+                                        ),
+                                        (route) => false,
+                                      );
+                                    },
+                                  ),
+                                ],
+                              );
+                            },
                           );
                         },
                         color: Colors.red,
@@ -388,22 +460,22 @@ class _ProfileInfoRow extends StatelessWidget {
     return Row(
       children: [
         SizedBox(
-            width: 90,
-            child: Text(
-              label,
-              style: TextStyle(
-                color: isDark ? Colors.white70 : Colors.black54,
-              ),
-            )),
+          width: 90,
+          child: Text(
+            label,
+            style: TextStyle(color: isDark ? Colors.white70 : Colors.black54),
+          ),
+        ),
         const SizedBox(width: 8),
         Expanded(
-            child: Text(
-          value,
-          style: TextStyle(
-            color: isDark ? Colors.white : Colors.black,
-            fontWeight: FontWeight.w500,
+          child: Text(
+            value,
+            style: TextStyle(
+              color: isDark ? Colors.white : Colors.black,
+              fontWeight: FontWeight.w500,
+            ),
           ),
-        )),
+        ),
       ],
     );
   }
@@ -414,11 +486,12 @@ class _ProfileMenuItem extends StatelessWidget {
   final String label;
   final VoidCallback onTap;
   final Color? color;
-  const _ProfileMenuItem(
-      {required this.icon,
-      required this.label,
-      required this.onTap,
-      this.color});
+  const _ProfileMenuItem({
+    required this.icon,
+    required this.label,
+    required this.onTap,
+    this.color,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -542,15 +615,10 @@ Widget _ThemeModeContainer(BuildContext context) {
     ),
     child: ListTile(
       contentPadding: const EdgeInsets.symmetric(horizontal: 16),
-      leading: Icon(
-        icon,
-        color: isDark ? Colors.white70 : Colors.grey[700],
-      ),
+      leading: Icon(icon, color: isDark ? Colors.white70 : Colors.grey[700]),
       title: Text(
         label,
-        style: TextStyle(
-          color: isDark ? Colors.white : Colors.black,
-        ),
+        style: TextStyle(color: isDark ? Colors.white : Colors.black),
       ),
       trailing: Icon(
         Icons.chevron_right,
@@ -586,9 +654,7 @@ class _ThemeModePicker extends StatelessWidget {
           ),
           title: Text(
             'Mode Terang',
-            style: TextStyle(
-              color: isDark ? Colors.white : Colors.black,
-            ),
+            style: TextStyle(color: isDark ? Colors.white : Colors.black),
           ),
           selected: selected == ThemeMode.light,
           onTap: () => Navigator.pop(context, ThemeMode.light),
@@ -600,9 +666,7 @@ class _ThemeModePicker extends StatelessWidget {
           ),
           title: Text(
             'Mode Gelap',
-            style: TextStyle(
-              color: isDark ? Colors.white : Colors.black,
-            ),
+            style: TextStyle(color: isDark ? Colors.white : Colors.black),
           ),
           selected: selected == ThemeMode.dark,
           onTap: () => Navigator.pop(context, ThemeMode.dark),
@@ -614,9 +678,7 @@ class _ThemeModePicker extends StatelessWidget {
           ),
           title: Text(
             'Otomatis',
-            style: TextStyle(
-              color: isDark ? Colors.white : Colors.black,
-            ),
+            style: TextStyle(color: isDark ? Colors.white : Colors.black),
           ),
           selected: selected == ThemeMode.system,
           onTap: () => Navigator.pop(context, ThemeMode.system),

@@ -11,7 +11,9 @@ import 'pilih_kain_customer_screen.dart';
 
 class UkuranCelanaCustomerScreen extends StatefulWidget {
   final String selectedFabric;
-  const UkuranCelanaCustomerScreen({Key? key, required this.selectedFabric})
+  final List<Map<String, dynamic>>? items;
+  const UkuranCelanaCustomerScreen(
+      {Key? key, required this.selectedFabric, this.items})
       : super(key: key);
 
   @override
@@ -202,21 +204,31 @@ class _UkuranCelanaCustomerScreenState
                             MaterialPageRoute(
                               builder: (context) => PilihKainCustomerScreen(
                                 onKainSelected: (kain) {
+                                  final modelName =
+                                      'Model Celana'; // Ganti sesuai input user jika ada
+                                  final calculatedPrice = kain
+                                      .harga; // Atau hitung sesuai kebutuhan
+                                  final user =
+                                      FirebaseAuth.instance.currentUser!;
+                                  final items = widget.items ?? [];
+                                  items.add({
+                                    'orderType': 'Celana',
+                                    'model': modelName,
+                                    'fabric': kain.nama,
+                                    'measurements': measurements,
+                                    'price': calculatedPrice,
+                                  });
                                   Navigator.pushReplacement(
                                     context,
                                     MaterialPageRoute(
                                       builder: (context) =>
-                                          KonfirmasiDesainCelanaCustomerScreen(
-                                        order: model.Order(
-                                          userId: user.uid,
-                                          userName: user.displayName ??
-                                              user.email ??
-                                              'No Name',
-                                          orderType: 'Celana',
-                                          measurements: measurements,
-                                          fabric: kain.nama,
-                                          orderDate: fs.Timestamp.now(),
-                                        ),
+                                          KonfirmasiPesananCustomerScreen(
+                                        userId: user.uid,
+                                        userName: user.displayName ??
+                                            user.email ??
+                                            'No Name',
+                                        items: items,
+                                        isDark: isDark,
                                       ),
                                     ),
                                   );

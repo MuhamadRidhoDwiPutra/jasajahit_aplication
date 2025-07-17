@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:jasa_jahit_aplication/src/customer/home_customer_screen.dart';
-
 import 'package:jasa_jahit_aplication/src/customer/profile_customer_screen.dart';
 import 'package:jasa_jahit_aplication/src/customer/status_pesanan_customer_screen.dart';
 import 'desain_customer_screen.dart';
@@ -32,8 +31,9 @@ class _RiwayatCustomerScreenState extends State<RiwayatCustomerScreen> {
     final authProvider = core_auth.AuthProvider();
     final userId = FirebaseAuth.instance.currentUser?.uid ?? '';
     return Scaffold(
-      backgroundColor:
-          isDark ? const Color(0xFF1A1A1A) : const Color(0xFF8FBC8F),
+      backgroundColor: isDark
+          ? const Color(0xFF1A1A1A)
+          : const Color(0xFF8FBC8F),
       body: SafeArea(
         child: Stack(
           children: [
@@ -46,8 +46,9 @@ class _RiwayatCustomerScreenState extends State<RiwayatCustomerScreen> {
                       hintText: 'Cari pesanan... (nama, model, jenis)',
                       prefixIcon: const Icon(Icons.search),
                       filled: true,
-                      fillColor:
-                          isDark ? const Color(0xFF2A2A2A) : Colors.white,
+                      fillColor: isDark
+                          ? const Color(0xFF2A2A2A)
+                          : Colors.white,
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(12),
                         borderSide: BorderSide.none,
@@ -73,34 +74,56 @@ class _RiwayatCustomerScreenState extends State<RiwayatCustomerScreen> {
                       if (snapshot.hasError) {
                         return Center(child: Text('Terjadi kesalahan'));
                       }
-                      final orders = snapshot.data
-                              ?.where((order) =>
-                                  order.status
-                                      .toLowerCase()
-                                      .contains('selesai') ||
-                                  order.status.toLowerCase().contains('batal'))
+                      final orders =
+                          snapshot.data
+                              ?.where(
+                                (order) =>
+                                    order.status.toLowerCase().contains(
+                                      'selesai',
+                                    ) ||
+                                    order.status.toLowerCase().contains(
+                                      'batal',
+                                    ),
+                              )
                               .where((order) {
-                            final query = _searchQuery.toLowerCase();
-                            return order.orderType
-                                    .toLowerCase()
-                                    .contains(query) ||
-                                order.model.toLowerCase().contains(query) ||
-                                order.userName.toLowerCase().contains(query);
-                          }).toList() ??
+                                final query = _searchQuery.toLowerCase();
+                                final firstItem = (order.items.isNotEmpty)
+                                    ? order.items[0]
+                                    : {};
+                                final orderType = (firstItem['orderType'] ?? '')
+                                    .toString();
+                                final model = (firstItem['model'] ?? '')
+                                    .toString();
+                                final userName = order.userName.toString();
+                                return orderType.toLowerCase().contains(
+                                      query,
+                                    ) ||
+                                    model.toLowerCase().contains(query) ||
+                                    userName.toLowerCase().contains(query);
+                              })
+                              .toList() ??
                           [];
                       if (orders.isEmpty) {
                         return Center(
-                            child: Text('Belum ada riwayat pesanan',
-                                style: TextStyle(
-                                    color: isDark
-                                        ? Colors.white70
-                                        : Colors.black54)));
+                          child: Text(
+                            'Belum ada riwayat pesanan',
+                            style: TextStyle(
+                              color: isDark ? Colors.white70 : Colors.black54,
+                            ),
+                          ),
+                        );
                       }
                       return ListView.builder(
                         padding: const EdgeInsets.all(16),
                         itemCount: orders.length,
                         itemBuilder: (context, index) {
                           final order = orders[index];
+                          final firstItem = (order.items.isNotEmpty)
+                              ? order.items[0]
+                              : {};
+                          final orderType = firstItem['orderType'] ?? '-';
+                          final model = firstItem['model'] ?? '-';
+                          final price = firstItem['price'] ?? 0;
                           return Container(
                             margin: const EdgeInsets.only(bottom: 16),
                             decoration: BoxDecoration(
@@ -141,10 +164,11 @@ class _RiwayatCustomerScreenState extends State<RiwayatCustomerScreen> {
                                   ),
                                 ),
                                 Divider(
-                                    height: 1,
-                                    color: isDark
-                                        ? Colors.white24
-                                        : Colors.black12),
+                                  height: 1,
+                                  color: isDark
+                                      ? Colors.white24
+                                      : Colors.black12,
+                                ),
                                 Padding(
                                   padding: const EdgeInsets.all(16),
                                   child: Column(
@@ -152,7 +176,7 @@ class _RiwayatCustomerScreenState extends State<RiwayatCustomerScreen> {
                                         CrossAxisAlignment.start,
                                     children: [
                                       Text(
-                                        order.orderType,
+                                        orderType,
                                         style: TextStyle(
                                           fontSize: 16,
                                           fontWeight: FontWeight.w600,
@@ -181,7 +205,7 @@ class _RiwayatCustomerScreenState extends State<RiwayatCustomerScreen> {
                                             ),
                                           ),
                                           Text(
-                                            'Rp ${order.price.toStringAsFixed(0)}',
+                                            'Rp ${price.toString()}',
                                             style: const TextStyle(
                                               fontSize: 16,
                                               fontWeight: FontWeight.w600,
@@ -196,17 +220,21 @@ class _RiwayatCustomerScreenState extends State<RiwayatCustomerScreen> {
                                         width: double.infinity,
                                         child: ElevatedButton.icon(
                                           style: ElevatedButton.styleFrom(
-                                            backgroundColor:
-                                                const Color(0xFFDE8500),
+                                            backgroundColor: const Color(
+                                              0xFFDE8500,
+                                            ),
                                             shape: RoundedRectangleBorder(
                                               borderRadius:
                                                   BorderRadius.circular(8),
                                             ),
                                             padding: const EdgeInsets.symmetric(
-                                                vertical: 12),
+                                              vertical: 12,
+                                            ),
                                           ),
-                                          icon: const Icon(Icons.shopping_cart,
-                                              color: Colors.white),
+                                          icon: const Icon(
+                                            Icons.shopping_cart,
+                                            color: Colors.white,
+                                          ),
                                           label: const Text(
                                             'Pesan Lagi',
                                             style: TextStyle(
@@ -219,22 +247,27 @@ class _RiwayatCustomerScreenState extends State<RiwayatCustomerScreen> {
                                               id: null,
                                               userId: userId,
                                               userName: order.userName,
-                                              orderType: order.orderType,
+                                              orderType: orderType,
                                               measurements: order.measurements,
                                               fabric: order.fabric,
-                                              model: order.model,
-                                              price: order.price,
+                                              model: model,
+                                              price: price,
                                               status: 'Menunggu Konfirmasi',
                                               orderDate: Timestamp.now(),
+                                              items: [],
                                             );
-                                            await FirestoreService()
-                                                .saveOrder(newOrder);
+                                            await FirestoreService().saveOrder(
+                                              newOrder,
+                                            );
                                             if (mounted) {
-                                              ScaffoldMessenger.of(context)
-                                                  .showSnackBar(
+                                              ScaffoldMessenger.of(
+                                                context,
+                                              ).showSnackBar(
                                                 const SnackBar(
-                                                    content: Text(
-                                                        'Pesanan berhasil diulang!')),
+                                                  content: Text(
+                                                    'Pesanan berhasil diulang!',
+                                                  ),
+                                                ),
                                               );
                                             }
                                           },

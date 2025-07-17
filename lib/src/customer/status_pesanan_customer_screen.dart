@@ -38,8 +38,9 @@ class StatusPesananCustomerScreen extends StatelessWidget {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final userId = FirebaseAuth.instance.currentUser?.uid ?? '';
     return Scaffold(
-      backgroundColor:
-          isDark ? const Color(0xFF1A1A1A) : const Color(0xFF8FBC8F),
+      backgroundColor: isDark
+          ? const Color(0xFF1A1A1A)
+          : const Color(0xFF8FBC8F),
       body: SafeArea(
         child: Column(
           children: [
@@ -59,7 +60,8 @@ class StatusPesananCustomerScreen extends StatelessWidget {
                       ),
                     );
                   }
-                  final orders = snapshot.data?.where((order) {
+                  final orders =
+                      snapshot.data?.where((order) {
                         final status = order.status.toLowerCase();
                         return status.contains('menunggu konfirmasi') ||
                             status.contains('dikonfirmasi') ||
@@ -68,22 +70,33 @@ class StatusPesananCustomerScreen extends StatelessWidget {
                       [];
                   if (orders.isEmpty) {
                     return Center(
-                        child: Text('Tidak ada pesanan berjalan',
-                            style: TextStyle(
-                                color:
-                                    isDark ? Colors.white70 : Colors.black54)));
+                      child: Text(
+                        'Tidak ada pesanan berjalan',
+                        style: TextStyle(
+                          color: isDark ? Colors.white70 : Colors.black54,
+                        ),
+                      ),
+                    );
                   }
                   return ListView.builder(
                     padding: const EdgeInsets.all(16),
                     itemCount: orders.length,
                     itemBuilder: (context, index) {
                       final order = orders[index];
+                      final firstItem = (order.items.isNotEmpty)
+                          ? order.items[0]
+                          : {};
+                      final orderType = firstItem['orderType'] ?? '-';
+                      final model = firstItem['model'] ?? '-';
+                      final fabric = firstItem['fabric'] ?? '-';
+                      final price = firstItem['price'] ?? 0;
                       return Card(
                         color: isDark ? const Color(0xFF2A2A2A) : Colors.white,
                         elevation: 3,
                         margin: const EdgeInsets.only(bottom: 16),
                         shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(16)),
+                          borderRadius: BorderRadius.circular(16),
+                        ),
                         child: Padding(
                           padding: const EdgeInsets.all(16),
                           child: Column(
@@ -98,16 +111,20 @@ class StatusPesananCustomerScreen extends StatelessWidget {
                                     style: TextStyle(
                                       fontWeight: FontWeight.bold,
                                       fontSize: 16,
-                                      color:
-                                          isDark ? Colors.white : Colors.black,
+                                      color: isDark
+                                          ? Colors.white
+                                          : Colors.black,
                                     ),
                                   ),
                                   Container(
                                     padding: const EdgeInsets.symmetric(
-                                        horizontal: 12, vertical: 6),
+                                      horizontal: 12,
+                                      vertical: 6,
+                                    ),
                                     decoration: BoxDecoration(
-                                      color: getStatusColor(order.status)
-                                          .withOpacity(0.1),
+                                      color: getStatusColor(
+                                        order.status,
+                                      ).withOpacity(0.1),
                                       borderRadius: BorderRadius.circular(8),
                                     ),
                                     child: Text(
@@ -122,9 +139,9 @@ class StatusPesananCustomerScreen extends StatelessWidget {
                                 ],
                               ),
                               Divider(
-                                  color:
-                                      isDark ? Colors.white24 : Colors.black12,
-                                  height: 24),
+                                color: isDark ? Colors.white24 : Colors.black12,
+                                height: 24,
+                              ),
                               Row(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
@@ -132,13 +149,14 @@ class StatusPesananCustomerScreen extends StatelessWidget {
                                     width: 80,
                                     height: 80,
                                     decoration: BoxDecoration(
-                                      color: const Color(0xFF8FBC8F)
-                                          .withOpacity(0.1),
+                                      color: const Color(
+                                        0xFF8FBC8F,
+                                      ).withOpacity(0.1),
                                       borderRadius: BorderRadius.circular(12),
                                     ),
                                     child: Center(
                                       child: Text(
-                                        order.orderType,
+                                        orderType,
                                         style: const TextStyle(
                                           color: Color(0xFF8FBC8F),
                                         ),
@@ -183,7 +201,7 @@ class StatusPesananCustomerScreen extends StatelessWidget {
                                           ),
                                         ),
                                         Text(
-                                          order.model,
+                                          model,
                                           style: TextStyle(
                                             fontWeight: FontWeight.w500,
                                             color: isDark
@@ -202,7 +220,7 @@ class StatusPesananCustomerScreen extends StatelessWidget {
                                           ),
                                         ),
                                         Text(
-                                          order.fabric,
+                                          fabric,
                                           style: TextStyle(
                                             fontWeight: FontWeight.w500,
                                             color: isDark
@@ -221,7 +239,7 @@ class StatusPesananCustomerScreen extends StatelessWidget {
                                           ),
                                         ),
                                         Text(
-                                          'Rp ${order.price.toStringAsFixed(0)}',
+                                          'Rp ${price.toString()}',
                                           style: const TextStyle(
                                             fontWeight: FontWeight.w600,
                                             color: Color(0xFFDE8500),
@@ -240,10 +258,12 @@ class StatusPesananCustomerScreen extends StatelessWidget {
                                     style: ElevatedButton.styleFrom(
                                       backgroundColor: const Color(0xFFDE8500),
                                       shape: RoundedRectangleBorder(
-                                          borderRadius:
-                                              BorderRadius.circular(8)),
+                                        borderRadius: BorderRadius.circular(8),
+                                      ),
                                       padding: const EdgeInsets.symmetric(
-                                          horizontal: 20, vertical: 10),
+                                        horizontal: 20,
+                                        vertical: 10,
+                                      ),
                                     ),
                                     onPressed: () {
                                       Navigator.push(
@@ -251,7 +271,8 @@ class StatusPesananCustomerScreen extends StatelessWidget {
                                         MaterialPageRoute(
                                           builder: (context) =>
                                               CekDetailStatusPesananCustomerScreen(
-                                                  order: order),
+                                                order: order,
+                                              ),
                                         ),
                                       );
                                     },
@@ -286,10 +307,7 @@ class _DetailRow extends StatelessWidget {
   final String label;
   final String value;
 
-  const _DetailRow({
-    required this.label,
-    required this.value,
-  });
+  const _DetailRow({required this.label, required this.value});
 
   @override
   Widget build(BuildContext context) {
@@ -426,10 +444,7 @@ class _BottomNavIcon extends StatelessWidget {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Icon(
-              icon,
-              color: isActive ? const Color(0xFF8FBC8F) : Colors.grey,
-            ),
+            Icon(icon, color: isActive ? const Color(0xFF8FBC8F) : Colors.grey),
             const SizedBox(height: 4),
             Text(
               label,

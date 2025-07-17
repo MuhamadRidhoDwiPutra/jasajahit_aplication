@@ -10,6 +10,7 @@ import 'package:jasa_jahit_aplication/src/theme/theme_switcher.dart';
 import 'package:provider/provider.dart';
 import 'package:jasa_jahit_aplication/src/theme/theme_provider.dart';
 import 'package:jasa_jahit_aplication/src/customer/whatsapp_chat_helper.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 class HomeCustomerScreen extends StatefulWidget {
   const HomeCustomerScreen({super.key});
@@ -297,27 +298,85 @@ class _HomeCustomerContent extends StatelessWidget {
           child: Row(
             children: [
               _CategoryCard(
-                icon: Icons.checkroom,
+                icon: FontAwesomeIcons.shirt, // Baju
                 label: 'Baju',
-                onTap: () {},
+                onTap: () {
+                  showDialog(
+                    context: context,
+                    builder: (context) => AlertDialog(
+                      title: const Text('Baju'),
+                      content: const Text(
+                          'Baju adalah pakaian atasan yang digunakan sehari-hari atau untuk acara tertentu.'),
+                      actions: [
+                        TextButton(
+                            onPressed: () => Navigator.pop(context),
+                            child: const Text('Tutup'))
+                      ],
+                    ),
+                  );
+                },
               ),
               const SizedBox(width: 12),
               _CategoryCard(
-                icon: Icons.accessibility_new,
+                icon: FontAwesomeIcons
+                    .personDress, // Celana (gunakan ikon dress sebagai pengganti celana)
                 label: 'Celana',
-                onTap: () {},
+                onTap: () {
+                  showDialog(
+                    context: context,
+                    builder: (context) => AlertDialog(
+                      title: const Text('Celana'),
+                      content: const Text(
+                          'Celana adalah pakaian bawahan yang menutupi bagian pinggang hingga kaki.'),
+                      actions: [
+                        TextButton(
+                            onPressed: () => Navigator.pop(context),
+                            child: const Text('Tutup'))
+                      ],
+                    ),
+                  );
+                },
               ),
               const SizedBox(width: 12),
               _CategoryCard(
-                icon: Icons.dry_cleaning,
+                icon: FontAwesomeIcons
+                    .userTie, // Seragam (gunakan ikon userTie sebagai pengganti seragam)
                 label: 'Seragam',
-                onTap: () {},
+                onTap: () {
+                  showDialog(
+                    context: context,
+                    builder: (context) => AlertDialog(
+                      title: const Text('Seragam'),
+                      content: const Text(
+                          'Seragam adalah pakaian yang digunakan secara bersama-sama dalam suatu kelompok atau institusi.'),
+                      actions: [
+                        TextButton(
+                            onPressed: () => Navigator.pop(context),
+                            child: const Text('Tutup'))
+                      ],
+                    ),
+                  );
+                },
               ),
               const SizedBox(width: 12),
               _CategoryCard(
-                icon: Icons.work,
+                icon: FontAwesomeIcons.suitcase, // Jas
                 label: 'Jas',
-                onTap: () {},
+                onTap: () {
+                  showDialog(
+                    context: context,
+                    builder: (context) => AlertDialog(
+                      title: const Text('Jas'),
+                      content: const Text(
+                          'Jas adalah pakaian formal bagian atas yang biasanya digunakan untuk acara resmi.'),
+                      actions: [
+                        TextButton(
+                            onPressed: () => Navigator.pop(context),
+                            child: const Text('Tutup'))
+                      ],
+                    ),
+                  );
+                },
               ),
             ],
           ),
@@ -357,7 +416,7 @@ class _HomeCustomerContent extends StatelessWidget {
 }
 
 class _CategoryCard extends StatelessWidget {
-  final IconData icon;
+  final dynamic icon; // Ubah dari IconData ke dynamic
   final String label;
   final VoidCallback onTap;
 

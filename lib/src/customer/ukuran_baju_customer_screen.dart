@@ -11,8 +11,8 @@ import 'pilih_kain_customer_screen.dart';
 
 class UkuranBajuCustomerScreen extends StatefulWidget {
   final String selectedFabric;
-  const UkuranBajuCustomerScreen({Key? key, required this.selectedFabric})
-      : super(key: key);
+  final List<Map<String, dynamic>>? items;
+  const UkuranBajuCustomerScreen({Key? key, required this.selectedFabric, this.items}) : super(key: key);
 
   @override
   State<UkuranBajuCustomerScreen> createState() =>
@@ -187,18 +187,25 @@ class _UkuranBajuCustomerScreenState extends State<UkuranBajuCustomerScreen> {
                     MaterialPageRoute(
                               builder: (context) => PilihKainCustomerScreen(
                                 onKainSelected: (kain) {
+                                  final user = FirebaseAuth.instance.currentUser!;
+                                  final items = widget.items ?? [];
+                                  final modelName = 'Model Baju'; // Ganti sesuai input user jika ada
+                                  final calculatedPrice = kain.harga; // Atau hitung sesuai kebutuhan
+                                  items.add({
+                                    'orderType': 'Baju',
+                                    'model': modelName,
+                                    'fabric': kain.nama,
+                                    'measurements': measurements,
+                                    'price': calculatedPrice,
+                                  });
                                   Navigator.pushReplacement(
                                     context,
                                     MaterialPageRoute(
-                                      builder: (context) => KonfirmasiDesainBajuCustomerScreen(
-                                        order: Order(
-                                          userId: user.uid,
-                                          userName: user.displayName ?? user.email ?? 'No Name',
-                                          orderType: 'Baju',
-                                          measurements: measurements,
-                                          fabric: kain.nama,
-                                          orderDate: Timestamp.now(),
-                                        ),
+                                      builder: (context) => KonfirmasiPesananCustomerScreen(
+                                        userId: user.uid,
+                                        userName: user.displayName ?? user.email ?? 'No Name',
+                                        items: items,
+                                        isDark: isDark,
                                       ),
                                     ),
                                   );

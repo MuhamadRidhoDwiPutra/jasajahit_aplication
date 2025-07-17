@@ -4,11 +4,7 @@ class Order {
   final String? id;
   final String userId;
   final String userName;
-  final String orderType;
-  final Map<String, dynamic> measurements;
-  final String fabric;
-  final String model;
-  final double price;
+  final List<Map<String, dynamic>> items; // Multi-item support
   final String status;
   final Timestamp orderDate;
 
@@ -16,27 +12,42 @@ class Order {
     this.id,
     required this.userId,
     required this.userName,
-    required this.orderType,
-    required this.measurements,
-    this.fabric = 'Katun',
-    this.model = 'Model 1',
-    this.price = 150000,
+    required this.items,
     this.status = 'Menunggu Konfirmasi',
-    required this.orderDate,
+    required this.orderDate, required orderType, required measurements, required fabric, required model, required price,
   });
 
   Map<String, dynamic> toMap() {
     return {
       'userId': userId,
       'userName': userName,
-      'orderType': orderType,
-      'measurements': measurements,
-      'fabric': fabric,
-      'model': model,
-      'price': price,
+      'items': items,
       'status': status,
       'orderDate': orderDate,
     };
   }
+
+  factory Order.fromMap(Map<String, dynamic> data, String id) {
+    return Order(
+      id: id,
+      userId: data['userId'] ?? '',
+      userName: data['userName'] ?? '',
+      items: (data['items'] as List?)
+              ?.map((e) => Map<String, dynamic>.from(e))
+              .toList() ??
+          [],
+      status: data['status'] ?? 'Menunggu Konfirmasi',
+      orderDate: data['orderDate'] ?? Timestamp.now(), orderType: null, measurements: null, fabric: null, model: null, price: null,
+    );
+  }
+
+  get model => null;
+
+  get fabric => null;
+
+  get measurements => null;
+
+  get price => null;
+
+  get orderType => null;
 }
- 
