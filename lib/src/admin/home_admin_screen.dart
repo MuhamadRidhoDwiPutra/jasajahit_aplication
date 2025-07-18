@@ -191,8 +191,8 @@ class _BottomNavIcon extends StatelessWidget {
     required this.index,
     required this.selectedIndex,
     required this.onTap,
-    Key? key,
-  }) : super(key: key);
+    super.key,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -229,7 +229,7 @@ class _BottomNavIcon extends StatelessWidget {
 }
 
 class _HomeAdminContent extends StatelessWidget {
-  const _HomeAdminContent({Key? key}) : super(key: key);
+  const _HomeAdminContent({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -413,12 +413,12 @@ class _OrderCard extends StatelessWidget {
   final int productQuantity;
 
   const _OrderCard({
-    Key? key,
+    super.key,
     required this.orderCode,
     required this.imageText,
     required this.orderDate,
     required this.productQuantity,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -583,8 +583,8 @@ class _DashboardItem extends StatelessWidget {
     required this.count,
     required this.color,
     required this.icon,
-    Key? key,
-  }) : super(key: key);
+    super.key,
+  });
 
   @override
   Widget build(BuildContext context) {

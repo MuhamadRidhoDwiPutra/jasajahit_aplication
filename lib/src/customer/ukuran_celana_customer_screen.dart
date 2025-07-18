@@ -13,8 +13,7 @@ class UkuranCelanaCustomerScreen extends StatefulWidget {
   final String selectedFabric;
   final List<Map<String, dynamic>>? items;
   const UkuranCelanaCustomerScreen(
-      {Key? key, required this.selectedFabric, this.items})
-      : super(key: key);
+      {super.key, required this.selectedFabric, this.items});
 
   @override
   State<UkuranCelanaCustomerScreen> createState() =>

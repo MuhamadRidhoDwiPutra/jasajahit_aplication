@@ -11,10 +11,10 @@ class AuthProvider extends ChangeNotifier {
   var enteredPassword = '';
 
   Future<void> submit() async {
-    final _isvalid =
+    final isvalid =
         form.currentState != null ? form.currentState!.validate() : true;
 
-    if (!_isvalid) {
+    if (!isvalid) {
       return;
     }
 

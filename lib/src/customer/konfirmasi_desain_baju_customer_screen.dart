@@ -19,13 +19,13 @@ class KonfirmasiPesananCustomerScreen extends StatefulWidget {
   final bool isDark;
 
   const KonfirmasiPesananCustomerScreen({
-    Key? key,
+    super.key,
     required this.userId,
     required this.userName,
     required this.items,
     this.status = 'Menunggu Konfirmasi',
     this.isDark = false,
-  }) : super(key: key);
+  });
 
   @override
   State<KonfirmasiPesananCustomerScreen> createState() =>

@@ -13,8 +13,7 @@ class PembayaranBajuCustomerScreen extends StatelessWidget {
   final Order order;
   final FirestoreService _firestoreService = FirestoreService();
 
-  PembayaranBajuCustomerScreen({Key? key, required this.order})
-      : super(key: key);
+  PembayaranBajuCustomerScreen({super.key, required this.order});
 
   @override
   Widget build(BuildContext context) {

@@ -12,7 +12,7 @@ import 'pilih_kain_customer_screen.dart';
 class UkuranBajuCustomerScreen extends StatefulWidget {
   final String selectedFabric;
   final List<Map<String, dynamic>>? items;
-  const UkuranBajuCustomerScreen({Key? key, required this.selectedFabric, this.items}) : super(key: key);
+  const UkuranBajuCustomerScreen({super.key, required this.selectedFabric, this.items});
 
   @override
   State<UkuranBajuCustomerScreen> createState() =>

@@ -15,7 +15,7 @@ class DesainCustomerScreen extends StatefulWidget {
 }
 
 class _DesainCustomerScreenState extends State<DesainCustomerScreen> {
-  String _selectedFabric = 'Katun';
+  final String _selectedFabric = 'Katun';
 
   @override
   Widget build(BuildContext context) {

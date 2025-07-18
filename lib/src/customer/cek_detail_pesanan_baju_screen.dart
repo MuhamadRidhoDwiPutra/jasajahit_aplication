@@ -6,8 +6,7 @@ import 'package:jasa_jahit_aplication/src/theme/theme_provider.dart';
 
 class CekDetailPesananBajuScreen extends StatelessWidget {
   final Order order;
-  const CekDetailPesananBajuScreen({Key? key, required this.order})
-      : super(key: key);
+  const CekDetailPesananBajuScreen({super.key, required this.order});
 
   @override
   Widget build(BuildContext context) {

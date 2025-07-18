@@ -10,13 +10,13 @@ class KonfirmasiDesainCelanaCustomerScreen extends StatelessWidget {
   final bool isDark;
 
   const KonfirmasiDesainCelanaCustomerScreen({
-    Key? key,
+    super.key,
     required this.userId,
     required this.userName,
     required this.items,
     this.status = 'Menunggu Konfirmasi',
     this.isDark = false,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

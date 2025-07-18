@@ -3,8 +3,7 @@ import 'package:jasa_jahit_aplication/src/model/order_model.dart';
 
 class CekDetailStatusPesananCustomerScreen extends StatelessWidget {
   final Order order;
-  const CekDetailStatusPesananCustomerScreen({Key? key, required this.order})
-    : super(key: key);
+  const CekDetailStatusPesananCustomerScreen({super.key, required this.order});
 
   @override
   Widget build(BuildContext context) {
