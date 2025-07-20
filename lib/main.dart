@@ -2,31 +2,34 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:jasa_jahit_aplication/firebase_options.dart';
 import 'package:jasa_jahit_aplication/src/theme/theme_provider.dart';
-// ignore: unused_import
 import 'src/theme/theme_switcher.dart';
 import 'src/page/splash_screen.dart';
-// ignore: unused_import
 import 'src/page/login_screen.dart';
-// ignore: unused_import
 import 'src/page/register_screen.dart';
 import 'package:provider/provider.dart';
 import 'package:jasa_jahit_aplication/Core/provider/auth_provider.dart';
-// import 'theme_provider.dart';
-// // ignore: unused_import
-// import 'theme_switcher.dart';
+import 'src/services/notification_service.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:overlay_support/overlay_support.dart';
+import 'package:jasa_jahit_aplication/Core/provider/notification_provider.dart';
+
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp(
-    options: DefaultFirebaseOptions.currentPlatform,
+  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+  FirebaseMessaging.onBackgroundMessage(
+    NotificationService.firebaseBackgroundHandler,
   );
   runApp(
-    MultiProvider(
-      providers: [
-        ChangeNotifierProvider(create: (_) => ThemeProvider()),
-        ChangeNotifierProvider(create: (_) => AuthProvider()),
-      ],
-      child: const MyApp(),
+    OverlaySupport.global(
+      child: MultiProvider(
+        providers: [
+          ChangeNotifierProvider(create: (_) => ThemeProvider()),
+          ChangeNotifierProvider(create: (_) => AuthProvider()),
+          ChangeNotifierProvider(create: (_) => NotificationProvider()),
+        ],
+        child: const MyApp(),
+      ),
     ),
   );
 }
@@ -37,6 +40,8 @@ class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
+    // Inisialisasi notifikasi
+    NotificationService.initialize(context);
     final themeProvider = Provider.of<ThemeProvider>(context);
     return MaterialApp(
       title: 'Flutter Demo',
@@ -63,7 +68,10 @@ class MyApp extends StatelessWidget {
           backgroundColor: Colors.white,
           iconTheme: IconThemeData(color: Color(0xFFDE8500)),
           titleTextStyle: TextStyle(
-              fontWeight: FontWeight.bold, color: Colors.black, fontSize: 20),
+            fontWeight: FontWeight.bold,
+            color: Colors.black,
+            fontSize: 20,
+          ),
         ),
       ),
       darkTheme: ThemeData(
@@ -84,7 +92,10 @@ class MyApp extends StatelessWidget {
           backgroundColor: Color(0xFF111111),
           iconTheme: IconThemeData(color: Color(0xFFDE8500)),
           titleTextStyle: TextStyle(
-              fontWeight: FontWeight.bold, color: Colors.white, fontSize: 20),
+            fontWeight: FontWeight.bold,
+            color: Colors.white,
+            fontSize: 20,
+          ),
         ),
         textTheme: TextTheme(
           bodyLarge: TextStyle(color: Colors.white),
@@ -173,9 +184,7 @@ class _MyHomePageState extends State<MyHomePage> {
           // wireframe for each widget.
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            const Text(
-              'You have pushed the button this many times:',
-            ),
+            const Text('You have pushed the button this many times:'),
             Text(
               '$_counter',
               style: Theme.of(context).textTheme.headlineMedium,

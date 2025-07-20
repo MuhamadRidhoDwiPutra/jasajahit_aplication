@@ -111,6 +111,13 @@ class _KonfirmasiPesananCustomerScreenState
 
   void _lanjutkanPembayaran() async {
     if (_items.isEmpty) return;
+
+    // Hitung total harga
+    double totalPrice = 0;
+    for (var item in _items) {
+      totalPrice += (item['price'] ?? 0).toDouble();
+    }
+
     final order = mymodel.Order(
       userId: widget.userId,
       userName: widget.userName,
@@ -121,14 +128,14 @@ class _KonfirmasiPesananCustomerScreenState
       measurements: null,
       fabric: null,
       model: null,
-      price: null,
+      price: totalPrice,
     );
-    await FirestoreService().saveOrder(order);
-    // Navigasi ke halaman sukses
-    Navigator.pushReplacement(
+
+    // Navigasi ke halaman pembayaran
+    Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) => const BerhasilPesanBajuCustomerScreen(),
+        builder: (context) => PembayaranBajuCustomerScreen(order: order),
       ),
     );
   }

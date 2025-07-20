@@ -21,8 +21,9 @@ class _RiwayatTransaksiAdminScreenState
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     return Scaffold(
-      backgroundColor:
-          isDark ? const Color(0xFF1A1A1A) : const Color(0xFF8FBC8F),
+      backgroundColor: isDark
+          ? const Color(0xFF1A1A1A)
+          : const Color(0xFF8FBC8F),
       appBar: AppBar(
         backgroundColor: isDark ? const Color(0xFF2A2A2A) : Colors.white,
         elevation: 1,
@@ -38,8 +39,10 @@ class _RiwayatTransaksiAdminScreenState
       body: Column(
         children: [
           Padding(
-            padding:
-                const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+            padding: const EdgeInsets.symmetric(
+              horizontal: 16.0,
+              vertical: 8.0,
+            ),
             child: Row(
               children: [
                 Expanded(
@@ -52,15 +55,17 @@ class _RiwayatTransaksiAdminScreenState
                       hintStyle: TextStyle(
                         color: isDark ? Colors.white70 : Colors.grey[400],
                       ),
-                      fillColor:
-                          isDark ? const Color(0xFF3A3A3A) : Colors.white,
+                      fillColor: isDark
+                          ? const Color(0xFF3A3A3A)
+                          : Colors.white,
                       filled: true,
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(8),
                         borderSide: BorderSide.none,
                       ),
-                      contentPadding:
-                          const EdgeInsets.symmetric(horizontal: 12),
+                      contentPadding: const EdgeInsets.symmetric(
+                        horizontal: 12,
+                      ),
                     ),
                     onChanged: (value) {
                       setState(() {
@@ -78,7 +83,8 @@ class _RiwayatTransaksiAdminScreenState
               builder: (context, snapshot) {
                 if (snapshot.hasError) {
                   return Center(
-                      child: Text('Terjadi kesalahan: ${snapshot.error}'));
+                    child: Text('Terjadi kesalahan: ${snapshot.error}'),
+                  );
                 }
                 if (snapshot.connectionState == ConnectionState.waiting) {
                   return const Center(child: CircularProgressIndicator());
@@ -86,8 +92,8 @@ class _RiwayatTransaksiAdminScreenState
 
                 var filteredDocs = snapshot.data!.docs.where((doc) {
                   final data = doc.data() as Map<String, dynamic>;
-                  final userName =
-                      (data['userName'] as String? ?? '').toLowerCase();
+                  final userName = (data['userName'] as String? ?? '')
+                      .toLowerCase();
                   final orderId = doc.id.toLowerCase();
                   return userName.contains(searchQuery) ||
                       orderId.contains(searchQuery);
@@ -95,7 +101,8 @@ class _RiwayatTransaksiAdminScreenState
 
                 if (filteredDocs.isEmpty) {
                   return const Center(
-                      child: Text('Tidak ada transaksi ditemukan.'));
+                    child: Text('Tidak ada transaksi ditemukan.'),
+                  );
                 }
 
                 return ListView.builder(
@@ -110,7 +117,8 @@ class _RiwayatTransaksiAdminScreenState
                       elevation: 3,
                       margin: const EdgeInsets.only(bottom: 16),
                       shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(16)),
+                        borderRadius: BorderRadius.circular(16),
+                      ),
                       child: Padding(
                         padding: const EdgeInsets.all(16),
                         child: Column(
@@ -125,18 +133,22 @@ class _RiwayatTransaksiAdminScreenState
                                     style: TextStyle(
                                       fontWeight: FontWeight.bold,
                                       fontSize: 16,
-                                      color:
-                                          isDark ? Colors.white : Colors.black,
+                                      color: isDark
+                                          ? Colors.white
+                                          : Colors.black,
                                     ),
                                     overflow: TextOverflow.ellipsis,
                                   ),
                                 ),
                                 Container(
                                   padding: const EdgeInsets.symmetric(
-                                      horizontal: 12, vertical: 6),
+                                    horizontal: 12,
+                                    vertical: 6,
+                                  ),
                                   decoration: BoxDecoration(
-                                    color: const Color(0xFFDE8500)
-                                        .withOpacity(0.1),
+                                    color: const Color(
+                                      0xFFDE8500,
+                                    ).withOpacity(0.1),
                                     borderRadius: BorderRadius.circular(8),
                                   ),
                                   child: Text(
@@ -161,8 +173,9 @@ class _RiwayatTransaksiAdminScreenState
                                   width: 80,
                                   height: 80,
                                   decoration: BoxDecoration(
-                                    color: const Color(0xFF8FBC8F)
-                                        .withOpacity(0.1),
+                                    color: const Color(
+                                      0xFF8FBC8F,
+                                    ).withOpacity(0.1),
                                     borderRadius: BorderRadius.circular(12),
                                   ),
                                   child: Center(
@@ -229,7 +242,7 @@ class _RiwayatTransaksiAdminScreenState
                               mainAxisAlignment: MainAxisAlignment.end,
                               children: [
                                 Text(
-                                  'Total: Rp ${orderData['price'].toStringAsFixed(0)}',
+                                  'Total: Rp ${(orderData['price'] ?? 0).toStringAsFixed(0)}',
                                   style: TextStyle(
                                     fontWeight: FontWeight.bold,
                                     fontSize: 16,

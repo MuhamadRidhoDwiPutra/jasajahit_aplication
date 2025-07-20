@@ -7,9 +7,12 @@ import 'package:jasa_jahit_aplication/src/admin/profile_admin_screen.dart';
 import 'package:jasa_jahit_aplication/src/theme/theme_switcher.dart';
 import 'package:provider/provider.dart';
 import 'package:jasa_jahit_aplication/src/theme/theme_provider.dart';
-import 'package:jasa_jahit_aplication/src/model/order_model.dart'; // Perbaiki path import Order
+import 'package:jasa_jahit_aplication/src/model/order_model.dart'
+    as order_model; // Perbaiki path import Order
 import 'package:jasa_jahit_aplication/src/services/firestore_service.dart'; // Added import for FirestoreService
 import 'package:fl_chart/fl_chart.dart';
+import 'package:jasa_jahit_aplication/Core/provider/notification_provider.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class HomeAdminScreen extends StatefulWidget {
   const HomeAdminScreen({super.key});
@@ -43,12 +46,48 @@ class _HomeAdminScreenState extends State<HomeAdminScreen> {
     });
   }
 
+  void _showNotificationDialog(BuildContext context) {
+    final notifications = Provider.of<NotificationProvider>(
+      context,
+      listen: false,
+    ).notifications;
+    showDialog(
+      context: context,
+      builder: (_) => AlertDialog(
+        title: Text('Notifikasi Masuk'),
+        content: SizedBox(
+          width: double.maxFinite,
+          child: notifications.isEmpty
+              ? Text('Belum ada notifikasi.')
+              : ListView.builder(
+                  shrinkWrap: true,
+                  itemCount: notifications.length,
+                  itemBuilder: (context, index) {
+                    final notif = notifications[index];
+                    return ListTile(
+                      title: Text(notif.title),
+                      subtitle: Text(notif.body),
+                    );
+                  },
+                ),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: Text('Tutup'),
+          ),
+        ],
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     return Scaffold(
-      backgroundColor:
-          isDark ? const Color(0xFF1A1A1A) : const Color(0xFF8FBC8F),
+      backgroundColor: isDark
+          ? const Color(0xFF1A1A1A)
+          : const Color(0xFF8FBC8F),
       body: SafeArea(
         child: Column(
           children: [
@@ -74,9 +113,11 @@ class _HomeAdminScreenState extends State<HomeAdminScreen> {
                       borderRadius: BorderRadius.circular(12),
                     ),
                     child: IconButton(
-                      icon: const Icon(Icons.notifications_none,
-                          color: Color(0xFFDE8500)),
-                      onPressed: () {},
+                      icon: const Icon(
+                        Icons.notifications_none,
+                        color: Color(0xFFDE8500),
+                      ),
+                      onPressed: () => _showNotificationDialog(context),
                     ),
                   ),
                   Expanded(
@@ -98,8 +139,10 @@ class _HomeAdminScreenState extends State<HomeAdminScreen> {
                       borderRadius: BorderRadius.circular(12),
                     ),
                     child: IconButton(
-                      icon: const Icon(Icons.account_circle_outlined,
-                          color: Color(0xFFDE8500)),
+                      icon: const Icon(
+                        Icons.account_circle_outlined,
+                        color: Color(0xFFDE8500),
+                      ),
                       onPressed: () {},
                     ),
                   ),
@@ -237,22 +280,26 @@ class _HomeAdminContent extends StatelessWidget {
       padding: const EdgeInsets.all(16.0),
       children: [
         // DASHBOARD SUMMARY
-        StreamBuilder<List<Order>>(
+        StreamBuilder<List<order_model.Order>>(
           stream: FirestoreService().getAllOrders(),
           builder: (context, snapshot) {
             if (snapshot.connectionState == ConnectionState.waiting) {
               return const Center(child: CircularProgressIndicator());
             }
             final orders = snapshot.data ?? [];
-            final masuk =
-                orders.where((o) => o.status == 'Menunggu Konfirmasi').length;
-            final dikonfirmasi =
-                orders.where((o) => o.status == 'Pesanan Dikonfirmasi').length;
-            final dikerjakan =
-                orders.where((o) => o.status == 'Sedang dikerjakan').length;
+            final masuk = orders
+                .where((o) => o.status == 'Menunggu Konfirmasi')
+                .length;
+            final dikonfirmasi = orders
+                .where((o) => o.status == 'Pesanan Dikonfirmasi')
+                .length;
+            final dikerjakan = orders
+                .where((o) => o.status == 'Sedang dikerjakan')
+                .length;
             final selesai = orders.where((o) => o.status == 'Selesai').length;
-            final dibatalkan =
-                orders.where((o) => o.status == 'Dibatalkan').length;
+            final dibatalkan = orders
+                .where((o) => o.status == 'Dibatalkan')
+                .length;
             return Column(
               children: [
                 Card(
@@ -261,38 +308,46 @@ class _HomeAdminContent extends StatelessWidget {
                       : Colors.white,
                   elevation: 2,
                   shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(16)),
+                    borderRadius: BorderRadius.circular(16),
+                  ),
                   child: Padding(
                     padding: const EdgeInsets.symmetric(
-                        vertical: 20, horizontal: 12),
+                      vertical: 20,
+                      horizontal: 12,
+                    ),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceAround,
                       children: [
                         _DashboardItem(
-                            label: 'Masuk',
-                            count: masuk,
-                            color: Colors.orange,
-                            icon: Icons.inbox),
+                          label: 'Masuk',
+                          count: masuk,
+                          color: Colors.orange,
+                          icon: Icons.inbox,
+                        ),
                         _DashboardItem(
-                            label: 'Dikonfirmasi',
-                            count: dikonfirmasi,
-                            color: Colors.blue,
-                            icon: Icons.check_circle_outline),
+                          label: 'Dikonfirmasi',
+                          count: dikonfirmasi,
+                          color: Colors.blue,
+                          icon: Icons.check_circle_outline,
+                        ),
                         _DashboardItem(
-                            label: 'Dikerjakan',
-                            count: dikerjakan,
-                            color: Colors.purple,
-                            icon: Icons.build),
+                          label: 'Dikerjakan',
+                          count: dikerjakan,
+                          color: Colors.purple,
+                          icon: Icons.build,
+                        ),
                         _DashboardItem(
-                            label: 'Selesai',
-                            count: selesai,
-                            color: Colors.green,
-                            icon: Icons.done_all),
+                          label: 'Selesai',
+                          count: selesai,
+                          color: Colors.green,
+                          icon: Icons.done_all,
+                        ),
                         _DashboardItem(
-                            label: 'Batal',
-                            count: dibatalkan,
-                            color: Colors.red,
-                            icon: Icons.cancel),
+                          label: 'Batal',
+                          count: dibatalkan,
+                          color: Colors.red,
+                          icon: Icons.cancel,
+                        ),
                       ],
                     ),
                   ),
@@ -305,7 +360,8 @@ class _HomeAdminContent extends StatelessWidget {
                       : Colors.white,
                   elevation: 2,
                   shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(16)),
+                    borderRadius: BorderRadius.circular(16),
+                  ),
                   child: Padding(
                     padding: const EdgeInsets.all(16.0),
                     child: SizedBox(
@@ -313,70 +369,102 @@ class _HomeAdminContent extends StatelessWidget {
                       child: BarChart(
                         BarChartData(
                           alignment: BarChartAlignment.spaceAround,
-                          maxY: [
+                          maxY:
+                              [
                                 masuk,
                                 dikonfirmasi,
                                 dikerjakan,
                                 selesai,
-                                dibatalkan
+                                dibatalkan,
                               ].reduce((a, b) => a > b ? a : b).toDouble() +
                               2,
                           barTouchData: BarTouchData(enabled: true),
                           titlesData: FlTitlesData(
                             leftTitles: AxisTitles(
                               sideTitles: SideTitles(
-                                  showTitles: true, reservedSize: 28),
+                                showTitles: true,
+                                reservedSize: 28,
+                              ),
                             ),
                             bottomTitles: AxisTitles(
                               sideTitles: SideTitles(
                                 showTitles: true,
                                 getTitlesWidget:
                                     (double value, TitleMeta meta) {
-                                  const labels = [
-                                    'Masuk',
-                                    'Dikonf.',
-                                    'Dikerj.',
-                                    'Selesai',
-                                    'Batal'
-                                  ];
-                                  return Padding(
-                                    padding: const EdgeInsets.only(top: 8.0),
-                                    child: Text(labels[value.toInt()],
-                                        style: const TextStyle(fontSize: 12)),
-                                  );
-                                },
+                                      const labels = [
+                                        'Masuk',
+                                        'Dikonf.',
+                                        'Dikerj.',
+                                        'Selesai',
+                                        'Batal',
+                                      ];
+                                      return Padding(
+                                        padding: const EdgeInsets.only(
+                                          top: 8.0,
+                                        ),
+                                        child: Text(
+                                          labels[value.toInt()],
+                                          style: const TextStyle(fontSize: 12),
+                                        ),
+                                      );
+                                    },
                                 interval: 1,
                               ),
                             ),
                             rightTitles: AxisTitles(
-                                sideTitles: SideTitles(showTitles: false)),
+                              sideTitles: SideTitles(showTitles: false),
+                            ),
                             topTitles: AxisTitles(
-                                sideTitles: SideTitles(showTitles: false)),
+                              sideTitles: SideTitles(showTitles: false),
+                            ),
                           ),
                           borderData: FlBorderData(show: false),
                           barGroups: [
-                            BarChartGroupData(x: 0, barRods: [
-                              BarChartRodData(
-                                  toY: masuk.toDouble(), color: Colors.orange)
-                            ]),
-                            BarChartGroupData(x: 1, barRods: [
-                              BarChartRodData(
+                            BarChartGroupData(
+                              x: 0,
+                              barRods: [
+                                BarChartRodData(
+                                  toY: masuk.toDouble(),
+                                  color: Colors.orange,
+                                ),
+                              ],
+                            ),
+                            BarChartGroupData(
+                              x: 1,
+                              barRods: [
+                                BarChartRodData(
                                   toY: dikonfirmasi.toDouble(),
-                                  color: Colors.blue)
-                            ]),
-                            BarChartGroupData(x: 2, barRods: [
-                              BarChartRodData(
+                                  color: Colors.blue,
+                                ),
+                              ],
+                            ),
+                            BarChartGroupData(
+                              x: 2,
+                              barRods: [
+                                BarChartRodData(
                                   toY: dikerjakan.toDouble(),
-                                  color: Colors.purple)
-                            ]),
-                            BarChartGroupData(x: 3, barRods: [
-                              BarChartRodData(
-                                  toY: selesai.toDouble(), color: Colors.green)
-                            ]),
-                            BarChartGroupData(x: 4, barRods: [
-                              BarChartRodData(
-                                  toY: dibatalkan.toDouble(), color: Colors.red)
-                            ]),
+                                  color: Colors.purple,
+                                ),
+                              ],
+                            ),
+                            BarChartGroupData(
+                              x: 3,
+                              barRods: [
+                                BarChartRodData(
+                                  toY: selesai.toDouble(),
+                                  color: Colors.green,
+                                ),
+                              ],
+                            ),
+                            BarChartGroupData(
+                              x: 4,
+                              barRods: [
+                                BarChartRodData(
+                                  toY: dibatalkan.toDouble(),
+                                  color: Colors.red,
+                                ),
+                              ],
+                            ),
                           ],
                         ),
                       ),
@@ -455,8 +543,10 @@ class _OrderCard extends StatelessWidget {
                   ),
                 ),
                 Container(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 12,
+                    vertical: 6,
+                  ),
                   decoration: BoxDecoration(
                     color: const Color(0xFFDE8500).withOpacity(0.1),
                     borderRadius: BorderRadius.circular(8),
@@ -544,20 +634,49 @@ class _OrderCard extends StatelessWidget {
                   ),
                 ),
                 IconButton(
-                  icon:
-                      const Icon(Icons.chevron_right, color: Color(0xFFDE8500)),
+                  icon: const Icon(
+                    Icons.chevron_right,
+                    color: Color(0xFFDE8500),
+                  ),
                   onPressed: () {
+                    // Create a mock Order object for the example card
+                    final mockOrder = order_model.Order(
+                      id: orderCode,
+                      userId: 'customer123',
+                      userName: 'John Doe',
+                      status: 'Menunggu Konfirmasi',
+                      orderDate: Timestamp.now(),
+                      totalPrice: 50000.0,
+                      items: [
+                        {
+                          'orderType': 'Baju',
+                          'model': 'Seragam',
+                          'fabric': 'Katun',
+                          'price': 50000.0,
+                          'measurements': {},
+                        },
+                      ],
+                      paymentProofUrl: null,
+                      paymentProofFileName: null,
+                      orderType: 'Baju',
+                      measurements: {},
+                      fabric: 'Katun',
+                      model: 'Seragam',
+                      price: 50000.0,
+                    );
+
                     Navigator.push(
                       context,
                       MaterialPageRoute(
                         builder: (context) => CekDetailAdminScreen(
+                          order: mockOrder,
                           orderCode: orderCode,
                           model: 'Seragam',
                           fabricType: 'Katun',
                           productQuantity: productQuantity,
                           orderDate: orderDate,
                           measurements: {},
-                          orderType: '',
+                          orderType: 'Baju',
                         ),
                       ),
                     );
@@ -590,11 +709,7 @@ class _DashboardItem extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        Icon(
-          icon,
-          color: color,
-          size: 24,
-        ),
+        Icon(icon, color: color, size: 24),
         Text(
           label,
           style: TextStyle(

@@ -11,6 +11,7 @@ import 'package:provider/provider.dart';
 import 'package:jasa_jahit_aplication/src/theme/theme_provider.dart';
 import 'package:jasa_jahit_aplication/src/customer/whatsapp_chat_helper.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:jasa_jahit_aplication/Core/provider/notification_provider.dart';
 
 class HomeCustomerScreen extends StatefulWidget {
   const HomeCustomerScreen({super.key});
@@ -44,20 +45,58 @@ class _HomeCustomerScreenState extends State<HomeCustomerScreen> {
     });
   }
 
+  void _showNotificationDialog(BuildContext context) {
+    final notifications = Provider.of<NotificationProvider>(
+      context,
+      listen: false,
+    ).notifications;
+    showDialog(
+      context: context,
+      builder: (_) => AlertDialog(
+        title: Text('Notifikasi Masuk'),
+        content: SizedBox(
+          width: double.maxFinite,
+          child: notifications.isEmpty
+              ? Text('Belum ada notifikasi.')
+              : ListView.builder(
+                  shrinkWrap: true,
+                  itemCount: notifications.length,
+                  itemBuilder: (context, index) {
+                    final notif = notifications[index];
+                    return ListTile(
+                      title: Text(notif.title),
+                      subtitle: Text(notif.body),
+                    );
+                  },
+                ),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: Text('Tutup'),
+          ),
+        ],
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     return Scaffold(
-      backgroundColor:
-          isDark ? const Color(0xFF1A1A1A) : const Color(0xFF8FBC8F),
+      backgroundColor: isDark
+          ? const Color(0xFF1A1A1A)
+          : const Color(0xFF8FBC8F),
       body: SafeArea(
         child: Stack(
           children: [
             Column(
               children: [
                 Container(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 16,
+                    vertical: 12,
+                  ),
                   decoration: BoxDecoration(
                     color: isDark ? const Color(0xFF2A2A2A) : Colors.white,
                     boxShadow: [
@@ -78,9 +117,11 @@ class _HomeCustomerScreenState extends State<HomeCustomerScreen> {
                           borderRadius: BorderRadius.circular(12),
                         ),
                         child: IconButton(
-                          icon: const Icon(Icons.notifications_none,
-                              color: Color(0xFFDE8500)),
-                          onPressed: () {},
+                          icon: const Icon(
+                            Icons.notifications_none,
+                            color: Color(0xFFDE8500),
+                          ),
+                          onPressed: () => _showNotificationDialog(context),
                         ),
                       ),
                       Expanded(
@@ -102,8 +143,10 @@ class _HomeCustomerScreenState extends State<HomeCustomerScreen> {
                           borderRadius: BorderRadius.circular(12),
                         ),
                         child: IconButton(
-                          icon:
-                              const Icon(Icons.chat, color: Color(0xFF25D366)),
+                          icon: const Icon(
+                            Icons.chat,
+                            color: Color(0xFF25D366),
+                          ),
                           onPressed: () {
                             WhatsAppChatHelper.openWhatsAppChat();
                           },
@@ -265,9 +308,7 @@ class _HomeCustomerContent extends StatelessWidget {
               const SizedBox(width: 12),
               Expanded(
                 child: TextField(
-                  style: TextStyle(
-                    color: isDark ? Colors.white : Colors.black,
-                  ),
+                  style: TextStyle(color: isDark ? Colors.white : Colors.black),
                   decoration: InputDecoration(
                     hintText: 'Cari model pakaian...',
                     hintStyle: TextStyle(
@@ -306,11 +347,13 @@ class _HomeCustomerContent extends StatelessWidget {
                     builder: (context) => AlertDialog(
                       title: const Text('Baju'),
                       content: const Text(
-                          'Baju adalah pakaian atasan yang digunakan sehari-hari atau untuk acara tertentu.'),
+                        'Baju adalah pakaian atasan yang digunakan sehari-hari atau untuk acara tertentu.',
+                      ),
                       actions: [
                         TextButton(
-                            onPressed: () => Navigator.pop(context),
-                            child: const Text('Tutup'))
+                          onPressed: () => Navigator.pop(context),
+                          child: const Text('Tutup'),
+                        ),
                       ],
                     ),
                   );
@@ -327,11 +370,13 @@ class _HomeCustomerContent extends StatelessWidget {
                     builder: (context) => AlertDialog(
                       title: const Text('Celana'),
                       content: const Text(
-                          'Celana adalah pakaian bawahan yang menutupi bagian pinggang hingga kaki.'),
+                        'Celana adalah pakaian bawahan yang menutupi bagian pinggang hingga kaki.',
+                      ),
                       actions: [
                         TextButton(
-                            onPressed: () => Navigator.pop(context),
-                            child: const Text('Tutup'))
+                          onPressed: () => Navigator.pop(context),
+                          child: const Text('Tutup'),
+                        ),
                       ],
                     ),
                   );
@@ -348,11 +393,13 @@ class _HomeCustomerContent extends StatelessWidget {
                     builder: (context) => AlertDialog(
                       title: const Text('Seragam'),
                       content: const Text(
-                          'Seragam adalah pakaian yang digunakan secara bersama-sama dalam suatu kelompok atau institusi.'),
+                        'Seragam adalah pakaian yang digunakan secara bersama-sama dalam suatu kelompok atau institusi.',
+                      ),
                       actions: [
                         TextButton(
-                            onPressed: () => Navigator.pop(context),
-                            child: const Text('Tutup'))
+                          onPressed: () => Navigator.pop(context),
+                          child: const Text('Tutup'),
+                        ),
                       ],
                     ),
                   );
@@ -368,11 +415,13 @@ class _HomeCustomerContent extends StatelessWidget {
                     builder: (context) => AlertDialog(
                       title: const Text('Jas'),
                       content: const Text(
-                          'Jas adalah pakaian formal bagian atas yang biasanya digunakan untuk acara resmi.'),
+                        'Jas adalah pakaian formal bagian atas yang biasanya digunakan untuk acara resmi.',
+                      ),
                       actions: [
                         TextButton(
-                            onPressed: () => Navigator.pop(context),
-                            child: const Text('Tutup'))
+                          onPressed: () => Navigator.pop(context),
+                          child: const Text('Tutup'),
+                        ),
                       ],
                     ),
                   );
@@ -457,11 +506,7 @@ class _CategoryCard extends StatelessWidget {
                 color: const Color(0xFFDE8500).withOpacity(0.1),
                 shape: BoxShape.circle,
               ),
-              child: Icon(
-                icon,
-                color: const Color(0xFFDE8500),
-                size: 24,
-              ),
+              child: Icon(icon, color: const Color(0xFFDE8500), size: 24),
             ),
             const SizedBox(height: 8),
             Text(

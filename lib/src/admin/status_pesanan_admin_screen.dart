@@ -4,6 +4,8 @@ import 'package:jasa_jahit_aplication/src/admin/cek_detail_admin_screen.dart';
 import 'package:jasa_jahit_aplication/src/theme/theme_switcher.dart';
 import 'package:provider/provider.dart';
 import 'package:jasa_jahit_aplication/src/theme/theme_provider.dart';
+import 'package:jasa_jahit_aplication/src/model/order_model.dart'
+    as order_model;
 
 class StatusPesananAdminScreen extends StatefulWidget {
   const StatusPesananAdminScreen({super.key});
@@ -42,14 +44,13 @@ class _StatusPesananAdminScreenState extends State<StatusPesananAdminScreen> {
 
   Future<void> _updateOrderStatus(String docId, String status) async {
     try {
-      await _firestore
-          .collection('orders')
-          .doc(docId)
-          .update({'status': status});
+      await _firestore.collection('orders').doc(docId).update({
+        'status': status,
+      });
     } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Gagal memperbarui status: $e')),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text('Gagal memperbarui status: $e')));
     }
   }
 
@@ -57,8 +58,9 @@ class _StatusPesananAdminScreenState extends State<StatusPesananAdminScreen> {
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     return Scaffold(
-      backgroundColor:
-          isDark ? const Color(0xFF1A1A1A) : const Color(0xFF8FBC8F),
+      backgroundColor: isDark
+          ? const Color(0xFF1A1A1A)
+          : const Color(0xFF8FBC8F),
       appBar: AppBar(
         backgroundColor: isDark ? const Color(0xFF2A2A2A) : Colors.white,
         elevation: 1,
@@ -106,7 +108,8 @@ class _StatusPesananAdminScreenState extends State<StatusPesananAdminScreen> {
                 elevation: 3,
                 margin: const EdgeInsets.only(bottom: 16),
                 shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(16)),
+                  borderRadius: BorderRadius.circular(16),
+                ),
                 child: Padding(
                   padding: const EdgeInsets.all(16),
                   child: Column(
@@ -128,10 +131,13 @@ class _StatusPesananAdminScreenState extends State<StatusPesananAdminScreen> {
                           ),
                           Container(
                             padding: const EdgeInsets.symmetric(
-                                horizontal: 12, vertical: 6),
+                              horizontal: 12,
+                              vertical: 6,
+                            ),
                             decoration: BoxDecoration(
-                              color: getStatusColor(currentStatus)
-                                  .withOpacity(0.1),
+                              color: getStatusColor(
+                                currentStatus,
+                              ).withOpacity(0.1),
                               borderRadius: BorderRadius.circular(8),
                             ),
                             child: Text(
@@ -226,10 +232,12 @@ class _StatusPesananAdminScreenState extends State<StatusPesananAdminScreen> {
                                 color: isDark ? Colors.white : Colors.black,
                               ),
                               items: statusOptions
-                                  .map((status) => DropdownMenuItem(
-                                        value: status,
-                                        child: Text(status),
-                                      ))
+                                  .map(
+                                    (status) => DropdownMenuItem(
+                                      value: status,
+                                      child: Text(status),
+                                    ),
+                                  )
                                   .toList(),
                               onChanged: (value) {
                                 if (value != null) {
@@ -243,26 +251,33 @@ class _StatusPesananAdminScreenState extends State<StatusPesananAdminScreen> {
                             style: ElevatedButton.styleFrom(
                               backgroundColor: const Color(0xFFDE8500),
                               shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(8)),
+                                borderRadius: BorderRadius.circular(8),
+                              ),
                               padding: const EdgeInsets.symmetric(
-                                  horizontal: 20, vertical: 10),
+                                horizontal: 20,
+                                vertical: 10,
+                              ),
                             ),
                             onPressed: () {
+                              // Buat Order object dari data Firestore
+                              final orderObj = order_model.Order.fromMap(
+                                orderData,
+                                order.id,
+                              );
                               Navigator.push(
                                 context,
                                 MaterialPageRoute(
                                   builder: (context) => CekDetailAdminScreen(
+                                    order: orderObj,
                                     orderCode: order.id,
-                                    model: orderData['model'] ?? '',
-                                    fabricType: orderData['fabric'] ?? '',
-                                    productQuantity: 1, // Placeholder
-                                    orderDate:
-                                        (orderData['orderDate'] as Timestamp)
-                                            .toDate()
-                                            .toString(),
-                                    measurements:
-                                        orderData['measurements'] ?? {},
-                                    orderType: orderData['orderType'] ?? '',
+                                    model: orderObj.model ?? '',
+                                    fabricType: orderObj.fabric ?? '',
+                                    productQuantity: orderObj.items.length,
+                                    orderDate: orderObj.orderDate
+                                        .toDate()
+                                        .toString(),
+                                    measurements: orderObj.measurements ?? {},
+                                    orderType: orderObj.orderType ?? '',
                                   ),
                                 ),
                               );
