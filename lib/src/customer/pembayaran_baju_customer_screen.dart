@@ -196,7 +196,7 @@ class _PembayaranBajuCustomerScreenState
                               ),
                             ),
                             Text(
-                              'Total Harga:\nRp. ${widget.order.price.toStringAsFixed(0)}',
+                              'Total Harga:\nRp. ${widget.order.estimatedPrice?.toStringAsFixed(0) ?? widget.order.price.toStringAsFixed(0)}',
                               style: TextStyle(
                                 color: isDark ? Colors.white : Colors.black,
                               ),
@@ -445,8 +445,9 @@ class _PembayaranBajuCustomerScreenState
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (context) =>
-                            const BerhasilPesanBajuCustomerScreen(),
+                        builder: (context) => BerhasilPesanBajuCustomerScreen(
+                          order: widget.order,
+                        ),
                       ),
                     );
                   } catch (e) {

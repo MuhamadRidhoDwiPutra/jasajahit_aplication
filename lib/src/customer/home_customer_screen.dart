@@ -12,6 +12,7 @@ import 'package:jasa_jahit_aplication/src/theme/theme_provider.dart';
 import 'package:jasa_jahit_aplication/src/customer/whatsapp_chat_helper.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:jasa_jahit_aplication/Core/provider/notification_provider.dart';
+import 'package:jasa_jahit_aplication/src/page/notification_screen.dart';
 
 class HomeCustomerScreen extends StatefulWidget {
   const HomeCustomerScreen({super.key});
@@ -46,38 +47,7 @@ class _HomeCustomerScreenState extends State<HomeCustomerScreen> {
   }
 
   void _showNotificationDialog(BuildContext context) {
-    final notifications = Provider.of<NotificationProvider>(
-      context,
-      listen: false,
-    ).notifications;
-    showDialog(
-      context: context,
-      builder: (_) => AlertDialog(
-        title: Text('Notifikasi Masuk'),
-        content: SizedBox(
-          width: double.maxFinite,
-          child: notifications.isEmpty
-              ? Text('Belum ada notifikasi.')
-              : ListView.builder(
-                  shrinkWrap: true,
-                  itemCount: notifications.length,
-                  itemBuilder: (context, index) {
-                    final notif = notifications[index];
-                    return ListTile(
-                      title: Text(notif.title),
-                      subtitle: Text(notif.body),
-                    );
-                  },
-                ),
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: Text('Tutup'),
-          ),
-        ],
-      ),
-    );
+    showDialog(context: context, builder: (_) => NotificationScreen());
   }
 
   @override

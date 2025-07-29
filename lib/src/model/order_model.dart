@@ -11,6 +11,12 @@ class Order {
   final String? paymentProofUrl; // URL bukti pembayaran
   final String? paymentProofFileName; // Nama file bukti pembayaran
 
+  // Field baru untuk estimasi harga dan detail pesanan
+  final int? estimatedPrice; // Harga estimasi dari kalkulasi
+  final String? estimatedSize; // Ukuran estimasi (S, M, L, XL, Custom)
+  final bool? isCustomSize; // Apakah ukuran custom
+  final String? selectedKain; // Kain yang dipilih
+
   Order({
     this.id,
     required this.userId,
@@ -21,6 +27,10 @@ class Order {
     this.totalPrice,
     this.paymentProofUrl,
     this.paymentProofFileName,
+    this.estimatedPrice,
+    this.estimatedSize,
+    this.isCustomSize,
+    this.selectedKain,
     required orderType,
     required measurements,
     required fabric,
@@ -38,6 +48,10 @@ class Order {
       'totalPrice': totalPrice,
       'paymentProofUrl': paymentProofUrl,
       'paymentProofFileName': paymentProofFileName,
+      'estimatedPrice': estimatedPrice,
+      'estimatedSize': estimatedSize,
+      'isCustomSize': isCustomSize,
+      'selectedKain': selectedKain,
     };
   }
 
@@ -56,6 +70,10 @@ class Order {
       totalPrice: (data['totalPrice'] ?? 0).toDouble(),
       paymentProofUrl: data['paymentProofUrl'],
       paymentProofFileName: data['paymentProofFileName'],
+      estimatedPrice: data['estimatedPrice'],
+      estimatedSize: data['estimatedSize'],
+      isCustomSize: data['isCustomSize'],
+      selectedKain: data['selectedKain'],
       orderType: null,
       measurements: null,
       fabric: null,

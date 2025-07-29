@@ -18,9 +18,7 @@ class _PilihKainCustomerScreenState extends State<PilihKainCustomerScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Pilih Kain'),
-      ),
+      appBar: AppBar(title: const Text('Pilih Kain')),
       body: StreamBuilder<List<KainModel>>(
         stream: _firestoreService.getKainList(),
         builder: (context, snapshot) {
@@ -29,77 +27,105 @@ class _PilihKainCustomerScreenState extends State<PilihKainCustomerScreen> {
           }
           if (snapshot.hasError) {
             return Center(
-                child: Text('Terjadi kesalahan: \\${snapshot.error}'));
+              child: Text('Terjadi kesalahan: \\${snapshot.error}'),
+            );
           }
           final kainList = snapshot.data ?? [];
           if (kainList.isEmpty) {
             return const Center(child: Text('Belum ada data kain.'));
           }
-          return ListView.builder(
-            padding: const EdgeInsets.all(12),
-            itemCount: kainList.length,
-            itemBuilder: (context, index) {
-              final kain = kainList[index];
-              final selected = kain.id == _selectedKain?.id;
-              return GestureDetector(
-                onTap: () {
-                  setState(() {
-                    _selectedKain = kain;
-                  });
-                },
-                child: Container(
-                  margin: const EdgeInsets.only(bottom: 12),
-                  padding: const EdgeInsets.all(16),
-                  decoration: BoxDecoration(
-                    color: selected
-                        ? Colors.orange.shade900
-                        : Colors.grey.shade800,
-                    borderRadius: BorderRadius.circular(16),
-                    border: selected
-                        ? Border.all(color: Colors.orange, width: 2)
-                        : null,
-                  ),
-                  child: Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              kain.nama,
-                              style: const TextStyle(
-                                fontWeight: FontWeight.bold,
-                                fontSize: 18,
-                                color: Colors.white,
-                              ),
-                            ),
-                            const SizedBox(height: 4),
-                            Text(
-                              kain.warna,
-                              style: const TextStyle(
-                                color: Colors.white70,
-                                fontSize: 14,
-                              ),
-                            ),
-                            const SizedBox(height: 8),
-                            Text(
-                              'Rp \\${kain.harga.toString().replaceAllMapped(RegExp(r'(\\d{1,3})(?=(\\d{3})+(?!\\d))'), (m) => '\\${m[1]}.')}/meter',
-                              style: const TextStyle(
-                                color: Colors.orange,
-                                fontWeight: FontWeight.bold,
-                                fontSize: 16,
-                              ),
-                            ),
-                          ],
-                        ),
+          return LayoutBuilder(
+            builder: (context, constraints) {
+              return ListView.builder(
+                padding: EdgeInsets.all(constraints.maxWidth > 600 ? 16 : 12),
+                itemCount: kainList.length,
+                itemBuilder: (context, index) {
+                  final kain = kainList[index];
+                  final selected = kain.id == _selectedKain?.id;
+                  return GestureDetector(
+                    onTap: () {
+                      setState(() {
+                        _selectedKain = kain;
+                      });
+                    },
+                    child: Container(
+                      margin: const EdgeInsets.only(bottom: 12),
+                      padding: EdgeInsets.all(
+                        constraints.maxWidth > 600 ? 20 : 16,
                       ),
-                      if (selected)
-                        const Icon(Icons.check_circle,
-                            color: Colors.orange, size: 32),
-                    ],
-                  ),
-                ),
+                      decoration: BoxDecoration(
+                        color: selected
+                            ? Colors.orange.shade900
+                            : Colors.grey.shade800,
+                        borderRadius: BorderRadius.circular(16),
+                        border: selected
+                            ? Border.all(color: Colors.orange, width: 2)
+                            : null,
+                      ),
+                      child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  kain.nama,
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: constraints.maxWidth > 600
+                                        ? 20
+                                        : 18,
+                                    color: Colors.white,
+                                  ),
+                                ),
+                                const SizedBox(height: 4),
+                                Text(
+                                  kain.warna,
+                                  style: TextStyle(
+                                    color: Colors.white70,
+                                    fontSize: constraints.maxWidth > 600
+                                        ? 16
+                                        : 14,
+                                  ),
+                                ),
+                                const SizedBox(height: 4),
+                                Text(
+                                  kain.deskripsi,
+                                  style: TextStyle(
+                                    color: Colors.white60,
+                                    fontSize: constraints.maxWidth > 600
+                                        ? 14
+                                        : 12,
+                                  ),
+                                  maxLines: constraints.maxWidth > 600 ? 3 : 2,
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                                const SizedBox(height: 8),
+                                Text(
+                                  'Rp \\${kain.harga.toString().replaceAllMapped(RegExp(r'(\\d{1,3})(?=(\\d{3})+(?!\\d))'), (m) => '\\${m[1]}.')}/meter',
+                                  style: TextStyle(
+                                    color: Colors.orange,
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: constraints.maxWidth > 600
+                                        ? 18
+                                        : 16,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                          if (selected)
+                            Icon(
+                              Icons.check_circle,
+                              color: Colors.orange,
+                              size: constraints.maxWidth > 600 ? 36 : 32,
+                            ),
+                        ],
+                      ),
+                    ),
+                  );
+                },
               );
             },
           );
@@ -124,9 +150,10 @@ class _PilihKainCustomerScreenState extends State<PilihKainCustomerScreen> {
             child: const Text(
               'Lanjut',
               style: TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.white),
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+                color: Colors.white,
+              ),
             ),
           ),
         ),

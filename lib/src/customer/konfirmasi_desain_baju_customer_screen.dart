@@ -118,12 +118,23 @@ class _KonfirmasiPesananCustomerScreenState
       totalPrice += (item['price'] ?? 0).toDouble();
     }
 
+    // Ambil data estimasi dari item pertama (asumsi semua item memiliki estimasi yang sama)
+    final firstItem = _items.first;
+    final estimatedPrice = firstItem['price'] ?? 0;
+    final estimatedSize = firstItem['estimatedSize'] ?? 'M';
+    final isCustomSize = firstItem['isCustomSize'] ?? false;
+    final selectedKain = firstItem['fabric'] ?? 'Kain yang dipilih';
+
     final order = mymodel.Order(
       userId: widget.userId,
       userName: widget.userName,
       items: _items,
       status: widget.status,
       orderDate: Timestamp.now(),
+      estimatedPrice: estimatedPrice,
+      estimatedSize: estimatedSize,
+      isCustomSize: isCustomSize,
+      selectedKain: selectedKain,
       orderType: null,
       measurements: null,
       fabric: null,

@@ -11,16 +11,27 @@ class CekDetailPesananBajuScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
+
+    // Ambil data estimasi dari order
+    final estimasiHarga = order.estimatedPrice ?? 0;
+    final ukuranEstimasi = order.estimatedSize ?? 'M';
+    final isCustomUkuran = order.isCustomSize ?? false;
+    final selectedKain = order.selectedKain ?? 'Kain yang dipilih';
+
     return Scaffold(
-      backgroundColor:
-          isDark ? const Color(0xFF1A1A1A) : const Color(0xFF8FBC8F),
+      backgroundColor: isDark
+          ? const Color(0xFF1A1A1A)
+          : const Color(0xFF8FBC8F),
       appBar: AppBar(
-        backgroundColor:
-            isDark ? const Color(0xFF1A1A1A) : const Color(0xFF8FBC8F),
+        backgroundColor: isDark
+            ? const Color(0xFF1A1A1A)
+            : const Color(0xFF8FBC8F),
         elevation: 0,
         leading: IconButton(
-          icon: Icon(Icons.arrow_back,
-              color: isDark ? Colors.white : Colors.black),
+          icon: Icon(
+            Icons.arrow_back,
+            color: isDark ? Colors.white : Colors.black,
+          ),
           onPressed: () {
             Navigator.pushReplacement(
               context,
@@ -34,7 +45,9 @@ class CekDetailPesananBajuScreen extends StatelessWidget {
         title: Text(
           'Detail Pesanan',
           style: TextStyle(
-              color: isDark ? Colors.white : Colors.white, fontSize: 18),
+            color: isDark ? Colors.white : Colors.white,
+            fontSize: 18,
+          ),
         ),
         centerTitle: true,
       ),
@@ -55,21 +68,25 @@ class CekDetailPesananBajuScreen extends StatelessWidget {
                   Expanded(
                     child: TextField(
                       enabled: false,
-                      controller:
-                          TextEditingController(text: order.id ?? 'N/A'),
+                      controller: TextEditingController(
+                        text: order.id ?? 'N/A',
+                      ),
                       style: TextStyle(
                         color: isDark ? Colors.white : Colors.black,
                       ),
                       decoration: InputDecoration(
                         filled: true,
-                        fillColor:
-                            isDark ? const Color(0xFF2A2A2A) : Colors.grey[300],
+                        fillColor: isDark
+                            ? const Color(0xFF2A2A2A)
+                            : Colors.grey[300],
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(8),
                           borderSide: BorderSide.none,
                         ),
                         contentPadding: const EdgeInsets.symmetric(
-                            horizontal: 16, vertical: 12),
+                          horizontal: 16,
+                          vertical: 12,
+                        ),
                       ),
                     ),
                   ),
@@ -77,14 +94,18 @@ class CekDetailPesananBajuScreen extends StatelessWidget {
                   ElevatedButton(
                     onPressed: () {},
                     style: ElevatedButton.styleFrom(
-                      backgroundColor:
-                          isDark ? const Color(0xFF2A2A2A) : Colors.grey[300],
+                      backgroundColor: isDark
+                          ? const Color(0xFF2A2A2A)
+                          : Colors.grey[300],
                       foregroundColor: isDark ? Colors.white : Colors.black,
                       elevation: 0,
                       shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(6)),
+                        borderRadius: BorderRadius.circular(6),
+                      ),
                       padding: const EdgeInsets.symmetric(
-                          horizontal: 16, vertical: 10),
+                        horizontal: 16,
+                        vertical: 10,
+                      ),
                     ),
                     child: const Text('Salin'),
                   ),
@@ -99,19 +120,20 @@ class CekDetailPesananBajuScreen extends StatelessWidget {
               TextField(
                 enabled: false,
                 controller: TextEditingController(text: order.model),
-                style: TextStyle(
-                  color: isDark ? Colors.white : Colors.black,
-                ),
+                style: TextStyle(color: isDark ? Colors.white : Colors.black),
                 decoration: InputDecoration(
                   filled: true,
-                  fillColor:
-                      isDark ? const Color(0xFF2A2A2A) : Colors.grey[300],
+                  fillColor: isDark
+                      ? const Color(0xFF2A2A2A)
+                      : Colors.grey[300],
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(8),
                     borderSide: BorderSide.none,
                   ),
-                  contentPadding:
-                      const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                  contentPadding: const EdgeInsets.symmetric(
+                    horizontal: 16,
+                    vertical: 12,
+                  ),
                 ),
               ),
               const SizedBox(height: 14),
@@ -122,20 +144,21 @@ class CekDetailPesananBajuScreen extends StatelessWidget {
               const SizedBox(height: 4),
               TextField(
                 enabled: false,
-                controller: TextEditingController(text: order.fabric),
-                style: TextStyle(
-                  color: isDark ? Colors.white : Colors.black,
-                ),
+                controller: TextEditingController(text: selectedKain),
+                style: TextStyle(color: isDark ? Colors.white : Colors.black),
                 decoration: InputDecoration(
                   filled: true,
-                  fillColor:
-                      isDark ? const Color(0xFF2A2A2A) : Colors.grey[300],
+                  fillColor: isDark
+                      ? const Color(0xFF2A2A2A)
+                      : Colors.grey[300],
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(8),
                     borderSide: BorderSide.none,
                   ),
-                  contentPadding:
-                      const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                  contentPadding: const EdgeInsets.symmetric(
+                    horizontal: 16,
+                    vertical: 12,
+                  ),
                 ),
               ),
               const SizedBox(height: 14),
@@ -147,50 +170,49 @@ class CekDetailPesananBajuScreen extends StatelessWidget {
               TextField(
                 enabled: false,
                 controller: TextEditingController(text: '1'),
-                style: TextStyle(
-                  color: isDark ? Colors.white : Colors.black,
-                ),
+                style: TextStyle(color: isDark ? Colors.white : Colors.black),
                 decoration: InputDecoration(
                   filled: true,
-                  fillColor:
-                      isDark ? const Color(0xFF2A2A2A) : Colors.grey[300],
+                  fillColor: isDark
+                      ? const Color(0xFF2A2A2A)
+                      : Colors.grey[300],
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(8),
                     borderSide: BorderSide.none,
                   ),
-                  contentPadding:
-                      const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                  contentPadding: const EdgeInsets.symmetric(
+                    horizontal: 16,
+                    vertical: 12,
+                  ),
                 ),
               ),
-              const SizedBox(height: 18),
-              Center(
-                child: Column(
-                  children: [
-                    SizedBox(
-                      width: 120,
-                      height: 80,
-                      child: Card(
-                        color: isDark ? Colors.grey[700] : Colors.grey,
-                        child: Center(
-                          child: Text(
-                            'Gambar desain\nBaju yang dipesan',
-                            textAlign: TextAlign.center,
-                            style: TextStyle(
-                              color: isDark ? Colors.white70 : Colors.white,
-                              fontSize: 13,
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
-                    const SizedBox(height: 8),
-                    Text(
-                      'Tanggal Pemesanan\n${order.orderDate.toDate().day} ${_getMonth(order.orderDate.toDate().month)} ${order.orderDate.toDate().year}',
-                      style: TextStyle(
-                          color: isDark ? Colors.white : Colors.white),
-                      textAlign: TextAlign.center,
-                    ),
-                  ],
+              const SizedBox(height: 14),
+              Text(
+                'Ukuran yang dipilih',
+                style: TextStyle(color: isDark ? Colors.white : Colors.white),
+              ),
+              const SizedBox(height: 4),
+              TextField(
+                enabled: false,
+                controller: TextEditingController(
+                  text: isCustomUkuran
+                      ? 'Custom Ukuran'
+                      : 'Ukuran $ukuranEstimasi',
+                ),
+                style: TextStyle(color: isDark ? Colors.white : Colors.black),
+                decoration: InputDecoration(
+                  filled: true,
+                  fillColor: isDark
+                      ? const Color(0xFF2A2A2A)
+                      : Colors.grey[300],
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(8),
+                    borderSide: BorderSide.none,
+                  ),
+                  contentPadding: const EdgeInsets.symmetric(
+                    horizontal: 16,
+                    vertical: 12,
+                  ),
                 ),
               ),
               const SizedBox(height: 18),
@@ -202,25 +224,27 @@ class CekDetailPesananBajuScreen extends StatelessWidget {
               TextField(
                 enabled: false,
                 controller: TextEditingController(
-                    text: 'Rp ${order.price.toStringAsFixed(0)}'),
-                style: TextStyle(
-                  color: isDark ? Colors.white : Colors.black,
+                  text: 'Rp ${estimasiHarga.toStringAsFixed(0)}',
                 ),
+                style: TextStyle(color: isDark ? Colors.white : Colors.black),
                 decoration: InputDecoration(
                   filled: true,
-                  fillColor:
-                      isDark ? const Color(0xFF2A2A2A) : Colors.grey[300],
+                  fillColor: isDark
+                      ? const Color(0xFF2A2A2A)
+                      : Colors.grey[300],
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(8),
                     borderSide: BorderSide.none,
                   ),
-                  contentPadding:
-                      const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                  contentPadding: const EdgeInsets.symmetric(
+                    horizontal: 16,
+                    vertical: 12,
+                  ),
                 ),
               ),
               const SizedBox(height: 18),
               Text(
-                'Ukuran',
+                'Detail Ukuran',
                 style: TextStyle(
                   fontWeight: FontWeight.bold,
                   fontSize: 16,
@@ -272,7 +296,7 @@ String _getMonth(int month) {
     'September',
     'Oktober',
     'November',
-    'Desember'
+    'Desember',
   ];
   return months[month - 1];
 }

@@ -1,25 +1,37 @@
 import 'package:flutter/material.dart';
+import 'package:jasa_jahit_aplication/src/model/order_model.dart';
 import 'home_customer_screen.dart';
 import 'package:provider/provider.dart';
 import 'package:jasa_jahit_aplication/src/theme/theme_provider.dart';
 
 class BerhasilPesanCelanaCustomerScreen extends StatelessWidget {
-  const BerhasilPesanCelanaCustomerScreen({super.key});
+  final Order order;
+
+  const BerhasilPesanCelanaCustomerScreen({super.key, required this.order});
 
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
+
+    // Ambil data dari order
+    final kodePesanan = order.id ?? 'N/A';
+    final tanggalPesanan = order.orderDate.toDate();
+    final estimasiHarga = order.estimatedPrice ?? 0;
+
     return Scaffold(
-      backgroundColor:
-          isDark ? const Color(0xFF1A1A1A) : const Color(0xFF8FBC8F),
+      backgroundColor: isDark
+          ? const Color(0xFF1A1A1A)
+          : const Color(0xFF8FBC8F),
       body: SafeArea(
         child: Stack(
           children: [
             Column(
               children: [
                 Container(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 16,
+                    vertical: 12,
+                  ),
                   decoration: BoxDecoration(
                     color: isDark ? const Color(0xFF2A2A2A) : Colors.white,
                     boxShadow: [
@@ -40,14 +52,17 @@ class BerhasilPesanCelanaCustomerScreen extends StatelessWidget {
                           borderRadius: BorderRadius.circular(12),
                         ),
                         child: IconButton(
-                          icon: const Icon(Icons.arrow_back_ios_new,
-                              color: Color(0xFFDE8500)),
+                          icon: const Icon(
+                            Icons.arrow_back_ios_new,
+                            color: Color(0xFFDE8500),
+                          ),
                           onPressed: () {
                             Navigator.pushReplacement(
                               context,
                               MaterialPageRoute(
-                                  builder: (context) =>
-                                      const HomeCustomerScreen()),
+                                builder: (context) =>
+                                    const HomeCustomerScreen(),
+                              ),
                             );
                           },
                         ),
@@ -75,8 +90,9 @@ class BerhasilPesanCelanaCustomerScreen extends StatelessWidget {
                       Container(
                         padding: const EdgeInsets.all(16),
                         decoration: BoxDecoration(
-                          color:
-                              isDark ? const Color(0xFF2A2A2A) : Colors.white,
+                          color: isDark
+                              ? const Color(0xFF2A2A2A)
+                              : Colors.white,
                           borderRadius: BorderRadius.circular(16),
                           boxShadow: [
                             BoxShadow(
@@ -125,26 +141,27 @@ class BerhasilPesanCelanaCustomerScreen extends StatelessWidget {
                             ),
                             const SizedBox(height: 24),
                             _DetailItem(
-                              label: 'Nomor Pesanan',
-                              value: '#123456',
+                              label: 'Kode Pesanan',
+                              value: kodePesanan,
                               icon: Icons.receipt_long,
                             ),
                             Divider(
-                                height: 24,
-                                color:
-                                    isDark ? Colors.white24 : Colors.black12),
+                              height: 24,
+                              color: isDark ? Colors.white24 : Colors.black12,
+                            ),
                             _DetailItem(
                               label: 'Tanggal',
-                              value: '12 Mei 2024',
+                              value:
+                                  '${tanggalPesanan.day} ${_getMonth(tanggalPesanan.month)} ${tanggalPesanan.year}',
                               icon: Icons.calendar_today,
                             ),
                             Divider(
-                                height: 24,
-                                color:
-                                    isDark ? Colors.white24 : Colors.black12),
+                              height: 24,
+                              color: isDark ? Colors.white24 : Colors.black12,
+                            ),
                             _DetailItem(
                               label: 'Total Pembayaran',
-                              value: 'Rp 150.000',
+                              value: 'Rp ${estimasiHarga.toStringAsFixed(0)}',
                               icon: Icons.payments,
                             ),
                           ],
@@ -189,6 +206,24 @@ class BerhasilPesanCelanaCustomerScreen extends StatelessWidget {
   }
 }
 
+String _getMonth(int month) {
+  const months = [
+    'Januari',
+    'Februari',
+    'Maret',
+    'April',
+    'Mei',
+    'Juni',
+    'Juli',
+    'Agustus',
+    'September',
+    'Oktober',
+    'November',
+    'Desember',
+  ];
+  return months[month - 1];
+}
+
 class _DetailItem extends StatelessWidget {
   final String label;
   final String value;
@@ -212,11 +247,7 @@ class _DetailItem extends StatelessWidget {
             color: const Color(0xFFDE8500).withOpacity(0.1),
             borderRadius: BorderRadius.circular(8),
           ),
-          child: Icon(
-            icon,
-            color: const Color(0xFFDE8500),
-            size: 24,
-          ),
+          child: Icon(icon, color: const Color(0xFFDE8500), size: 24),
         ),
         const SizedBox(width: 16),
         Expanded(

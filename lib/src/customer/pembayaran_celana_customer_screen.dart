@@ -194,7 +194,7 @@ class _PembayaranCelanaCustomerScreenState
                               ),
                             ),
                             Text(
-                              'Total Harga:\nRp. ${widget.order.price.toStringAsFixed(0)}',
+                              'Total Harga:\nRp. ${widget.order.estimatedPrice?.toStringAsFixed(0) ?? widget.order.price.toStringAsFixed(0)}',
                               style: TextStyle(
                                 color: isDark ? Colors.white : Colors.black,
                               ),
@@ -444,8 +444,9 @@ class _PembayaranCelanaCustomerScreenState
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (context) =>
-                            const BerhasilPesanCelanaCustomerScreen(),
+                        builder: (context) => BerhasilPesanCelanaCustomerScreen(
+                          order: widget.order,
+                        ),
                       ),
                     );
                   } catch (e) {
@@ -479,20 +480,24 @@ class _PembayaranCelanaCustomerScreenState
   Future<void> _pickFileFromCamera() async {
     try {
       // Coba pick image dari camera dengan error handling yang lebih baik
-      final XFile? pickedFile = await _picker.pickImage(
-        source: ImageSource.camera,
-        imageQuality: 80,
-        maxWidth: 1920,
-        maxHeight: 1080,
-      ).catchError((error) {
-        print('Camera picker error: $error');
-        throw Exception('Gagal membuka camera. Pastikan aplikasi memiliki izin akses camera.');
-      });
+      final XFile? pickedFile = await _picker
+          .pickImage(
+            source: ImageSource.camera,
+            imageQuality: 80,
+            maxWidth: 1920,
+            maxHeight: 1080,
+          )
+          .catchError((error) {
+            print('Camera picker error: $error');
+            throw Exception(
+              'Gagal membuka camera. Pastikan aplikasi memiliki izin akses camera.',
+            );
+          });
 
       if (pickedFile != null) {
         try {
           final file = File(pickedFile.path);
-          
+
           // Validasi file exists
           if (!await file.exists()) {
             throw Exception('File tidak ditemukan');

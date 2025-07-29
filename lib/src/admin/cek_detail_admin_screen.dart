@@ -180,7 +180,7 @@ class CekDetailAdminScreen extends StatelessWidget {
                               ),
                             ),
                           )
-                          .toList(),
+                          ,
                     ],
                   ),
                 ),

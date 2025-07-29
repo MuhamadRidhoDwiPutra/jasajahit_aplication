@@ -13,13 +13,18 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:overlay_support/overlay_support.dart';
 import 'package:jasa_jahit_aplication/Core/provider/notification_provider.dart';
 
-
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
   FirebaseMessaging.onBackgroundMessage(
     NotificationService.firebaseBackgroundHandler,
   );
+
+  // Print FCM token ke debug console
+  FirebaseMessaging.instance.getToken().then((token) {
+    print('FCM Token: $token');
+  });
+
   runApp(
     OverlaySupport.global(
       child: MultiProvider(

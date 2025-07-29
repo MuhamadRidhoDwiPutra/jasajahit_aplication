@@ -1,3 +1,4 @@
+import 'package:firebase_messaging_platform_interface/src/remote_message.dart';
 import 'package:flutter/material.dart';
 import 'package:jasa_jahit_aplication/src/admin/cek_detail_admin_screen.dart';
 import 'package:jasa_jahit_aplication/src/admin/status_pesanan_admin_screen.dart';
@@ -13,6 +14,7 @@ import 'package:jasa_jahit_aplication/src/services/firestore_service.dart'; // A
 import 'package:fl_chart/fl_chart.dart';
 import 'package:jasa_jahit_aplication/Core/provider/notification_provider.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:jasa_jahit_aplication/src/page/notification_screen.dart';
 
 class HomeAdminScreen extends StatefulWidget {
   const HomeAdminScreen({super.key});
@@ -47,38 +49,7 @@ class _HomeAdminScreenState extends State<HomeAdminScreen> {
   }
 
   void _showNotificationDialog(BuildContext context) {
-    final notifications = Provider.of<NotificationProvider>(
-      context,
-      listen: false,
-    ).notifications;
-    showDialog(
-      context: context,
-      builder: (_) => AlertDialog(
-        title: Text('Notifikasi Masuk'),
-        content: SizedBox(
-          width: double.maxFinite,
-          child: notifications.isEmpty
-              ? Text('Belum ada notifikasi.')
-              : ListView.builder(
-                  shrinkWrap: true,
-                  itemCount: notifications.length,
-                  itemBuilder: (context, index) {
-                    final notif = notifications[index];
-                    return ListTile(
-                      title: Text(notif.title),
-                      subtitle: Text(notif.body),
-                    );
-                  },
-                ),
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: Text('Tutup'),
-          ),
-        ],
-      ),
-    );
+    showDialog(context: context, builder: (_) => NotificationScreen());
   }
 
   @override
@@ -219,6 +190,12 @@ class _HomeAdminScreenState extends State<HomeAdminScreen> {
       ),
     );
   }
+}
+
+extension on RemoteMessage {
+  String? get title => null;
+
+  String? get body => null;
 }
 
 class _BottomNavIcon extends StatelessWidget {

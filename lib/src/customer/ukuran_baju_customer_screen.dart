@@ -7,6 +7,8 @@ import 'konfirmasi_desain_baju_customer_screen.dart';
 import 'package:provider/provider.dart';
 import 'package:jasa_jahit_aplication/src/theme/theme_provider.dart';
 import 'package:jasa_jahit_aplication/src/model/order_model.dart';
+import 'package:jasa_jahit_aplication/src/model/kain_model.dart';
+import 'package:jasa_jahit_aplication/src/services/firestore_service.dart';
 import 'pilih_kain_customer_screen.dart';
 
 class UkuranBajuCustomerScreen extends StatefulWidget {
@@ -25,6 +27,49 @@ class _UkuranBajuCustomerScreenState extends State<UkuranBajuCustomerScreen> {
   final TextEditingController panjangBajuController = TextEditingController();
   final TextEditingController panjangLenganController = TextEditingController();
   final TextEditingController lebarLenganController = TextEditingController();
+  
+  final FirestoreService _firestoreService = FirestoreService();
+  KainModel? _selectedKain;
+  int _estimasiHarga = 0;
+  String _ukuranEstimasi = 'M';
+  bool _isCustomUkuran = false;
+
+  void _hitungEstimasiHarga() {
+    if (_selectedKain != null) {
+      final lingkarDada = double.tryParse(lingkarDadaController.text) ?? 0;
+      
+      // Tentukan ukuran berdasarkan lingkar dada
+      if (lingkarDada > 0) {
+        if (lingkarDada < 90) {
+          _ukuranEstimasi = 'S';
+          _isCustomUkuran = false;
+        } else if (lingkarDada < 100) {
+          _ukuranEstimasi = 'M';
+          _isCustomUkuran = false;
+        } else if (lingkarDada < 110) {
+          _ukuranEstimasi = 'L';
+          _isCustomUkuran = false;
+        } else if (lingkarDada < 120) {
+          _ukuranEstimasi = 'XL';
+          _isCustomUkuran = false;
+        } else {
+          _ukuranEstimasi = 'Custom';
+          _isCustomUkuran = true;
+        }
+      }
+      
+      setState(() {
+        _estimasiHarga = _selectedKain!.hitungEstimasiHarga(
+          jenisPakaian: 'baju',
+          ukuran: _ukuranEstimasi,
+          isExpress: false,
+          isCustomUkuran: _isCustomUkuran,
+          kategoriUmur: 'dewasa', // Default untuk dewasa
+          lokasi: 'kota_kecil', // Default untuk kota kecil
+        );
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -149,11 +194,161 @@ class _UkuranBajuCustomerScreenState extends State<UkuranBajuCustomerScreen> {
                               label: 'Lebar Lengan',
                               controller: lebarLenganController,
                               icon: Icons.straighten,
-                  ),
+                            ),
                           ],
-              ),
-            ),
-            const SizedBox(height: 24),
+                        ),
+                      ),
+                      
+                      // Preview Estimasi Harga
+                      if (_selectedKain != null && _estimasiHarga > 0)
+                        Container(
+                          margin: const EdgeInsets.only(top: 16),
+                          padding: const EdgeInsets.all(16),
+                          decoration: BoxDecoration(
+                            color: Colors.orange.shade100,
+                            borderRadius: BorderRadius.circular(12),
+                            border: Border.all(color: Colors.orange),
+                          ),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                'Estimasi Harga',
+                                style: TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.orange.shade800,
+                                ),
+                              ),
+                              const SizedBox(height: 8),
+                              Text(
+                                'Rp ${_estimasiHarga.toString().replaceAllMapped(RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'), (m) => '${m[1]}.')}',
+                                style: TextStyle(
+                                  fontSize: 20,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.orange.shade800,
+                                ),
+                              ),
+                              const SizedBox(height: 4),
+                              Text(
+                                'Ukuran: $_ukuranEstimasi • Kain: ${_selectedKain!.nama}',
+                                style: TextStyle(
+                                  fontSize: 12,
+                                  color: Colors.orange.shade700,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      
+                      // Pilih Kain untuk Estimasi
+                      Container(
+                        margin: const EdgeInsets.only(top: 16),
+                        padding: const EdgeInsets.all(16),
+                        decoration: BoxDecoration(
+                          color: isDark ? const Color(0xFF2A2A2A) : Colors.white,
+                          borderRadius: BorderRadius.circular(16),
+                          boxShadow: [
+                            BoxShadow(
+                              color: isDark
+                                  ? Colors.black.withOpacity(0.3)
+                                  : Colors.black.withOpacity(0.05),
+                              blurRadius: 10,
+                              offset: const Offset(0, 2),
+                            ),
+                          ],
+                        ),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              'Pilih Kain untuk Estimasi',
+                              style: TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.w600,
+                                color: isDark ? Colors.white : Colors.black,
+                                fontFamily: 'SF Pro Display',
+                              ),
+                            ),
+                            const SizedBox(height: 12),
+                            StreamBuilder<List<KainModel>>(
+                              stream: _firestoreService.getKainList(),
+                              builder: (context, snapshot) {
+                                if (snapshot.connectionState == ConnectionState.waiting) {
+                                  return const Center(child: CircularProgressIndicator());
+                                }
+                                final kainList = snapshot.data ?? [];
+                                if (kainList.isEmpty) {
+                                  return const Center(child: Text('Belum ada data kain.'));
+                                }
+                                return SizedBox(
+                                  height: 100,
+                                  child: ListView.builder(
+                                    scrollDirection: Axis.horizontal,
+                                    itemCount: kainList.length,
+                                    itemBuilder: (context, index) {
+                                      final kain = kainList[index];
+                                      final selected = kain.id == _selectedKain?.id;
+                                      return GestureDetector(
+                                        onTap: () {
+                                          setState(() {
+                                            _selectedKain = kain;
+                                            _hitungEstimasiHarga();
+                                          });
+                                        },
+                                        child: Container(
+                                          width: 150,
+                                          margin: const EdgeInsets.only(right: 12),
+                                          padding: const EdgeInsets.all(12),
+                                          decoration: BoxDecoration(
+                                            color: selected
+                                                ? Colors.orange.shade900
+                                                : isDark ? Colors.grey[800] : Colors.grey[200],
+                                            borderRadius: BorderRadius.circular(12),
+                                            border: selected
+                                                ? Border.all(color: Colors.orange, width: 2)
+                                                : null,
+                                          ),
+                                          child: Column(
+                                            crossAxisAlignment: CrossAxisAlignment.start,
+                                            children: [
+                                              Text(
+                                                kain.nama,
+                                                style: TextStyle(
+                                                  fontWeight: FontWeight.bold,
+                                                  color: selected ? Colors.white : null,
+                                                  fontSize: 12,
+                                                ),
+                                              ),
+                                              Text(
+                                                kain.warna,
+                                                style: TextStyle(
+                                                  color: selected ? Colors.white70 : null,
+                                                  fontSize: 10,
+                                                ),
+                                              ),
+                                              Text(
+                                                'Rp ${kain.harga.toString()}/m',
+                                                style: TextStyle(
+                                                  color: selected ? Colors.orange : null,
+                                                  fontWeight: FontWeight.bold,
+                                                  fontSize: 10,
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                      );
+                                    },
+                                  ),
+                                );
+                              },
+                            ),
+                          ],
+                        ),
+                      ),
+                      
+                      const SizedBox(height: 24),
                       ElevatedButton(
                 style: ElevatedButton.styleFrom(
                           backgroundColor: const Color(0xFFDE8500),
@@ -165,11 +360,19 @@ class _UkuranBajuCustomerScreenState extends State<UkuranBajuCustomerScreen> {
                 onPressed: () {
                           final user = FirebaseAuth.instance.currentUser;
                           if (user == null) {
-                            // Handle user not logged in case
                             ScaffoldMessenger.of(context).showSnackBar(
                               const SnackBar(
                                   content: Text(
                                       'Anda harus login untuk membuat pesanan.')),
+                            );
+                            return;
+                          }
+
+                          if (_selectedKain == null) {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(
+                                  content: Text(
+                                      'Silakan pilih kain terlebih dahulu.')),
                             );
                             return;
                           }
@@ -182,38 +385,32 @@ class _UkuranBajuCustomerScreenState extends State<UkuranBajuCustomerScreen> {
                             'lebarLengan': lebarLenganController.text,
                           };
 
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                              builder: (context) => PilihKainCustomerScreen(
-                                onKainSelected: (kain) {
-                                  final user = FirebaseAuth.instance.currentUser!;
-                                  final items = widget.items ?? [];
-                                  final modelName = 'Model Baju'; // Ganti sesuai input user jika ada
-                                  final calculatedPrice = kain.harga; // Atau hitung sesuai kebutuhan
-                                  items.add({
-                                    'orderType': 'Baju',
-                                    'model': modelName,
-                                    'fabric': kain.nama,
-                                    'measurements': measurements,
-                                    'price': calculatedPrice,
-                                  });
-                                  Navigator.pushReplacement(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (context) => KonfirmasiPesananCustomerScreen(
-                                        userId: user.uid,
-                                        userName: user.displayName ?? user.email ?? 'No Name',
-                                        items: items,
-                                        isDark: isDark,
-                                      ),
-                                    ),
-                                  );
-                                },
+                          // Langsung lanjut ke konfirmasi dengan kain yang sudah dipilih
+                          final items = widget.items ?? [];
+                          final modelName = 'Model Baju';
+                          
+                          items.add({
+                            'orderType': 'Baju',
+                            'model': modelName,
+                            'fabric': _selectedKain!.nama,
+                            'measurements': measurements,
+                            'price': _estimasiHarga,
+                            'estimatedSize': _ukuranEstimasi,
+                            'isCustomSize': _isCustomUkuran,
+                          });
+                          
+                          Navigator.pushReplacement(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => KonfirmasiPesananCustomerScreen(
+                                userId: user.uid,
+                                userName: user.displayName ?? user.email ?? 'No Name',
+                                items: items,
+                                isDark: isDark,
                               ),
                             ),
-                  );
-                },
+                          );
+                        },
                         child: const Text(
                           'Lanjut',
                           style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.white),
