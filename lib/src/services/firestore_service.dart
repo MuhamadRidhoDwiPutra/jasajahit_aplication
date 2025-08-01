@@ -4,6 +4,8 @@ import 'package:jasa_jahit_aplication/src/model/order_model.dart'
 import 'package:jasa_jahit_aplication/src/model/kain_model.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'dart:io';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
 
 class FirestoreService {
   final fs.FirebaseFirestore _db = fs.FirebaseFirestore.instance;
@@ -133,6 +135,38 @@ class FirestoreService {
     } catch (e) {
       print('Error updating order with payment proof: $e');
       rethrow;
+    }
+  }
+
+  /// Kirim notifikasi FCM ke user lain (admin/customer)
+  Future<void> sendNotificationToUser({
+    required String fcmToken,
+    required String title,
+    required String body,
+    Map<String, String>? data,
+  }) async {
+    const String serverKey =
+        'YOUR_SERVER_KEY_FROM_FIREBASE_CONSOLE'; // Ganti dengan server key FCM projectmu
+
+    final message = {
+      'to': fcmToken,
+      'notification': {'title': title, 'body': body},
+      'data': data ?? {},
+    };
+
+    final response = await http.post(
+      Uri.parse('https://fcm.googleapis.com/fcm/send'),
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'key=$serverKey',
+      },
+      body: jsonEncode(message),
+    );
+
+    if (response.statusCode == 200) {
+      print('Notifikasi berhasil dikirim');
+    } else {
+      print('Gagal mengirim notifikasi: ${response.body}');
     }
   }
 }

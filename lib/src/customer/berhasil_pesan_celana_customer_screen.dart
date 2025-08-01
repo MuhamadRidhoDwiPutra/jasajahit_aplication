@@ -3,6 +3,7 @@ import 'package:jasa_jahit_aplication/src/model/order_model.dart';
 import 'home_customer_screen.dart';
 import 'package:provider/provider.dart';
 import 'package:jasa_jahit_aplication/src/theme/theme_provider.dart';
+import 'package:jasa_jahit_aplication/Core/provider/notification_provider.dart';
 
 class BerhasilPesanCelanaCustomerScreen extends StatelessWidget {
   final Order order;
@@ -11,6 +12,45 @@ class BerhasilPesanCelanaCustomerScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // Kirim notifikasi ke admin saat pesanan berhasil
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      print('🔄 Customer order completed, sending notification to admin...');
+
+      final notificationProvider = Provider.of<NotificationProvider>(
+        context,
+        listen: false,
+      );
+
+      try {
+        await notificationProvider.sendOrderNotificationToAdmin(
+          orderId: order.id ?? 'N/A',
+          customerName: order.userName,
+          orderType: 'celana',
+          totalPrice: (order.estimatedPrice ?? 0).toDouble(),
+        );
+
+        // Show success message
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text(
+              'Pesanan berhasil! Notifikasi telah dikirim ke admin.',
+            ),
+            backgroundColor: Colors.green,
+          ),
+        );
+
+        print('✅ Notification sent successfully');
+      } catch (e) {
+        print('❌ Error sending notification: $e');
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Pesanan berhasil! Error mengirim notifikasi: $e'),
+            backgroundColor: Colors.orange,
+          ),
+        );
+      }
+    });
+
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
     // Ambil data dari order

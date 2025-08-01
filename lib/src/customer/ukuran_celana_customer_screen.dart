@@ -10,6 +10,7 @@ import 'package:jasa_jahit_aplication/src/model/order_model.dart' as model;
 import 'package:jasa_jahit_aplication/src/model/kain_model.dart';
 import 'package:jasa_jahit_aplication/src/services/firestore_service.dart';
 import 'pilih_kain_customer_screen.dart';
+import 'home_customer_screen.dart';
 
 class UkuranCelanaCustomerScreen extends StatefulWidget {
   final String selectedFabric;
@@ -131,7 +132,7 @@ class _UkuranCelanaCustomerScreenState
                               context,
                               MaterialPageRoute(
                                 builder: (context) =>
-                                    const DesainCustomerScreen(),
+                                    const HomeCustomerScreen(initialIndex: 1),
                               ),
                             );
                           },

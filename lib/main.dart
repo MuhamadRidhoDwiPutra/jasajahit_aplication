@@ -22,7 +22,8 @@ void main() async {
 
   // Print FCM token ke debug console
   FirebaseMessaging.instance.getToken().then((token) {
-    print('FCM Token: $token');
+    print('🔥 FCM Token: $token');
+    print('📱 Copy token ini untuk testing notifikasi');
   });
 
   runApp(
@@ -47,6 +48,14 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     // Inisialisasi notifikasi
     NotificationService.initialize(context);
+
+    // Setup NotificationProvider
+    final notificationProvider = Provider.of<NotificationProvider>(
+      context,
+      listen: false,
+    );
+    notificationProvider.setupFirebaseMessaging(context);
+
     final themeProvider = Provider.of<ThemeProvider>(context);
     return MaterialApp(
       title: 'Flutter Demo',

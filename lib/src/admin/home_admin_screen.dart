@@ -14,7 +14,7 @@ import 'package:jasa_jahit_aplication/src/services/firestore_service.dart'; // A
 import 'package:fl_chart/fl_chart.dart';
 import 'package:jasa_jahit_aplication/Core/provider/notification_provider.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:jasa_jahit_aplication/src/page/notification_screen.dart';
+import 'package:jasa_jahit_aplication/src/page/admin_notification_screen.dart';
 
 class HomeAdminScreen extends StatefulWidget {
   const HomeAdminScreen({super.key});
@@ -25,6 +25,26 @@ class HomeAdminScreen extends StatefulWidget {
 
 class _HomeAdminScreenState extends State<HomeAdminScreen> {
   int _selectedIndex = 0;
+
+  @override
+  void initState() {
+    super.initState();
+
+    // Setup FCM token untuk admin
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      final notificationProvider = Provider.of<NotificationProvider>(
+        context,
+        listen: false,
+      );
+      notificationProvider.setupFirebaseMessaging(context);
+
+      // Simpan FCM token admin ke Firestore
+      await notificationProvider.saveFCMTokenToFirestore('admin_001', 'admin');
+
+      // Load notifikasi dari Firestore
+      await notificationProvider.loadNotificationsFromFirestore('admin');
+    });
+  }
 
   final List<Widget> _adminScreens = [
     _HomeAdminContent(),
@@ -49,7 +69,10 @@ class _HomeAdminScreenState extends State<HomeAdminScreen> {
   }
 
   void _showNotificationDialog(BuildContext context) {
-    showDialog(context: context, builder: (_) => NotificationScreen());
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => const AdminNotificationScreen()),
+    );
   }
 
   @override

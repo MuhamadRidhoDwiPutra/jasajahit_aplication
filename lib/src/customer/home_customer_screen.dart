@@ -15,14 +15,40 @@ import 'package:jasa_jahit_aplication/Core/provider/notification_provider.dart';
 import 'package:jasa_jahit_aplication/src/page/notification_screen.dart';
 
 class HomeCustomerScreen extends StatefulWidget {
-  const HomeCustomerScreen({super.key});
+  final int initialIndex;
+  const HomeCustomerScreen({super.key, this.initialIndex = 0});
 
   @override
   State<HomeCustomerScreen> createState() => _HomeCustomerScreenState();
 }
 
 class _HomeCustomerScreenState extends State<HomeCustomerScreen> {
-  int _selectedIndex = 0;
+  late int _selectedIndex;
+
+  @override
+  void initState() {
+    super.initState();
+    _selectedIndex = widget.initialIndex;
+
+    // Setup FCM token untuk customer
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      final notificationProvider = Provider.of<NotificationProvider>(
+        context,
+        listen: false,
+      );
+      notificationProvider.setupFirebaseMessaging(context);
+
+      // Simpan FCM token customer ke Firestore
+      // TODO: Ganti dengan user ID yang sebenarnya
+      await notificationProvider.saveFCMTokenToFirestore(
+        'customer_001',
+        'customer',
+      );
+
+      // Load notifikasi dari Firestore
+      await notificationProvider.loadNotificationsFromFirestore('customer');
+    });
+  }
 
   final List<Widget> _customerScreens = [
     _HomeCustomerContent(),
@@ -47,7 +73,10 @@ class _HomeCustomerScreenState extends State<HomeCustomerScreen> {
   }
 
   void _showNotificationDialog(BuildContext context) {
-    showDialog(context: context, builder: (_) => NotificationScreen());
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => const NotificationScreen()),
+    );
   }
 
   @override
@@ -118,7 +147,7 @@ class _HomeCustomerScreenState extends State<HomeCustomerScreen> {
                             color: Color(0xFF25D366),
                           ),
                           onPressed: () {
-                            WhatsAppChatHelper.openWhatsAppChat();
+                            WhatsAppChatHelper.openWhatsAppChat(context);
                           },
                         ),
                       ),

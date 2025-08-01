@@ -24,13 +24,16 @@ class _DesainCustomerScreenState extends State<DesainCustomerScreen> {
       onWillPop: () async {
         Navigator.pushReplacement(
           context,
-          MaterialPageRoute(builder: (context) => const HomeCustomerScreen()),
+          MaterialPageRoute(
+            builder: (context) => const HomeCustomerScreen(initialIndex: 1),
+          ),
         );
         return false;
       },
       child: Scaffold(
-        backgroundColor:
-            isDark ? const Color(0xFF1A1A1A) : const Color(0xFF8FBC8F),
+        backgroundColor: isDark
+            ? const Color(0xFF1A1A1A)
+            : const Color(0xFF8FBC8F),
         body: SafeArea(
           child: Stack(
             children: [
@@ -64,11 +67,11 @@ class _DesainCustomerScreenState extends State<DesainCustomerScreen> {
                           physics: const NeverScrollableScrollPhysics(),
                           gridDelegate:
                               const SliverGridDelegateWithFixedCrossAxisCount(
-                            crossAxisCount: 2,
-                            childAspectRatio: 0.7,
-                            crossAxisSpacing: 20,
-                            mainAxisSpacing: 20,
-                          ),
+                                crossAxisCount: 2,
+                                childAspectRatio: 0.7,
+                                crossAxisSpacing: 20,
+                                mainAxisSpacing: 20,
+                              ),
                           itemCount: 2,
                           itemBuilder: (context, index) {
                             if (index == 0) {
@@ -82,7 +85,8 @@ class _DesainCustomerScreenState extends State<DesainCustomerScreen> {
                                     MaterialPageRoute(
                                       builder: (context) =>
                                           UkuranBajuCustomerScreen(
-                                              selectedFabric: _selectedFabric),
+                                            selectedFabric: _selectedFabric,
+                                          ),
                                     ),
                                   );
                                 },
@@ -98,7 +102,8 @@ class _DesainCustomerScreenState extends State<DesainCustomerScreen> {
                                     MaterialPageRoute(
                                       builder: (context) =>
                                           UkuranCelanaCustomerScreen(
-                                              selectedFabric: _selectedFabric),
+                                            selectedFabric: _selectedFabric,
+                                          ),
                                     ),
                                   );
                                 },
@@ -124,11 +129,12 @@ class _ModelCardModern extends StatelessWidget {
   final String imageText;
   final String title;
   final VoidCallback onTap;
-  const _ModelCardModern(
-      {required this.icon,
-      required this.imageText,
-      required this.title,
-      required this.onTap});
+  const _ModelCardModern({
+    required this.icon,
+    required this.imageText,
+    required this.title,
+    required this.onTap,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -163,8 +169,11 @@ class _ModelCardModern extends StatelessWidget {
                 borderRadius: BorderRadius.circular(12),
               ),
               child: Center(
-                child: Icon(icon,
-                    color: isDark ? Colors.white70 : Colors.black54, size: 40),
+                child: Icon(
+                  icon,
+                  color: isDark ? Colors.white70 : Colors.black54,
+                  size: 40,
+                ),
               ),
             ),
             Text(

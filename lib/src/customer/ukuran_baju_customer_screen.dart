@@ -10,6 +10,7 @@ import 'package:jasa_jahit_aplication/src/model/order_model.dart';
 import 'package:jasa_jahit_aplication/src/model/kain_model.dart';
 import 'package:jasa_jahit_aplication/src/services/firestore_service.dart';
 import 'pilih_kain_customer_screen.dart';
+import 'home_customer_screen.dart';
 
 class UkuranBajuCustomerScreen extends StatefulWidget {
   final String selectedFabric;
@@ -111,8 +112,7 @@ class _UkuranBajuCustomerScreenState extends State<UkuranBajuCustomerScreen> {
             Navigator.pushReplacement(
               context,
               MaterialPageRoute(
-                                  builder: (context) =>
-                                      const DesainCustomerScreen()),
+                                  builder: (context) => const HomeCustomerScreen(initialIndex: 1)),
             );
           },
         ),

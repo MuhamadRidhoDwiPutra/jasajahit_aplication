@@ -7,6 +7,7 @@ import 'package:jasa_jahit_aplication/src/theme/theme_provider.dart';
 import 'package:jasa_jahit_aplication/src/model/order_model.dart'
     as order_model;
 import 'package:jasa_jahit_aplication/src/page/notification_screen.dart';
+import 'package:jasa_jahit_aplication/Core/provider/notification_provider.dart';
 
 class StatusPesananAdminScreen extends StatefulWidget {
   const StatusPesananAdminScreen({super.key});
@@ -25,6 +26,7 @@ class _StatusPesananAdminScreenState extends State<StatusPesananAdminScreen> {
     'Pesanan Dikonfirmasi',
     'Pesanan telah selesai',
     'Pesanan Diterima',
+    'Pesanan Dibatalkan',
   ];
 
   Color getStatusColor(String status) {
@@ -45,9 +47,58 @@ class _StatusPesananAdminScreenState extends State<StatusPesananAdminScreen> {
 
   Future<void> _updateOrderStatus(String docId, String status) async {
     try {
+      // Update status di Firestore
       await _firestore.collection('orders').doc(docId).update({
         'status': status,
       });
+
+      // Ambil data order untuk notifikasi
+      final orderDoc = await _firestore.collection('orders').doc(docId).get();
+      final orderData = orderDoc.data() as Map<String, dynamic>;
+
+      // Kirim notifikasi ke customer
+      print(
+        '🔄 Admin updating order status, sending notification to customer...',
+      );
+      print('📝 Order details: $docId, ${orderData['userId']}, $status');
+
+      final notificationProvider = Provider.of<NotificationProvider>(
+        context,
+        listen: false,
+      );
+
+      try {
+        await notificationProvider.sendStatusUpdateNotificationToCustomer(
+          orderId: docId,
+          customerId: orderData['userId'] ?? '',
+          newStatus: status,
+          orderType: orderData['items']?[0]?['orderType'] ?? 'pakaian',
+        );
+
+        // Reload notifications untuk admin
+        await notificationProvider.loadNotificationsFromFirestore('admin');
+
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(
+              'Status berhasil diubah dan notifikasi dikirim ke customer',
+            ),
+            backgroundColor: Colors.green,
+          ),
+        );
+
+        print('✅ Status update notification sent successfully');
+      } catch (e) {
+        print('❌ Error sending status update notification: $e');
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(
+              'Status berhasil diubah! Error mengirim notifikasi: $e',
+            ),
+            backgroundColor: Colors.orange,
+          ),
+        );
+      }
     } catch (e) {
       ScaffoldMessenger.of(
         context,
