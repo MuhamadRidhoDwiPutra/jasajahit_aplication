@@ -87,7 +87,11 @@ class StatusPesananCustomerScreen extends StatelessWidget {
                           ? order.items[0]
                           : {};
                       final orderType = firstItem['orderType'] ?? '-';
-                      final model = firstItem['model'] ?? '-';
+                      final model =
+                          firstItem['jenisBaju'] ??
+                          firstItem['jenisCelana'] ??
+                          firstItem['model'] ??
+                          '-';
                       final fabric = firstItem['fabric'] ?? '-';
                       final price = firstItem['price'] ?? 0;
                       return Card(

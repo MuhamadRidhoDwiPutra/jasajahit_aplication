@@ -47,6 +47,13 @@ class _UkuranCelanaCustomerScreenState
   int _estimasiHarga = 0;
   String _ukuranEstimasi = 'M';
   bool _isCustomUkuran = false;
+  
+  // Jenis celana yang tersedia
+  final List<String> _jenisCelanaList = [
+    'Celana Panjang',
+    'Celana Pendek',
+  ];
+  String _selectedJenisCelana = 'Celana Panjang';
 
   void _hitungEstimasiHarga() {
     if (_selectedKain != null) {
@@ -178,6 +185,119 @@ class _UkuranCelanaCustomerScreenState
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
+                            // Panduan Ukuran Celana
+                            Text(
+                              'Panduan Ukuran Celana',
+                              style: TextStyle(
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold,
+                                color: isDark ? Colors.white : Colors.black,
+                                fontFamily: 'SF Pro Display',
+                              ),
+                            ),
+                            const SizedBox(height: 12),
+                            Container(
+                              width: double.infinity,
+                              height: 200,
+                              decoration: BoxDecoration(
+                                color: isDark ? Colors.grey[800] : Colors.grey[100],
+                                borderRadius: BorderRadius.circular(12),
+                                border: Border.all(
+                                  color: const Color(0xFFDE8500),
+                                  width: 1,
+                                ),
+                              ),
+                              child: Stack(
+                                children: [
+                                  // Gambar celana sederhana
+                                  Positioned(
+                                    left: 20,
+                                    top: 20,
+                                    child: Container(
+                                      width: 80,
+                                      height: 160,
+                                      decoration: BoxDecoration(
+                                        color: Colors.grey[600],
+                                        borderRadius: BorderRadius.circular(8),
+                                      ),
+                                      child: CustomPaint(
+                                        painter: CelanaPainter(),
+                                      ),
+                                    ),
+                                  ),
+                                  // Label ukuran
+                                  Positioned(
+                                    left: 120,
+                                    top: 30,
+                                    child: Column(
+                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      children: [
+                                        _buildMeasurementLabelWidget('Panjang Celana'),
+                                        const SizedBox(height: 25),
+                                        _buildMeasurementLabelWidget('Lingkar Pinggang'),
+                                        const SizedBox(height: 25),
+                                        _buildMeasurementLabelWidget('Lingkar Pesak'),
+                                        const SizedBox(height: 25),
+                                        _buildMeasurementLabelWidget('Lingkar Paha'),
+                                        const SizedBox(height: 25),
+                                        _buildMeasurementLabelWidget('Lebar Bawah Celana'),
+                                      ],
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                            const SizedBox(height: 24),
+                            // Dropdown Jenis Celana
+                            Text(
+                              'Jenis Celana',
+                              style: TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.w600,
+                                color: isDark ? Colors.white : Colors.black,
+                                fontFamily: 'SF Pro Display',
+                              ),
+                            ),
+                            const SizedBox(height: 12),
+                            Container(
+                              decoration: BoxDecoration(
+                                color: isDark ? const Color(0xFF3A3A3A) : Colors.grey[100],
+                                borderRadius: BorderRadius.circular(12),
+                                border: Border.all(
+                                  color: const Color(0xFFDE8500),
+                                  width: 1,
+                                ),
+                              ),
+                              child: DropdownButtonFormField<String>(
+                                value: _selectedJenisCelana,
+                                decoration: const InputDecoration(
+                                  contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                                  border: InputBorder.none,
+                                  prefixIcon: Icon(
+                                    Icons.checkroom,
+                                    color: Color(0xFFDE8500),
+                                  ),
+                                ),
+                                dropdownColor: isDark ? const Color(0xFF3A3A3A) : Colors.white,
+                                style: TextStyle(
+                                  color: isDark ? Colors.white : Colors.black,
+                                  fontFamily: 'SF Pro Text',
+                                  fontSize: 16,
+                                ),
+                                items: _jenisCelanaList.map((String jenis) {
+                                  return DropdownMenuItem<String>(
+                                    value: jenis,
+                                    child: Text(jenis),
+                                  );
+                                }).toList(),
+                                onChanged: (String? newValue) {
+                                  setState(() {
+                                    _selectedJenisCelana = newValue!;
+                                  });
+                                },
+                              ),
+                            ),
+                            const SizedBox(height: 24),
                             Text(
                               'Ukuran (cm)',
                               style: TextStyle(
@@ -226,6 +346,156 @@ class _UkuranCelanaCustomerScreenState
                           ],
                         ),
                       ),
+                      
+                      // Preview Estimasi Harga
+                      if (_selectedKain != null && _estimasiHarga > 0)
+                        Container(
+                          margin: const EdgeInsets.only(top: 16),
+                          padding: const EdgeInsets.all(16),
+                          decoration: BoxDecoration(
+                            color: Colors.orange.shade100,
+                            borderRadius: BorderRadius.circular(12),
+                            border: Border.all(color: Colors.orange),
+                          ),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                'Estimasi Harga',
+                                style: TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.orange.shade800,
+                                ),
+                              ),
+                              const SizedBox(height: 8),
+                              Text(
+                                'Rp ${_estimasiHarga.toString().replaceAllMapped(RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'), (m) => '${m[1]}.')}',
+                                style: TextStyle(
+                                  fontSize: 20,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.orange.shade800,
+                                ),
+                              ),
+                              const SizedBox(height: 4),
+                              Text(
+                                'Jenis: $_selectedJenisCelana • Ukuran: $_ukuranEstimasi • Kain: ${_selectedKain!.nama}',
+                                style: TextStyle(
+                                  fontSize: 12,
+                                  color: Colors.orange.shade700,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      
+                      // Pilih Kain untuk Estimasi
+                      Container(
+                        margin: const EdgeInsets.only(top: 16),
+                        padding: const EdgeInsets.all(16),
+                        decoration: BoxDecoration(
+                          color: isDark ? const Color(0xFF2A2A2A) : Colors.white,
+                          borderRadius: BorderRadius.circular(16),
+                          boxShadow: [
+                            BoxShadow(
+                              color: isDark
+                                  ? Colors.black.withOpacity(0.3)
+                                  : Colors.black.withOpacity(0.05),
+                              blurRadius: 10,
+                              offset: const Offset(0, 2),
+                            ),
+                          ],
+                        ),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              'Pilih Kain untuk Estimasi',
+                              style: TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.w600,
+                                color: isDark ? Colors.white : Colors.black,
+                                fontFamily: 'SF Pro Display',
+                              ),
+                            ),
+                            const SizedBox(height: 12),
+                            StreamBuilder<List<KainModel>>(
+                              stream: _firestoreService.getKainList(),
+                              builder: (context, snapshot) {
+                                if (snapshot.connectionState == ConnectionState.waiting) {
+                                  return const Center(child: CircularProgressIndicator());
+                                }
+                                final kainList = snapshot.data ?? [];
+                                if (kainList.isEmpty) {
+                                  return const Center(child: Text('Belum ada data kain.'));
+                                }
+                                return SizedBox(
+                                  height: 100,
+                                  child: ListView.builder(
+                                    scrollDirection: Axis.horizontal,
+                                    itemCount: kainList.length,
+                                    itemBuilder: (context, index) {
+                                      final kain = kainList[index];
+                                      final selected = kain.id == _selectedKain?.id;
+                                      return GestureDetector(
+                                        onTap: () {
+                                          setState(() {
+                                            _selectedKain = kain;
+                                            _hitungEstimasiHarga();
+                                          });
+                                        },
+                                        child: Container(
+                                          width: 150,
+                                          margin: const EdgeInsets.only(right: 12),
+                                          padding: const EdgeInsets.all(12),
+                                          decoration: BoxDecoration(
+                                            color: selected
+                                                ? Colors.orange.shade900
+                                                : isDark ? Colors.grey[800] : Colors.grey[200],
+                                            borderRadius: BorderRadius.circular(12),
+                                            border: selected
+                                                ? Border.all(color: Colors.orange, width: 2)
+                                                : null,
+                                          ),
+                                          child: Column(
+                                            crossAxisAlignment: CrossAxisAlignment.start,
+                                            children: [
+                                              Text(
+                                                kain.nama,
+                                                style: TextStyle(
+                                                  fontWeight: FontWeight.bold,
+                                                  color: selected ? Colors.white : null,
+                                                  fontSize: 12,
+                                                ),
+                                              ),
+                                              Text(
+                                                kain.warna,
+                                                style: TextStyle(
+                                                  color: selected ? Colors.white70 : null,
+                                                  fontSize: 10,
+                                                ),
+                                              ),
+                                              Text(
+                                                'Rp ${kain.harga.toString()}/m',
+                                                style: TextStyle(
+                                                  color: selected ? Colors.orange : null,
+                                                  fontWeight: FontWeight.bold,
+                                                  fontSize: 10,
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                      );
+                                    },
+                                  ),
+                                );
+                              },
+                            ),
+                          ],
+                        ),
+                      ),
+                      
                       const SizedBox(height: 24),
                       ElevatedButton(
                         style: ElevatedButton.styleFrom(
@@ -248,6 +518,17 @@ class _UkuranCelanaCustomerScreenState
                             return;
                           }
 
+                          if (_selectedKain == null) {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(
+                                content: Text(
+                                  'Silakan pilih kain terlebih dahulu.',
+                                ),
+                              ),
+                            );
+                            return;
+                          }
+
                           final measurements = {
                             'panjangCelana': panjangCelanaController.text,
                             'lingkarPinggang': lingkarPinggangController.text,
@@ -257,75 +538,29 @@ class _UkuranCelanaCustomerScreenState
                             'lebarBawahCelana': lebarBawahCelanaController.text,
                           };
 
-                          Navigator.push(
+                          // Langsung lanjut ke konfirmasi dengan kain yang sudah dipilih
+                          final items = widget.items ?? [];
+                          final modelName = 'Model Celana';
+                          
+                          items.add({
+                            'orderType': 'Celana',
+                            'model': modelName,
+                            'jenisCelana': _selectedJenisCelana,
+                            'fabric': _selectedKain!.nama,
+                            'measurements': measurements,
+                            'price': _estimasiHarga,
+                            'estimatedSize': _ukuranEstimasi,
+                            'isCustomSize': _isCustomUkuran,
+                          });
+                          
+                          Navigator.pushReplacement(
                             context,
                             MaterialPageRoute(
-                              builder: (context) => PilihKainCustomerScreen(
-                                onKainSelected: (kain) {
-                                  final modelName = 'Model Celana';
-                                  final user =
-                                      FirebaseAuth.instance.currentUser!;
-                                  final items = widget.items ?? [];
-
-                                  // Hitung estimasi harga berdasarkan ukuran yang diinput
-                                  String ukuranEstimasi = 'M'; // Default
-                                  bool isCustomUkuran = false;
-
-                                  // Tentukan ukuran berdasarkan lingkar pinggang
-                                  final lingkarPinggang =
-                                      double.tryParse(
-                                        lingkarPinggangController.text,
-                                      ) ??
-                                      0;
-                                  if (lingkarPinggang > 0) {
-                                    if (lingkarPinggang < 70) {
-                                      ukuranEstimasi = 'S';
-                                    } else if (lingkarPinggang < 80)
-                                      ukuranEstimasi = 'M';
-                                    else if (lingkarPinggang < 90)
-                                      ukuranEstimasi = 'L';
-                                    else if (lingkarPinggang < 100)
-                                      ukuranEstimasi = 'XL';
-                                    else {
-                                      ukuranEstimasi = 'Custom';
-                                      isCustomUkuran = true;
-                                    }
-                                  }
-
-                                  // Hitung estimasi harga menggunakan method dari KainModel
-                                  final calculatedPrice = kain
-                                      .hitungEstimasiHarga(
-                                        jenisPakaian: 'celana',
-                                        ukuran: ukuranEstimasi,
-                                        isExpress: false,
-                                        isCustomUkuran: isCustomUkuran,
-                                      );
-
-                                  items.add({
-                                    'orderType': 'Celana',
-                                    'model': modelName,
-                                    'fabric': kain.nama,
-                                    'measurements': measurements,
-                                    'price': calculatedPrice,
-                                    'estimatedSize': ukuranEstimasi,
-                                    'isCustomSize': isCustomUkuran,
-                                  });
-                                  Navigator.pushReplacement(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (context) =>
-                                          KonfirmasiPesananCustomerScreen(
-                                            userId: user.uid,
-                                            userName:
-                                                user.displayName ??
-                                                user.email ??
-                                                'No Name',
-                                            items: items,
-                                            isDark: isDark,
-                                          ),
-                                    ),
-                                  );
-                                },
+                              builder: (context) => KonfirmasiPesananCustomerScreen(
+                                userId: user.uid,
+                                userName: user.displayName ?? user.email ?? 'No Name',
+                                items: items,
+                                isDark: isDark,
                               ),
                             ),
                           );
@@ -349,6 +584,74 @@ class _UkuranCelanaCustomerScreenState
       ),
     );
   }
+  
+  Widget _buildMeasurementLabelWidget(String label) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    return Row(
+      children: [
+        Container(
+          width: 60,
+          height: 1,
+          decoration: BoxDecoration(
+            color: const Color(0xFFDE8500),
+            borderRadius: BorderRadius.circular(0.5),
+          ),
+        ),
+        const SizedBox(width: 8),
+        Text(
+          label,
+          style: TextStyle(
+            fontSize: 12,
+            fontWeight: FontWeight.w500,
+            color: isDark ? Colors.white70 : Colors.black54,
+            fontFamily: 'SF Pro Text',
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+class CelanaPainter extends CustomPainter {
+  @override
+  void paint(Canvas canvas, Size size) {
+    final paint = Paint()
+      ..color = Colors.white
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 2;
+
+    // Gambar celana sederhana
+    final path = Path();
+    
+    // Waistband (pinggang)
+    path.moveTo(10, 10);
+    path.lineTo(70, 10);
+    
+    // Left leg (kaki kiri)
+    path.moveTo(10, 10);
+    path.lineTo(10, 150);
+    path.lineTo(35, 150);
+    
+    // Right leg (kaki kanan)
+    path.moveTo(70, 10);
+    path.lineTo(70, 150);
+    path.lineTo(45, 150);
+    
+    // Crotch (selangkangan)
+    path.moveTo(35, 40);
+    path.lineTo(45, 40);
+    
+    // Pockets (saku)
+    path.moveTo(15, 20);
+    path.lineTo(25, 20);
+    path.moveTo(55, 20);
+    path.lineTo(65, 20);
+    
+    canvas.drawPath(path, paint);
+  }
+
+  @override
+  bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
 }
 
 class _MeasurementField extends StatelessWidget {

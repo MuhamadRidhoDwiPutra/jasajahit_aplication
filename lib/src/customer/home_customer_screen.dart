@@ -13,6 +13,7 @@ import 'package:jasa_jahit_aplication/src/customer/whatsapp_chat_helper.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:jasa_jahit_aplication/Core/provider/notification_provider.dart';
 import 'package:jasa_jahit_aplication/src/page/notification_screen.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class HomeCustomerScreen extends StatefulWidget {
   final int initialIndex;
@@ -110,18 +111,59 @@ class _HomeCustomerScreenState extends State<HomeCustomerScreen> {
                   ),
                   child: Row(
                     children: [
-                      Container(
-                        decoration: BoxDecoration(
-                          color: const Color(0xFFDE8500).withOpacity(0.1),
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                        child: IconButton(
-                          icon: const Icon(
-                            Icons.notifications_none,
-                            color: Color(0xFFDE8500),
+                      Stack(
+                        children: [
+                          Container(
+                            decoration: BoxDecoration(
+                              color: const Color(0xFFDE8500).withOpacity(0.1),
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                            child: IconButton(
+                              icon: const Icon(
+                                Icons.notifications_none,
+                                color: Color(0xFFDE8500),
+                              ),
+                              onPressed: () => _showNotificationDialog(context),
+                            ),
                           ),
-                          onPressed: () => _showNotificationDialog(context),
-                        ),
+                          // Penanda notifikasi baru
+                          Positioned(
+                            right: 8,
+                            top: 8,
+                            child: StreamBuilder<QuerySnapshot>(
+                              stream: FirebaseFirestore.instance
+                                  .collection('notifications')
+                                  .where('recipientId', isEqualTo: 'customer_001')
+                                  .where('isRead', isEqualTo: false)
+                                  .snapshots(),
+                              builder: (context, snapshot) {
+                                if (snapshot.hasData && snapshot.data!.docs.isNotEmpty) {
+                                  return Container(
+                                    padding: const EdgeInsets.all(4),
+                                    decoration: BoxDecoration(
+                                      color: Colors.red,
+                                      borderRadius: BorderRadius.circular(10),
+                                    ),
+                                    constraints: const BoxConstraints(
+                                      minWidth: 16,
+                                      minHeight: 16,
+                                    ),
+                                    child: Text(
+                                      '${snapshot.data!.docs.length}',
+                                      style: const TextStyle(
+                                        color: Colors.white,
+                                        fontSize: 10,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                      textAlign: TextAlign.center,
+                                    ),
+                                  );
+                                }
+                                return const SizedBox.shrink();
+                              },
+                            ),
+                          ),
+                        ],
                       ),
                       Expanded(
                         child: Center(

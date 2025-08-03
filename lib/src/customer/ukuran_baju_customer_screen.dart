@@ -34,6 +34,14 @@ class _UkuranBajuCustomerScreenState extends State<UkuranBajuCustomerScreen> {
   int _estimasiHarga = 0;
   String _ukuranEstimasi = 'M';
   bool _isCustomUkuran = false;
+  
+  // Jenis baju yang tersedia
+  final List<String> _jenisBajuList = [
+    'Kaos Oblong',
+    'Kemeja',
+    'Polo (Kaos Berkerah)',
+  ];
+  String _selectedJenisBaju = 'Kaos Oblong';
 
   void _hitungEstimasiHarga() {
     if (_selectedKain != null) {
@@ -156,6 +164,56 @@ class _UkuranBajuCustomerScreenState extends State<UkuranBajuCustomerScreen> {
         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+                            // Dropdown Jenis Baju
+                            Text(
+                              'Jenis Baju',
+                              style: TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.w600,
+                                color: isDark ? Colors.white : Colors.black,
+                                fontFamily: 'SF Pro Display',
+                              ),
+                            ),
+                            const SizedBox(height: 12),
+                            Container(
+                              decoration: BoxDecoration(
+                                color: isDark ? const Color(0xFF3A3A3A) : Colors.grey[100],
+                                borderRadius: BorderRadius.circular(12),
+                                border: Border.all(
+                                  color: const Color(0xFFDE8500),
+                                  width: 1,
+                                ),
+                              ),
+                              child: DropdownButtonFormField<String>(
+                                value: _selectedJenisBaju,
+                                decoration: const InputDecoration(
+                                  contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                                  border: InputBorder.none,
+                                  prefixIcon: Icon(
+                                    Icons.checkroom,
+                                    color: Color(0xFFDE8500),
+                                  ),
+                                ),
+                                dropdownColor: isDark ? const Color(0xFF3A3A3A) : Colors.white,
+                                style: TextStyle(
+                                  color: isDark ? Colors.white : Colors.black,
+                                  fontFamily: 'SF Pro Text',
+                                  fontSize: 16,
+                                ),
+                                items: _jenisBajuList.map((String jenis) {
+                                  return DropdownMenuItem<String>(
+                                    value: jenis,
+                                    child: Text(jenis),
+                                  );
+                                }).toList(),
+                                onChanged: (String? newValue) {
+                                  setState(() {
+                                    _selectedJenisBaju = newValue!;
+                                  });
+                                },
+                              ),
+                            ),
+                            const SizedBox(height: 24),
                             Text(
                               'Ukuran (cm)',
                               style: TextStyle(
@@ -231,7 +289,7 @@ class _UkuranBajuCustomerScreenState extends State<UkuranBajuCustomerScreen> {
                               ),
                               const SizedBox(height: 4),
                               Text(
-                                'Ukuran: $_ukuranEstimasi • Kain: ${_selectedKain!.nama}',
+                                'Jenis: $_selectedJenisBaju • Ukuran: $_ukuranEstimasi • Kain: ${_selectedKain!.nama}',
                                 style: TextStyle(
                                   fontSize: 12,
                                   color: Colors.orange.shade700,
@@ -392,6 +450,7 @@ class _UkuranBajuCustomerScreenState extends State<UkuranBajuCustomerScreen> {
                           items.add({
                             'orderType': 'Baju',
                             'model': modelName,
+                            'jenisBaju': _selectedJenisBaju,
                             'fabric': _selectedKain!.nama,
                             'measurements': measurements,
                             'price': _estimasiHarga,

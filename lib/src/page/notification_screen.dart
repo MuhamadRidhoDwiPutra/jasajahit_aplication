@@ -296,7 +296,7 @@ class _NotificationScreenState extends State<NotificationScreen> {
     final now = DateTime.now();
     final difference = now.difference(timestamp);
 
-    if (difference.inMinutes < 1) {
+    if (difference.inSeconds < 60) {
       return 'Baru saja';
     } else if (difference.inMinutes < 60) {
       return '${difference.inMinutes} menit yang lalu';
@@ -304,8 +304,15 @@ class _NotificationScreenState extends State<NotificationScreen> {
       return '${difference.inHours} jam yang lalu';
     } else if (difference.inDays < 7) {
       return '${difference.inDays} hari yang lalu';
+    } else if (difference.inDays < 30) {
+      final weeks = (difference.inDays / 7).floor();
+      return '$weeks minggu yang lalu';
+    } else if (difference.inDays < 365) {
+      final months = (difference.inDays / 30).floor();
+      return '$months bulan yang lalu';
     } else {
-      return '${timestamp.day}/${timestamp.month}/${timestamp.year}';
+      final years = (difference.inDays / 365).floor();
+      return '$years tahun yang lalu';
     }
   }
 }

@@ -9,7 +9,7 @@ class CekDetailStatusPesananCustomerScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final firstItem = (order.items.isNotEmpty) ? order.items[0] : {};
-    final model = firstItem['model'] ?? '-';
+    final model = firstItem['jenisBaju'] ?? firstItem['jenisCelana'] ?? firstItem['model'] ?? '-';
     final fabric = firstItem['fabric'] ?? '-';
     final measurements = firstItem['measurements'] ?? {};
     final orderType = (firstItem['orderType'] ?? '').toString();

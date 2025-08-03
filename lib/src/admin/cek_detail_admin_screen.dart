@@ -10,7 +10,17 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 class CekDetailAdminScreen extends StatelessWidget {
   final order_model.Order order;
 
-  const CekDetailAdminScreen({super.key, required this.order, required String orderCode, required String model, required String fabricType, required int productQuantity, required String orderDate, required Map measurements, required String orderType});
+  const CekDetailAdminScreen({
+    super.key,
+    required this.order,
+    required String orderCode,
+    required String model,
+    required String fabricType,
+    required int productQuantity,
+    required String orderDate,
+    required Map measurements,
+    required String orderType,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -132,55 +142,51 @@ class CekDetailAdminScreen extends StatelessWidget {
                         ),
                       ),
                       const SizedBox(height: 12),
-                      ...order.items
-                          .map(
-                            (item) => Padding(
-                              padding: const EdgeInsets.only(bottom: 8),
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    '${item['orderType'] ?? '-'} - ${item['model'] ?? '-'}',
-                                    style: TextStyle(
-                                      fontWeight: FontWeight.w600,
-                                      color: isDark
-                                          ? Colors.white
-                                          : Colors.black,
-                                    ),
-                                  ),
-                                  Text(
-                                    'Kain: ${item['fabric'] ?? '-'}',
-                                    style: TextStyle(
-                                      color: isDark
-                                          ? Colors.white70
-                                          : Colors.black54,
-                                    ),
-                                  ),
-                                  Text(
-                                    'Harga: Rp ${item['price']?.toStringAsFixed(0) ?? '0'}',
-                                    style: TextStyle(
-                                      color: isDark
-                                          ? Colors.white70
-                                          : Colors.black54,
-                                    ),
-                                  ),
-                                  if (item['measurements'] != null) ...[
-                                    const SizedBox(height: 4),
-                                    Text(
-                                      'Ukuran: ${_formatMeasurements(item['measurements'])}',
-                                      style: TextStyle(
-                                        color: isDark
-                                            ? Colors.white70
-                                            : Colors.black54,
-                                        fontSize: 12,
-                                      ),
-                                    ),
-                                  ],
-                                ],
+                      ...order.items.map(
+                        (item) => Padding(
+                          padding: const EdgeInsets.only(bottom: 8),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                '${item['orderType'] ?? '-'} - ${item['jenisBaju'] ?? item['jenisCelana'] ?? item['model'] ?? '-'}',
+                                style: TextStyle(
+                                  fontWeight: FontWeight.w600,
+                                  color: isDark ? Colors.white : Colors.black,
+                                ),
                               ),
-                            ),
-                          )
-                          ,
+                              Text(
+                                'Kain: ${item['fabric'] ?? '-'}',
+                                style: TextStyle(
+                                  color: isDark
+                                      ? Colors.white70
+                                      : Colors.black54,
+                                ),
+                              ),
+                              Text(
+                                'Harga: Rp ${item['price']?.toStringAsFixed(0) ?? '0'}',
+                                style: TextStyle(
+                                  color: isDark
+                                      ? Colors.white70
+                                      : Colors.black54,
+                                ),
+                              ),
+                              if (item['measurements'] != null) ...[
+                                const SizedBox(height: 4),
+                                Text(
+                                  'Ukuran: ${_formatMeasurements(item['measurements'])}',
+                                  style: TextStyle(
+                                    color: isDark
+                                        ? Colors.white70
+                                        : Colors.black54,
+                                    fontSize: 12,
+                                  ),
+                                ),
+                              ],
+                            ],
+                          ),
+                        ),
+                      ),
                     ],
                   ),
                 ),

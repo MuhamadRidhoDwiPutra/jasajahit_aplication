@@ -219,7 +219,7 @@ class _PembayaranCelanaCustomerScreenState
                       (item) => Padding(
                         padding: const EdgeInsets.only(bottom: 4),
                         child: Text(
-                          '• ${item['orderType'] ?? '-'} - ${item['model'] ?? '-'} (Rp ${item['price']?.toStringAsFixed(0) ?? '0'})',
+                          '• ${item['orderType'] ?? '-'} - ${item['jenisCelana'] ?? item['model'] ?? '-'} (Rp ${item['price']?.toStringAsFixed(0) ?? '0'})',
                           style: TextStyle(
                             color: isDark ? Colors.white70 : Colors.black54,
                             fontSize: 11,

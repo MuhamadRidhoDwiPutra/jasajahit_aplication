@@ -92,7 +92,7 @@ class _RiwayatCustomerScreenState extends State<RiwayatCustomerScreen> {
                                     : {};
                                 final orderType = (firstItem['orderType'] ?? '')
                                     .toString();
-                                final model = (firstItem['model'] ?? '')
+                                final model = (firstItem['jenisBaju'] ?? firstItem['jenisCelana'] ?? firstItem['model'] ?? '')
                                     .toString();
                                 final userName = order.userName.toString();
                                 return orderType.toLowerCase().contains(
@@ -122,7 +122,7 @@ class _RiwayatCustomerScreenState extends State<RiwayatCustomerScreen> {
                               ? order.items[0]
                               : {};
                           final orderType = firstItem['orderType'] ?? '-';
-                          final model = firstItem['model'] ?? '-';
+                                                      final model = firstItem['jenisBaju'] ?? firstItem['jenisCelana'] ?? firstItem['model'] ?? '-';
                           final price = firstItem['price'] ?? 0;
                           return Container(
                             margin: const EdgeInsets.only(bottom: 16),

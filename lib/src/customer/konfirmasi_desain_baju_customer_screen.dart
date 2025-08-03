@@ -192,12 +192,12 @@ class _KonfirmasiPesananCustomerScreenState
                   return Card(
                     color: isDark ? const Color(0xFF2A2A2A) : Colors.white,
                     child: ListTile(
-                      title: Text(
-                        '${item['orderType'] ?? '-'} - ${item['model'] ?? '-'}',
-                      ),
-                      subtitle: Text(
-                        'Kain: ${item['fabric'] ?? '-'}\nHarga: Rp ${item['price'] ?? 0}',
-                      ),
+                                          title: Text(
+                      '${item['orderType'] ?? '-'} - ${item['jenisBaju'] ?? item['jenisCelana'] ?? item['model'] ?? '-'}',
+                    ),
+                    subtitle: Text(
+                      'Kain: ${item['fabric'] ?? '-'}\nHarga: Rp ${item['price'] ?? 0}',
+                    ),
                       trailing: IconButton(
                         icon: const Icon(Icons.delete, color: Colors.red),
                         onPressed: () => _removeItem(index),
