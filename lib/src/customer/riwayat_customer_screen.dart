@@ -10,9 +10,14 @@ import 'package:jasa_jahit_aplication/src/theme/theme_provider.dart';
 import 'package:jasa_jahit_aplication/src/services/firestore_service.dart';
 import 'package:jasa_jahit_aplication/Core/provider/auth_provider.dart'
     as core_auth;
-import 'package:jasa_jahit_aplication/src/model/order_model.dart' as model;
+import 'package:jasa_jahit_aplication/src/model/order_model.dart'
+    as order_model;
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:jasa_jahit_aplication/src/customer/pembayaran_baju_customer_screen.dart';
+import 'package:jasa_jahit_aplication/src/customer/pembayaran_celana_customer_screen.dart';
+import 'package:jasa_jahit_aplication/src/customer/pembayaran_model_customer_screen.dart';
+import 'package:jasa_jahit_aplication/src/model/product_model.dart';
 
 class RiwayatCustomerScreen extends StatefulWidget {
   const RiwayatCustomerScreen({super.key});
@@ -65,7 +70,7 @@ class _RiwayatCustomerScreenState extends State<RiwayatCustomerScreen> {
                   ),
                 ),
                 Expanded(
-                  child: StreamBuilder<List<model.Order>>(
+                  child: StreamBuilder<List<order_model.Order>>(
                     stream: FirestoreService().getOrdersByUserId(userId),
                     builder: (context, snapshot) {
                       if (snapshot.connectionState == ConnectionState.waiting) {
@@ -76,15 +81,10 @@ class _RiwayatCustomerScreenState extends State<RiwayatCustomerScreen> {
                       }
                       final orders =
                           snapshot.data
-                              ?.where(
-                                (order) =>
-                                    order.status.toLowerCase().contains(
-                                      'selesai',
-                                    ) ||
-                                    order.status.toLowerCase().contains(
-                                      'batal',
-                                    ),
-                              )
+                              ?.where((order) {
+                                // Tampilkan semua order (tidak hanya selesai/batal)
+                                return true;
+                              })
                               .where((order) {
                                 final query = _searchQuery.toLowerCase();
                                 final firstItem = (order.items.isNotEmpty)
@@ -92,13 +92,19 @@ class _RiwayatCustomerScreenState extends State<RiwayatCustomerScreen> {
                                     : {};
                                 final orderType = (firstItem['orderType'] ?? '')
                                     .toString();
-                                final model = (firstItem['jenisBaju'] ?? firstItem['jenisCelana'] ?? firstItem['model'] ?? '')
-                                    .toString();
+                                final productModel =
+                                    (firstItem['jenisBaju'] ??
+                                            firstItem['jenisCelana'] ??
+                                            firstItem['model'] ??
+                                            '')
+                                        .toString();
                                 final userName = order.userName.toString();
                                 return orderType.toLowerCase().contains(
                                       query,
                                     ) ||
-                                    model.toLowerCase().contains(query) ||
+                                    productModel.toLowerCase().contains(
+                                      query,
+                                    ) ||
                                     userName.toLowerCase().contains(query);
                               })
                               .toList() ??
@@ -122,8 +128,11 @@ class _RiwayatCustomerScreenState extends State<RiwayatCustomerScreen> {
                               ? order.items[0]
                               : {};
                           final orderType = firstItem['orderType'] ?? '-';
-                                                      final model = firstItem['jenisBaju'] ?? firstItem['jenisCelana'] ?? firstItem['model'] ?? '-';
-                          final price = firstItem['price'] ?? 0;
+                          final price =
+                              order.estimatedPrice?.toDouble() ??
+                              order.totalPrice ??
+                              firstItem['price'] ??
+                              0;
                           return Container(
                             margin: const EdgeInsets.only(bottom: 16),
                             decoration: BoxDecoration(
@@ -187,6 +196,48 @@ class _RiwayatCustomerScreenState extends State<RiwayatCustomerScreen> {
                                         ),
                                       ),
                                       const SizedBox(height: 8),
+                                      // Tambahkan detail pesanan
+                                      if (firstItem['jenisBaju'] != null ||
+                                          firstItem['jenisCelana'] != null) ...[
+                                        Text(
+                                          'Model: ${firstItem['jenisBaju'] ?? firstItem['jenisCelana'] ?? '-'}',
+                                          style: TextStyle(
+                                            fontSize: 14,
+                                            color: isDark
+                                                ? Colors.white70
+                                                : Colors.black54,
+                                            fontFamily: 'SF Pro Text',
+                                          ),
+                                        ),
+                                        const SizedBox(height: 4),
+                                      ],
+                                      if (firstItem['fabric'] != null) ...[
+                                        Text(
+                                          'Kain: ${firstItem['fabric']}',
+                                          style: TextStyle(
+                                            fontSize: 14,
+                                            color: isDark
+                                                ? Colors.white70
+                                                : Colors.black54,
+                                            fontFamily: 'SF Pro Text',
+                                          ),
+                                        ),
+                                        const SizedBox(height: 4),
+                                      ],
+                                      if (firstItem['measurements'] !=
+                                          null) ...[
+                                        Text(
+                                          'Ukuran: Custom',
+                                          style: TextStyle(
+                                            fontSize: 14,
+                                            color: isDark
+                                                ? Colors.white70
+                                                : Colors.black54,
+                                            fontFamily: 'SF Pro Text',
+                                          ),
+                                        ),
+                                        const SizedBox(height: 4),
+                                      ],
                                       Row(
                                         mainAxisAlignment:
                                             MainAxisAlignment.spaceBetween,
@@ -205,7 +256,7 @@ class _RiwayatCustomerScreenState extends State<RiwayatCustomerScreen> {
                                             ),
                                           ),
                                           Text(
-                                            'Rp ${price.toString()}',
+                                            'Rp ${_formatCurrency(price)}',
                                             style: const TextStyle(
                                               fontSize: 16,
                                               fontWeight: FontWeight.w600,
@@ -243,32 +294,163 @@ class _RiwayatCustomerScreenState extends State<RiwayatCustomerScreen> {
                                             ),
                                           ),
                                           onPressed: () async {
-                                            final newOrder = model.Order(
-                                              id: null,
-                                              userId: userId,
-                                              userName: order.userName,
-                                              orderType: orderType,
-                                              measurements: order.measurements,
-                                              fabric: order.fabric,
-                                              model: model,
-                                              price: price,
-                                              status: 'Menunggu Konfirmasi',
-                                              orderDate: Timestamp.now(),
-                                              items: [],
+                                            print(
+                                              'DEBUG: Button Pesan Lagi ditekan',
                                             );
-                                            await FirestoreService().saveOrder(
-                                              newOrder,
-                                            );
-                                            if (mounted) {
-                                              ScaffoldMessenger.of(
-                                                context,
-                                              ).showSnackBar(
-                                                const SnackBar(
-                                                  content: Text(
-                                                    'Pesanan berhasil diulang!',
-                                                  ),
-                                                ),
+                                            try {
+                                              // Tentukan tipe pesanan untuk navigasi yang tepat
+                                              final orderType =
+                                                  firstItem['orderType'] ?? '';
+                                              final productModel =
+                                                  firstItem['jenisBaju'] ??
+                                                  firstItem['jenisCelana'] ??
+                                                  firstItem['model'] ??
+                                                  '';
+                                              final fabric =
+                                                  firstItem['fabric'] ?? '';
+                                              final measurements =
+                                                  firstItem['measurements'] ??
+                                                  {};
+                                              final price =
+                                                  firstItem['price'] ?? 0;
+
+                                              print(
+                                                'DEBUG: orderType = $orderType',
                                               );
+                                              print(
+                                                'DEBUG: productModel = $productModel',
+                                              );
+                                              print('DEBUG: price = $price');
+                                              print(
+                                                'DEBUG: firstItem = $firstItem',
+                                              );
+
+                                              // Validasi data
+                                              if (orderType.isEmpty) {
+                                                ScaffoldMessenger.of(
+                                                  context,
+                                                ).showSnackBar(
+                                                  const SnackBar(
+                                                    content: Text(
+                                                      'Data pesanan tidak valid',
+                                                    ),
+                                                    backgroundColor: Colors.red,
+                                                  ),
+                                                );
+                                                return;
+                                              }
+
+                                              // Buat order baru berdasarkan tipe pesanan
+                                              final newOrder = order_model.Order(
+                                                id: null,
+                                                userId: userId,
+                                                userName: order.userName,
+                                                items: [
+                                                  {
+                                                    'orderType': orderType,
+                                                    'jenisBaju':
+                                                        firstItem['jenisBaju'],
+                                                    'jenisCelana':
+                                                        firstItem['jenisCelana'],
+                                                    'model': productModel,
+                                                    'fabric': fabric,
+                                                    'measurements':
+                                                        measurements,
+                                                    'price': price,
+                                                  },
+                                                ],
+                                                status: 'Menunggu Konfirmasi',
+                                                orderDate: Timestamp.now(),
+                                                totalPrice: price.toDouble(),
+                                                estimatedPrice: price.toInt(),
+                                              );
+
+                                              print(
+                                                'DEBUG: Order baru dibuat: ${newOrder.id}',
+                                              );
+
+                                              // Simpan order terlebih dahulu
+                                              await FirestoreService()
+                                                  .saveOrder(newOrder);
+
+                                              print(
+                                                'DEBUG: Order berhasil disimpan',
+                                              );
+
+                                              // Navigasi ke screen pembayaran berdasarkan tipe pesanan
+                                              if (orderType == 'Baju') {
+                                                Navigator.push(
+                                                  context,
+                                                  MaterialPageRoute(
+                                                    builder: (context) =>
+                                                        PembayaranBajuCustomerScreen(
+                                                          order: newOrder,
+                                                        ),
+                                                  ),
+                                                );
+                                              } else if (orderType ==
+                                                  'Celana') {
+                                                Navigator.push(
+                                                  context,
+                                                  MaterialPageRoute(
+                                                    builder: (context) =>
+                                                        PembayaranCelanaCustomerScreen(
+                                                          order: newOrder,
+                                                        ),
+                                                  ),
+                                                );
+                                              } else {
+                                                // Untuk model, gunakan screen model
+                                                Navigator.push(
+                                                  context,
+                                                  MaterialPageRoute(
+                                                    builder: (context) =>
+                                                        PembayaranModelCustomerScreen(
+                                                          product: Product(
+                                                            id: 'reorder_${DateTime.now().millisecondsSinceEpoch}',
+                                                            name: productModel,
+                                                            description:
+                                                                'Pesanan ulang dari riwayat',
+                                                            price: price
+                                                                .toDouble(),
+                                                            imagePath:
+                                                                'assets/images/default_product.jpg',
+                                                            category: orderType,
+                                                          ),
+                                                        ),
+                                                  ),
+                                                );
+                                              }
+
+                                              if (mounted) {
+                                                ScaffoldMessenger.of(
+                                                  context,
+                                                ).showSnackBar(
+                                                  const SnackBar(
+                                                    content: Text(
+                                                      'Pesanan berhasil dibuat! Silakan lakukan pembayaran.',
+                                                    ),
+                                                    backgroundColor:
+                                                        Colors.green,
+                                                  ),
+                                                );
+                                              }
+                                            } catch (e) {
+                                              print(
+                                                'DEBUG: Error dalam Pesan Lagi: $e',
+                                              );
+                                              if (mounted) {
+                                                ScaffoldMessenger.of(
+                                                  context,
+                                                ).showSnackBar(
+                                                  SnackBar(
+                                                    content: Text(
+                                                      'Gagal membuat pesanan: $e',
+                                                    ),
+                                                    backgroundColor: Colors.red,
+                                                  ),
+                                                );
+                                              }
                                             }
                                           },
                                         ),
@@ -313,6 +495,16 @@ class _RiwayatCustomerScreenState extends State<RiwayatCustomerScreen> {
       case OrderStatus.dibatalkan:
         return 'Dibatalkan';
     }
+  }
+
+  String _formatCurrency(double amount) {
+    // Format manual untuk currency Indonesia
+    final number = amount.toInt();
+    final formatted = number.toString().replaceAllMapped(
+      RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'),
+      (Match m) => '${m[1]}.',
+    );
+    return formatted;
   }
 }
 

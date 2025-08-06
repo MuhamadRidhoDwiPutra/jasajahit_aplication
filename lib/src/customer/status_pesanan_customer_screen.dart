@@ -106,37 +106,41 @@ class StatusPesananCustomerScreen extends StatelessWidget {
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
+                              Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   Text(
                                     'Kode: ${order.id ?? '-'}',
                                     style: TextStyle(
                                       fontWeight: FontWeight.bold,
-                                      fontSize: 16,
+                                      fontSize: 14, // Kurangi dari 16
                                       color: isDark
                                           ? Colors.white
                                           : Colors.black,
                                     ),
                                   ),
+                                  const SizedBox(
+                                    height: 8,
+                                  ), // Tambahkan spacing
                                   Container(
                                     padding: const EdgeInsets.symmetric(
-                                      horizontal: 12,
-                                      vertical: 6,
+                                      horizontal: 8, // Kurangi dari 12
+                                      vertical: 4, // Kurangi dari 6
                                     ),
                                     decoration: BoxDecoration(
                                       color: getStatusColor(
                                         order.status,
                                       ).withOpacity(0.1),
-                                      borderRadius: BorderRadius.circular(8),
+                                      borderRadius: BorderRadius.circular(
+                                        6,
+                                      ), // Kurangi dari 8
                                     ),
                                     child: Text(
                                       order.status,
                                       style: TextStyle(
                                         color: getStatusColor(order.status),
                                         fontWeight: FontWeight.w500,
-                                        fontSize: 12,
+                                        fontSize: 10, // Kurangi dari 12
                                       ),
                                     ),
                                   ),
@@ -150,24 +154,28 @@ class StatusPesananCustomerScreen extends StatelessWidget {
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   Container(
-                                    width: 80,
-                                    height: 80,
+                                    width: 60, // Kurangi dari 80
+                                    height: 60, // Kurangi dari 80
                                     decoration: BoxDecoration(
                                       color: const Color(
                                         0xFF8FBC8F,
                                       ).withOpacity(0.1),
-                                      borderRadius: BorderRadius.circular(12),
+                                      borderRadius: BorderRadius.circular(
+                                        8,
+                                      ), // Kurangi dari 12
                                     ),
                                     child: Center(
                                       child: Text(
                                         orderType,
                                         style: const TextStyle(
                                           color: Color(0xFF8FBC8F),
+                                          fontSize:
+                                              10, // Tambahkan ukuran font yang lebih kecil
                                         ),
                                       ),
                                     ),
                                   ),
-                                  const SizedBox(width: 16),
+                                  const SizedBox(width: 12), // Kurangi dari 16
                                   Expanded(
                                     child: Column(
                                       crossAxisAlignment:
@@ -179,7 +187,7 @@ class StatusPesananCustomerScreen extends StatelessWidget {
                                             color: isDark
                                                 ? Colors.white70
                                                 : Colors.grey[600],
-                                            fontSize: 12,
+                                            fontSize: 10, // Kurangi dari 12
                                           ),
                                         ),
                                         Text(
@@ -192,16 +200,20 @@ class StatusPesananCustomerScreen extends StatelessWidget {
                                             color: isDark
                                                 ? Colors.white
                                                 : Colors.black,
+                                            fontSize:
+                                                11, // Tambahkan ukuran font yang lebih kecil
                                           ),
                                         ),
-                                        const SizedBox(height: 8),
+                                        const SizedBox(
+                                          height: 6,
+                                        ), // Kurangi dari 8
                                         Text(
                                           'Model',
                                           style: TextStyle(
                                             color: isDark
                                                 ? Colors.white70
                                                 : Colors.grey[600],
-                                            fontSize: 12,
+                                            fontSize: 10, // Kurangi dari 12
                                           ),
                                         ),
                                         Text(
@@ -211,16 +223,20 @@ class StatusPesananCustomerScreen extends StatelessWidget {
                                             color: isDark
                                                 ? Colors.white
                                                 : Colors.black,
+                                            fontSize:
+                                                11, // Tambahkan ukuran font yang lebih kecil
                                           ),
                                         ),
-                                        const SizedBox(height: 8),
+                                        const SizedBox(
+                                          height: 6,
+                                        ), // Kurangi dari 8
                                         Text(
                                           'Jenis Kain',
                                           style: TextStyle(
                                             color: isDark
                                                 ? Colors.white70
                                                 : Colors.grey[600],
-                                            fontSize: 12,
+                                            fontSize: 10, // Kurangi dari 12
                                           ),
                                         ),
                                         Text(
@@ -230,16 +246,20 @@ class StatusPesananCustomerScreen extends StatelessWidget {
                                             color: isDark
                                                 ? Colors.white
                                                 : Colors.black,
+                                            fontSize:
+                                                11, // Tambahkan ukuran font yang lebih kecil
                                           ),
                                         ),
-                                        const SizedBox(height: 8),
+                                        const SizedBox(
+                                          height: 6,
+                                        ), // Kurangi dari 8
                                         Text(
                                           'Harga',
                                           style: TextStyle(
                                             color: isDark
                                                 ? Colors.white70
                                                 : Colors.grey[600],
-                                            fontSize: 12,
+                                            fontSize: 10, // Kurangi dari 12
                                           ),
                                         ),
                                         Text(
@@ -247,6 +267,8 @@ class StatusPesananCustomerScreen extends StatelessWidget {
                                           style: const TextStyle(
                                             fontWeight: FontWeight.w600,
                                             color: Color(0xFFDE8500),
+                                            fontSize:
+                                                11, // Tambahkan ukuran font yang lebih kecil
                                           ),
                                         ),
                                       ],
@@ -254,7 +276,7 @@ class StatusPesananCustomerScreen extends StatelessWidget {
                                   ),
                                 ],
                               ),
-                              const SizedBox(height: 16),
+                              const SizedBox(height: 6), // Kurangi dari 8
                               Row(
                                 mainAxisAlignment: MainAxisAlignment.end,
                                 children: [
@@ -262,11 +284,13 @@ class StatusPesananCustomerScreen extends StatelessWidget {
                                     style: ElevatedButton.styleFrom(
                                       backgroundColor: const Color(0xFFDE8500),
                                       shape: RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.circular(8),
+                                        borderRadius: BorderRadius.circular(
+                                          3,
+                                        ), // Kurangi dari 4
                                       ),
                                       padding: const EdgeInsets.symmetric(
-                                        horizontal: 20,
-                                        vertical: 10,
+                                        horizontal: 8, // Kurangi dari 12
+                                        vertical: 4, // Kurangi dari 6
                                       ),
                                     ),
                                     onPressed: () {
@@ -285,6 +309,7 @@ class StatusPesananCustomerScreen extends StatelessWidget {
                                       style: TextStyle(
                                         color: Colors.white,
                                         fontWeight: FontWeight.bold,
+                                        fontSize: 9, // Kurangi dari 10
                                       ),
                                     ),
                                   ),

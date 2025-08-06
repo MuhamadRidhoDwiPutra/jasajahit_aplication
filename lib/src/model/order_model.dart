@@ -31,11 +31,6 @@ class Order {
     this.estimatedSize,
     this.isCustomSize,
     this.selectedKain,
-    required orderType,
-    required measurements,
-    required fabric,
-    required model,
-    required double price,
   });
 
   Map<String, dynamic> toMap() {
@@ -74,11 +69,6 @@ class Order {
       estimatedSize: data['estimatedSize'],
       isCustomSize: data['isCustomSize'],
       selectedKain: data['selectedKain'],
-      orderType: null,
-      measurements: null,
-      fabric: null,
-      model: null,
-      price: (data['totalPrice'] ?? 0).toDouble(),
     );
   }
 

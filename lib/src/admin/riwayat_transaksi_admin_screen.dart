@@ -242,7 +242,7 @@ class _RiwayatTransaksiAdminScreenState
                               mainAxisAlignment: MainAxisAlignment.end,
                               children: [
                                 Text(
-                                  'Total: Rp ${(orderData['price'] ?? 0).toStringAsFixed(0)}',
+                                  'Total: Rp ${(orderData['estimatedPrice'] ?? orderData['totalPrice'] ?? orderData['price'] ?? 0).toStringAsFixed(0)}',
                                   style: TextStyle(
                                     fontWeight: FontWeight.bold,
                                     fontSize: 16,

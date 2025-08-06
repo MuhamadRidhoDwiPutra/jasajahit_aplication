@@ -9,6 +9,7 @@ import 'package:flutter/material.dart';
 import 'package:overlay_support/overlay_support.dart';
 import 'package:jasa_jahit_aplication/Core/provider/notification_provider.dart';
 import 'package:provider/provider.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class NotificationService {
   static final FlutterLocalNotificationsPlugin _localNotifications =
@@ -112,5 +113,61 @@ class NotificationService {
         ],
       ),
     );
+  }
+
+  // Fungsi untuk mengirim notifikasi ke admin saat customer membeli model
+  static Future<void> sendModelPurchaseNotification({
+    required String customerName,
+    required String productName,
+    required String orderId,
+    required double price,
+  }) async {
+    try {
+      // Simpan notifikasi ke Firestore
+      await FirebaseFirestore.instance.collection('notifications').add({
+        'recipientId': 'admin_001',
+        'title': 'Pembelian Model Baru',
+        'body': '$customerName telah membeli $productName seharga Rp ${price.toStringAsFixed(0)}',
+        'type': 'model_purchase',
+        'orderId': orderId,
+        'customerName': customerName,
+        'productName': productName,
+        'price': price,
+        'timestamp': FieldValue.serverTimestamp(),
+        'isRead': false,
+      });
+
+      print('Notifikasi pembelian model berhasil dikirim ke admin');
+    } catch (e) {
+      print('Error mengirim notifikasi pembelian model: $e');
+    }
+  }
+
+  // Fungsi untuk mengirim notifikasi ke admin saat customer pesan jasa jahit
+  static Future<void> sendJasaJahitNotification({
+    required String customerName,
+    required String orderType,
+    required String orderId,
+    required double price,
+  }) async {
+    try {
+      // Simpan notifikasi ke Firestore
+      await FirebaseFirestore.instance.collection('notifications').add({
+        'recipientId': 'admin_001',
+        'title': 'Pemesanan Jasa Jahit Baru',
+        'body': '$customerName telah memesan $orderType seharga Rp ${price.toStringAsFixed(0)}',
+        'type': 'jasa_jahit',
+        'orderId': orderId,
+        'customerName': customerName,
+        'orderType': orderType,
+        'price': price,
+        'timestamp': FieldValue.serverTimestamp(),
+        'isRead': false,
+      });
+
+      print('Notifikasi pemesanan jasa jahit berhasil dikirim ke admin');
+    } catch (e) {
+      print('Error mengirim notifikasi pemesanan jasa jahit: $e');
+    }
   }
 }

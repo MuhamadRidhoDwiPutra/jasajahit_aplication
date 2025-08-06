@@ -14,6 +14,9 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:jasa_jahit_aplication/Core/provider/notification_provider.dart';
 import 'package:jasa_jahit_aplication/src/page/notification_screen.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:jasa_jahit_aplication/src/model/product_model.dart';
+import 'pembayaran_model_customer_screen.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class HomeCustomerScreen extends StatefulWidget {
   final int initialIndex;
@@ -40,14 +43,18 @@ class _HomeCustomerScreenState extends State<HomeCustomerScreen> {
       notificationProvider.setupFirebaseMessaging(context);
 
       // Simpan FCM token customer ke Firestore
-      // TODO: Ganti dengan user ID yang sebenarnya
-      await notificationProvider.saveFCMTokenToFirestore(
-        'customer_001',
-        'customer',
-      );
+      final currentUser = FirebaseAuth.instance.currentUser;
+      if (currentUser != null) {
+        await notificationProvider.saveFCMTokenToFirestore(
+          currentUser.uid,
+          'customer',
+        );
+      }
 
       // Load notifikasi dari Firestore
-      await notificationProvider.loadNotificationsFromFirestore('customer');
+      if (currentUser != null) {
+        await notificationProvider.loadNotificationsFromFirestore('customer');
+      }
     });
   }
 
@@ -73,7 +80,21 @@ class _HomeCustomerScreenState extends State<HomeCustomerScreen> {
     });
   }
 
-  void _showNotificationDialog(BuildContext context) {
+  void _showNotificationDialog(BuildContext context) async {
+    // Tandai semua notifikasi customer sebagai sudah dibaca
+    final notificationsRef = FirebaseFirestore.instance.collection(
+      'notifications',
+    );
+    final unreadNotifications = await notificationsRef
+        .where('recipientId', isEqualTo: FirebaseAuth.instance.currentUser?.uid)
+        .where('isRead', isEqualTo: false)
+        .get();
+
+    // Update semua notifikasi menjadi sudah dibaca
+    for (var doc in unreadNotifications.docs) {
+      await doc.reference.update({'isRead': true});
+    }
+
     Navigator.push(
       context,
       MaterialPageRoute(builder: (context) => const NotificationScreen()),
@@ -133,11 +154,16 @@ class _HomeCustomerScreenState extends State<HomeCustomerScreen> {
                             child: StreamBuilder<QuerySnapshot>(
                               stream: FirebaseFirestore.instance
                                   .collection('notifications')
-                                  .where('recipientId', isEqualTo: 'customer_001')
+                                  .where(
+                                    'recipientId',
+                                    isEqualTo:
+                                        FirebaseAuth.instance.currentUser?.uid,
+                                  )
                                   .where('isRead', isEqualTo: false)
                                   .snapshots(),
                               builder: (context, snapshot) {
-                                if (snapshot.hasData && snapshot.data!.docs.isNotEmpty) {
+                                if (snapshot.hasData &&
+                                    snapshot.data!.docs.isNotEmpty) {
                                   return Container(
                                     padding: const EdgeInsets.all(4),
                                     decoration: BoxDecoration(
@@ -184,9 +210,11 @@ class _HomeCustomerScreenState extends State<HomeCustomerScreen> {
                           borderRadius: BorderRadius.circular(12),
                         ),
                         child: IconButton(
-                          icon: const Icon(
-                            Icons.chat,
-                            color: Color(0xFF25D366),
+                          icon: Image.asset(
+                            'assets/images/ikon_WA.png',
+                            width: 24,
+                            height: 24,
+                            color: const Color(0xFF25D366),
                           ),
                           onPressed: () {
                             WhatsAppChatHelper.openWhatsAppChat(context);
@@ -322,6 +350,46 @@ class _NavBarItem extends StatelessWidget {
 class _HomeCustomerContent extends StatelessWidget {
   const _HomeCustomerContent({super.key});
 
+  // Data produk model terbaru
+  List<Product> get _products => [
+    Product(
+      id: '1',
+      name: 'Celana Kain Panjang',
+      description:
+          'Celana panjang dengan bahan kain berkualitas tinggi, nyaman dipakai untuk acara formal maupun casual.',
+      price: 150000,
+      imagePath: 'assets/images/celana_kain_panjang.jpg',
+      category: 'Celana',
+    ),
+    Product(
+      id: '2',
+      name: 'Jas Hitam',
+      description:
+          'Jas hitam elegan dengan potongan modern, cocok untuk acara formal dan profesional.',
+      price: 250000,
+      imagePath: 'assets/images/jaz_hitam.jpg',
+      category: 'Jas',
+    ),
+    Product(
+      id: '3',
+      name: 'Kaos Oblong Hitam',
+      description:
+          'Kaos oblong hitam dengan bahan katun yang lembut dan nyaman, cocok untuk penggunaan sehari-hari.',
+      price: 80000,
+      imagePath: 'assets/images/kaos_oblong_hitam.jpg',
+      category: 'Kaos',
+    ),
+    Product(
+      id: '4',
+      name: 'Kemeja Lengan Panjang Hitam',
+      description:
+          'Kemeja lengan panjang hitam dengan desain klasik, cocok untuk acara formal dan semi-formal.',
+      price: 120000,
+      imagePath: 'assets/images/kemeja_lengan_panjang_hitam.jpg',
+      category: 'Kemeja',
+    ),
+  ];
+
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
@@ -380,7 +448,7 @@ class _HomeCustomerContent extends StatelessWidget {
           child: Row(
             children: [
               _CategoryCard(
-                icon: FontAwesomeIcons.shirt, // Baju
+                icon: FontAwesomeIcons.shirt, // Baju - sudah tepat
                 label: 'Baju',
                 onTap: () {
                   showDialog(
@@ -403,7 +471,7 @@ class _HomeCustomerContent extends StatelessWidget {
               const SizedBox(width: 12),
               _CategoryCard(
                 icon: FontAwesomeIcons
-                    .personDress, // Celana (gunakan ikon dress sebagai pengganti celana)
+                    .personWalking, // Celana - ikon orang berjalan lebih sesuai
                 label: 'Celana',
                 onTap: () {
                   showDialog(
@@ -425,16 +493,15 @@ class _HomeCustomerContent extends StatelessWidget {
               ),
               const SizedBox(width: 12),
               _CategoryCard(
-                icon: FontAwesomeIcons
-                    .userTie, // Seragam (gunakan ikon userTie sebagai pengganti seragam)
-                label: 'Seragam',
+                icon: FontAwesomeIcons.personDress, // Rok - sudah tepat
+                label: 'Rok',
                 onTap: () {
                   showDialog(
                     context: context,
                     builder: (context) => AlertDialog(
-                      title: const Text('Seragam'),
+                      title: const Text('Rok'),
                       content: const Text(
-                        'Seragam adalah pakaian yang digunakan secara bersama-sama dalam suatu kelompok atau institusi.',
+                        'Rok adalah pakaian bawahan yang menutupi bagian pinggang hingga lutut atau kaki, biasanya digunakan oleh wanita.',
                       ),
                       actions: [
                         TextButton(
@@ -448,7 +515,7 @@ class _HomeCustomerContent extends StatelessWidget {
               ),
               const SizedBox(width: 12),
               _CategoryCard(
-                icon: FontAwesomeIcons.suitcase, // Jas
+                icon: FontAwesomeIcons.userTie, // Jas - ikon jas lebih sesuai
                 label: 'Jas',
                 onTap: () {
                   showDialog(
@@ -487,17 +554,14 @@ class _HomeCustomerContent extends StatelessWidget {
           physics: const NeverScrollableScrollPhysics(),
           gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
             crossAxisCount: 2,
-            childAspectRatio: 0.75,
+            childAspectRatio: 0.95,
             crossAxisSpacing: 16,
             mainAxisSpacing: 16,
           ),
-          itemCount: 4,
+          itemCount: _products.length,
           itemBuilder: (context, index) {
-            return _ModelCard(
-              imageUrl: 'https://via.placeholder.com/150',
-              title: 'Model ${index + 1}',
-              price: 'Rp ${(index + 1) * 100000}',
-            );
+            final product = _products[index];
+            return _ModelCard(product: product);
           },
         ),
       ],
@@ -567,16 +631,174 @@ class _CategoryCard extends StatelessWidget {
 }
 
 class _ModelCard extends StatelessWidget {
-  final String imageUrl;
-  final String title;
-  final String price;
+  final Product product;
 
-  const _ModelCard({
-    required this.imageUrl,
-    required this.title,
-    required this.price,
-    super.key,
-  });
+  const _ModelCard({required this.product, super.key});
+
+  void _showProductDetail(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return Dialog(
+          backgroundColor: isDark ? const Color(0xFF2A2A2A) : Colors.white,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16),
+          ),
+          child: Container(
+            constraints: const BoxConstraints(maxHeight: 500),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                // Header dengan gambar
+                ClipRRect(
+                  borderRadius: const BorderRadius.vertical(
+                    top: Radius.circular(16),
+                  ),
+                  child: Container(
+                    height: 200,
+                    width: double.infinity,
+                    color: isDark ? Colors.grey[800] : Colors.grey[100],
+                    child: Image.asset(
+                      product.imagePath,
+                      height: 200,
+                      width: double.infinity,
+                      fit: BoxFit.contain,
+                      errorBuilder: (context, error, stackTrace) {
+                        return Container(
+                          height: 200,
+                          width: double.infinity,
+                          color: isDark ? Colors.grey[700] : Colors.grey[300],
+                          child: Center(
+                            child: Icon(
+                              Icons.image_not_supported,
+                              color: isDark ? Colors.white70 : Colors.black54,
+                              size: 40,
+                            ),
+                          ),
+                        );
+                      },
+                    ),
+                  ),
+                ),
+                // Content
+                Padding(
+                  padding: const EdgeInsets.all(20),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        product.name,
+                        style: TextStyle(
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold,
+                          color: isDark ? Colors.white : Colors.black,
+                          fontFamily: 'SF Pro Display',
+                        ),
+                      ),
+                      const SizedBox(height: 8),
+                      Text(
+                        'Rp ${product.price.toStringAsFixed(0)}',
+                        style: const TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                          color: Color(0xFFDE8500),
+                          fontFamily: 'SF Pro Text',
+                        ),
+                      ),
+                      const SizedBox(height: 12),
+                      Text(
+                        'Deskripsi:',
+                        style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.w600,
+                          color: isDark ? Colors.white : Colors.black,
+                          fontFamily: 'SF Pro Display',
+                        ),
+                      ),
+                      const SizedBox(height: 8),
+                      Text(
+                        product.description,
+                        style: TextStyle(
+                          fontSize: 14,
+                          color: isDark ? Colors.white70 : Colors.black54,
+                          fontFamily: 'SF Pro Text',
+                          height: 1.4,
+                        ),
+                      ),
+                      const SizedBox(height: 20),
+                      Row(
+                        children: [
+                          Expanded(
+                            child: ElevatedButton(
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: Colors.grey[300],
+                                foregroundColor: Colors.black,
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(8),
+                                ),
+                                padding: const EdgeInsets.symmetric(
+                                  vertical: 12,
+                                ),
+                              ),
+                              onPressed: () => Navigator.pop(context),
+                              child: const Text(
+                                'Tutup',
+                                style: TextStyle(
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w600,
+                                  fontFamily: 'SF Pro Display',
+                                ),
+                              ),
+                            ),
+                          ),
+                          const SizedBox(width: 12),
+                          Expanded(
+                            child: ElevatedButton(
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: const Color(0xFFDE8500),
+                                foregroundColor: Colors.white,
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(8),
+                                ),
+                                padding: const EdgeInsets.symmetric(
+                                  vertical: 12,
+                                ),
+                              ),
+                              onPressed: () {
+                                Navigator.pop(context);
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) =>
+                                        PembayaranModelCustomerScreen(
+                                          product: product,
+                                        ),
+                                  ),
+                                );
+                              },
+                              child: const Text(
+                                'Beli Sekarang',
+                                style: TextStyle(
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w600,
+                                  fontFamily: 'SF Pro Display',
+                                ),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -600,38 +822,141 @@ class _ModelCard extends StatelessWidget {
         children: [
           ClipRRect(
             borderRadius: const BorderRadius.vertical(top: Radius.circular(16)),
-            child: Image.network(
-              imageUrl,
-              height: 150,
+            child: Container(
+              height: 80, // Kurangi dari 100
               width: double.infinity,
-              fit: BoxFit.cover,
+              color: isDark ? Colors.grey[800] : Colors.grey[100],
+              child: Image.asset(
+                product.imagePath,
+                height: 80, // Kurangi dari 100
+                width: double.infinity,
+                fit: BoxFit.contain,
+                errorBuilder: (context, error, stackTrace) {
+                  return Container(
+                    height: 80, // Kurangi dari 100
+                    width: double.infinity,
+                    color: isDark ? Colors.grey[700] : Colors.grey[300],
+                    child: Center(
+                      child: Icon(
+                        Icons.image_not_supported,
+                        color: isDark ? Colors.white70 : Colors.black54,
+                        size: 24, // Kurangi dari 32
+                      ),
+                    ),
+                  );
+                },
+              ),
             ),
           ),
-          Padding(
-            padding: const EdgeInsets.all(16),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  title,
-                  style: TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.w600,
-                    color: isDark ? Colors.white : Colors.black,
-                    fontFamily: 'SF Pro Display',
+          Expanded(
+            child: Padding(
+              padding: const EdgeInsets.all(4), // Kurangi dari 6
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    product.name,
+                    style: TextStyle(
+                      fontSize: 10, // Kurangi dari 11
+                      fontWeight: FontWeight.w600,
+                      color: isDark ? Colors.white : Colors.black,
+                      fontFamily: 'SF Pro Display',
+                    ),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
                   ),
-                ),
-                const SizedBox(height: 8),
-                Text(
-                  price,
-                  style: const TextStyle(
-                    fontSize: 14,
-                    fontWeight: FontWeight.w500,
-                    color: Color(0xFFDE8500),
-                    fontFamily: 'SF Pro Text',
+                  const SizedBox(height: 1), // Kurangi dari 2
+                  Text(
+                    product.description,
+                    style: TextStyle(
+                      fontSize: 7, // Kurangi dari 8
+                      color: isDark ? Colors.white70 : Colors.black54,
+                      fontFamily: 'SF Pro Text',
+                    ),
+                    maxLines: 1, // Kurangi dari 2
+                    overflow: TextOverflow.ellipsis,
                   ),
-                ),
-              ],
+                  const Spacer(),
+                  Text(
+                    'Rp ${product.price.toStringAsFixed(0)}',
+                    style: const TextStyle(
+                      fontSize: 9, // Kurangi dari 10
+                      fontWeight: FontWeight.w500,
+                      color: Color(0xFFDE8500),
+                      fontFamily: 'SF Pro Text',
+                    ),
+                  ),
+                  const SizedBox(height: 2), // Kurangi dari 4
+                  SizedBox(
+                    height: 20, // Kurangi dari 24
+                    child: Row(
+                      children: [
+                        Expanded(
+                          child: ElevatedButton(
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: const Color(0xFFDE8500),
+                              foregroundColor: Colors.white,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(
+                                  3,
+                                ), // Kurangi dari 4
+                              ),
+                              padding: const EdgeInsets.symmetric(
+                                vertical: 1,
+                              ), // Kurangi dari 2
+                            ),
+                            onPressed: () => _showProductDetail(context),
+                            child: const Text(
+                              'Detail',
+                              style: TextStyle(
+                                fontSize: 7, // Kurangi dari 8
+                                fontWeight: FontWeight.w600,
+                                fontFamily: 'SF Pro Display',
+                              ),
+                            ),
+                          ),
+                        ),
+                        const SizedBox(width: 1), // Kurangi dari 2
+                        Expanded(
+                          child: ElevatedButton(
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: Colors.green,
+                              foregroundColor: Colors.white,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(
+                                  3,
+                                ), // Kurangi dari 4
+                              ),
+                              padding: const EdgeInsets.symmetric(
+                                vertical: 1,
+                              ), // Kurangi dari 2
+                            ),
+                            onPressed: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) =>
+                                      PembayaranModelCustomerScreen(
+                                        product: product,
+                                      ),
+                                ),
+                              );
+                            },
+                            child: const Text(
+                              'Beli',
+                              style: TextStyle(
+                                fontSize: 7, // Kurangi dari 8
+                                fontWeight: FontWeight.w600,
+                                fontFamily: 'SF Pro Display',
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
             ),
           ),
         ],

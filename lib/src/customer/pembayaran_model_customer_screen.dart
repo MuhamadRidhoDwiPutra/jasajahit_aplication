@@ -1,38 +1,38 @@
-import 'cek_detail_pesanan_celana_screen.dart';
 import 'package:flutter/material.dart';
-import 'berhasil_pesan_celana_customer_screen.dart';
-import 'home_customer_screen.dart';
-import 'package:provider/provider.dart';
-import 'package:jasa_jahit_aplication/src/theme/theme_provider.dart';
 import 'package:jasa_jahit_aplication/src/model/order_model.dart'
     as order_model;
+import 'package:jasa_jahit_aplication/src/model/product_model.dart';
 import 'package:jasa_jahit_aplication/src/services/firestore_service.dart';
 import 'package:jasa_jahit_aplication/src/services/notification_service.dart';
+import 'package:provider/provider.dart';
+import 'package:jasa_jahit_aplication/src/theme/theme_provider.dart';
 import 'dart:io';
 import 'package:image_picker/image_picker.dart';
-import 'package:cloud_firestore/cloud_firestore.dart' as firestore;
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_storage/firebase_storage.dart';
+import 'berhasil_pesan_model_customer_screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
-class PembayaranCelanaCustomerScreen extends StatefulWidget {
-  final order_model.Order order;
+class PembayaranModelCustomerScreen extends StatefulWidget {
+  final Product product;
   final FirestoreService _firestoreService = FirestoreService();
 
-  PembayaranCelanaCustomerScreen({super.key, required this.order});
+  PembayaranModelCustomerScreen({super.key, required this.product});
 
   @override
-  State<PembayaranCelanaCustomerScreen> createState() =>
-      _PembayaranCelanaCustomerScreenState();
+  State<PembayaranModelCustomerScreen> createState() =>
+      _PembayaranModelCustomerScreenState();
 }
 
-class _PembayaranCelanaCustomerScreenState
-    extends State<PembayaranCelanaCustomerScreen> {
+class _PembayaranModelCustomerScreenState
+    extends State<PembayaranModelCustomerScreen> {
   File? _selectedFile;
   String? _fileName;
   final ImagePicker _picker = ImagePicker();
+  String _selectedSize = 'L'; // Default size
 
   Future<void> _pickFile() async {
     try {
-      // Coba pick image dengan error handling yang lebih baik
       final XFile? pickedFile = await _picker
           .pickImage(
             source: ImageSource.gallery,
@@ -51,12 +51,10 @@ class _PembayaranCelanaCustomerScreenState
         try {
           final file = File(pickedFile.path);
 
-          // Validasi file exists
           if (!await file.exists()) {
             throw Exception('File tidak ditemukan');
           }
 
-          // Validasi ukuran file (max 10MB)
           final fileSize = await file.length();
           if (fileSize > 10 * 1024 * 1024) {
             throw Exception('Ukuran file terlalu besar (maksimal 10MB)');
@@ -114,7 +112,7 @@ class _PembayaranCelanaCustomerScreenState
           onPressed: () => Navigator.pop(context),
         ),
         title: Text(
-          'Daftar Pesanan',
+          'Pembayaran Model',
           style: TextStyle(
             color: isDark ? Colors.white : Colors.white,
             fontSize: 18,
@@ -148,9 +146,8 @@ class _PembayaranCelanaCustomerScreenState
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // Model pakaian
                   Text(
-                    'Detail Pesanan',
+                    'Detail Model',
                     style: TextStyle(
                       fontWeight: FontWeight.bold,
                       color: isDark ? Colors.white : Colors.black,
@@ -160,7 +157,7 @@ class _PembayaranCelanaCustomerScreenState
                   Row(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      // Gambar pakaian
+                      // Gambar produk
                       Container(
                         width: 70,
                         height: 70,
@@ -168,39 +165,76 @@ class _PembayaranCelanaCustomerScreenState
                           color: isDark ? Colors.grey[700] : Colors.grey[400],
                           borderRadius: BorderRadius.circular(8),
                         ),
-                        child: Center(
-                          child: Text(
-                            'Gambar pakaian',
-                            textAlign: TextAlign.center,
-                            style: TextStyle(
-                              fontSize: 13,
-                              color: isDark ? Colors.white70 : Colors.black54,
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.circular(8),
+                          child: Container(
+                            color: isDark ? Colors.grey[800] : Colors.grey[100],
+                            child: Image.asset(
+                              widget.product.imagePath,
+                              fit: BoxFit.contain,
+                              errorBuilder: (context, error, stackTrace) {
+                                return Center(
+                                  child: Text(
+                                    'Gambar',
+                                    textAlign: TextAlign.center,
+                                    style: TextStyle(
+                                      fontSize: 13,
+                                      color: isDark
+                                          ? Colors.white70
+                                          : Colors.black54,
+                                    ),
+                                  ),
+                                );
+                              },
                             ),
                           ),
                         ),
                       ),
                       const SizedBox(width: 12),
-                      // Data pesanan
+                      // Data produk
                       Expanded(
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              'Tanggal Pemesanan\n${widget.order.orderDate.toDate().day} ${_getMonth(widget.order.orderDate.toDate().month)} ${widget.order.orderDate.toDate().year}',
+                              'Model: ${widget.product.name}',
                               style: TextStyle(
+                                fontWeight: FontWeight.bold,
                                 color: isDark ? Colors.white : Colors.black,
                               ),
                             ),
+                            const SizedBox(height: 4),
                             Text(
-                              'Jumlah Produk\n${widget.order.items.length}',
+                              'Ukuran: $_selectedSize',
                               style: TextStyle(
-                                color: isDark ? Colors.white : Colors.black,
+                                fontWeight: FontWeight.bold,
+                                color: const Color(0xFFDE8500),
+                                fontSize: 12,
                               ),
                             ),
+                            const SizedBox(height: 4),
                             Text(
-                              'Total Harga:\nRp. ${widget.order.estimatedPrice?.toStringAsFixed(0) ?? widget.order.price.toStringAsFixed(0)}',
+                              'Deskripsi: ${widget.product.description}',
                               style: TextStyle(
-                                color: isDark ? Colors.white : Colors.black,
+                                color: isDark ? Colors.white70 : Colors.black54,
+                                fontSize: 12,
+                              ),
+                            ),
+                            const SizedBox(height: 4),
+                            Text(
+                              'Harga: Rp ${widget.product.price.toStringAsFixed(0)}',
+                              style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                color: const Color(0xFFDE8500),
+                                fontSize: 14,
+                              ),
+                            ),
+                            const SizedBox(height: 4),
+                            Text(
+                              'Tanggal: ${DateTime.now().day} ${_getMonth(DateTime.now().month)} ${DateTime.now().year}',
+                              style: TextStyle(
+                                color: isDark ? Colors.white70 : Colors.black54,
+                                fontSize: 12,
                               ),
                             ),
                           ],
@@ -208,30 +242,6 @@ class _PembayaranCelanaCustomerScreenState
                       ),
                     ],
                   ),
-                  if (widget.order.items.length > 1) ...[
-                    const SizedBox(height: 8),
-                    Text(
-                      'Daftar Item:',
-                      style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        color: isDark ? Colors.white : Colors.black,
-                        fontSize: 12,
-                      ),
-                    ),
-                    const SizedBox(height: 4),
-                    ...widget.order.items.map(
-                      (item) => Padding(
-                        padding: const EdgeInsets.only(bottom: 4),
-                        child: Text(
-                          '• ${item['orderType'] ?? '-'} - ${item['jenisCelana'] ?? item['model'] ?? '-'} (Rp ${item['price']?.toStringAsFixed(0) ?? '0'})',
-                          style: TextStyle(
-                            color: isDark ? Colors.white70 : Colors.black54,
-                            fontSize: 11,
-                          ),
-                        ),
-                      ),
-                    ),
-                  ],
                   const SizedBox(height: 8),
                   Row(
                     children: [
@@ -243,30 +253,58 @@ class _PembayaranCelanaCustomerScreenState
                           ),
                         ),
                       ),
-                      GestureDetector(
-                        onTap: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) =>
-                                  CekDetailPesananCelanaScreen(
-                                    order: widget.order,
-                                  ),
-                            ),
-                          );
-                        },
-                        child: Text(
-                          'Cek detail',
-                          style: TextStyle(
-                            color: Colors.blue,
-                            decoration: TextDecoration.underline,
-                          ),
-                        ),
-                      ),
                     ],
                   ),
                 ],
               ),
+            ),
+            const SizedBox(height: 16),
+            // Pilihan ukuran
+            Text(
+              'Pilih Ukuran',
+              style: TextStyle(
+                color: isDark ? Colors.white : Colors.white,
+                fontSize: 16,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            const SizedBox(height: 8),
+            Row(
+              children: ['S', 'L', 'XL'].map((size) {
+                return Expanded(
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 4),
+                    child: ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: _selectedSize == size
+                            ? const Color(0xFFDE8500)
+                            : (isDark
+                                  ? const Color(0xFF2A2A2A)
+                                  : Colors.grey[300]),
+                        foregroundColor: _selectedSize == size
+                            ? Colors.white
+                            : (isDark ? Colors.white : Colors.black),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        elevation: 0,
+                      ),
+                      onPressed: () {
+                        setState(() {
+                          _selectedSize = size;
+                        });
+                      },
+                      child: Text(
+                        size,
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 16,
+                        ),
+                      ),
+                    ),
+                  ),
+                );
+              }).toList(),
             ),
             const SizedBox(height: 16),
             // Upload bukti pembayaran
@@ -426,9 +464,33 @@ class _PembayaranCelanaCustomerScreenState
                       },
                     );
 
+                    // Buat order untuk model
+                    final order = order_model.Order(
+                      userId:
+                          FirebaseAuth.instance.currentUser?.uid ??
+                          'customer_001',
+                      userName:
+                          FirebaseAuth.instance.currentUser?.displayName ??
+                          'Customer',
+                      items: [
+                        {
+                          'orderType': 'Model',
+                          'model': widget.product.name,
+                          'description': widget.product.description,
+                          'price': widget.product.price,
+                          'imagePath': widget.product.imagePath,
+                          'category': widget.product.category,
+                          'size': _selectedSize,
+                        },
+                      ],
+                      orderDate: Timestamp.now(),
+                      totalPrice: widget.product.price,
+                      estimatedPrice: widget.product.price.toInt(),
+                    );
+
                     // Simpan order terlebih dahulu
                     final orderDoc = await widget._firestoreService.saveOrder(
-                      widget.order,
+                      order,
                     );
 
                     // Upload bukti pembayaran
@@ -443,22 +505,22 @@ class _PembayaranCelanaCustomerScreenState
                     );
 
                     // Kirim notifikasi ke admin
-                    await NotificationService.sendJasaJahitNotification(
+                    await NotificationService.sendModelPurchaseNotification(
                       customerName:
                           FirebaseAuth.instance.currentUser?.displayName ??
                           'Customer',
-                      orderType: 'Celana',
+                      productName: widget.product.name,
                       orderId: orderDoc.id,
-                      price: widget.order.totalPrice ?? 0,
+                      price: widget.product.price,
                     );
 
                     // Tambahkan notifikasi ke Firestore untuk admin
-                    await firestore.FirebaseFirestore.instance
+                    await FirebaseFirestore.instance
                         .collection('notifications')
                         .add({
                           'title': 'Pesanan Baru',
                           'body':
-                              '${FirebaseAuth.instance.currentUser?.displayName ?? 'Customer'} telah membuat pesanan Celana seharga Rp ${(widget.order.totalPrice ?? 0).toStringAsFixed(0)}',
+                              '${FirebaseAuth.instance.currentUser?.displayName ?? 'Customer'} telah membuat pesanan ${widget.product.name} seharga Rp ${widget.product.price.toStringAsFixed(0)}',
                           'orderId': orderDoc.id,
                           'customerId':
                               FirebaseAuth.instance.currentUser?.uid ??
@@ -466,9 +528,9 @@ class _PembayaranCelanaCustomerScreenState
                           'type': 'new_order',
                           'recipientRole': 'admin',
                           'recipientId': 'admin_001',
-                          'timestamp': firestore.FieldValue.serverTimestamp(),
+                          'timestamp': FieldValue.serverTimestamp(),
                           'isRead': false,
-                          'createdAt': firestore.FieldValue.serverTimestamp(),
+                          'createdAt': FieldValue.serverTimestamp(),
                         });
 
                     // Tutup loading dialog
@@ -477,9 +539,8 @@ class _PembayaranCelanaCustomerScreenState
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => BerhasilPesanCelanaCustomerScreen(
-                          order: widget.order,
-                        ),
+                        builder: (context) =>
+                            BerhasilPesanModelCustomerScreen(order: order),
                       ),
                     );
                   } catch (e) {
@@ -512,7 +573,6 @@ class _PembayaranCelanaCustomerScreenState
 
   Future<void> _pickFileFromCamera() async {
     try {
-      // Coba pick image dari camera dengan error handling yang lebih baik
       final XFile? pickedFile = await _picker
           .pickImage(
             source: ImageSource.camera,
@@ -531,12 +591,10 @@ class _PembayaranCelanaCustomerScreenState
         try {
           final file = File(pickedFile.path);
 
-          // Validasi file exists
           if (!await file.exists()) {
             throw Exception('File tidak ditemukan');
           }
 
-          // Validasi ukuran file (max 10MB)
           final fileSize = await file.length();
           if (fileSize > 10 * 1024 * 1024) {
             throw Exception('Ukuran file terlalu besar (maksimal 10MB)');

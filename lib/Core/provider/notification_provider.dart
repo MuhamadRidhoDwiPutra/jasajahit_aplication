@@ -151,7 +151,7 @@ class NotificationProvider extends ChangeNotifier {
     }
   }
 
-  // Fungsi untuk mengirim notifikasi ke customer saat admin mengubah status
+  // Fungsi untuk mengirim notifikasi update status ke customer
   Future<void> sendStatusUpdateNotificationToCustomer({
     required String orderId,
     required String customerId,
@@ -159,41 +159,27 @@ class NotificationProvider extends ChangeNotifier {
     required String orderType,
   }) async {
     try {
-      print('🔄 Sending status update notification to customer...');
-      print(
-        '📝 Status update details: $orderId, $customerId, $newStatus, $orderType',
-      );
+      print('📤 Sending status update notification to customer...');
+      print('👤 Customer ID: $customerId');
+      print('📦 Order ID: $orderId');
+      print('🔄 New Status: $newStatus');
 
-      // Validasi data sebelum menyimpan
-      if (customerId.isEmpty) {
-        print('⚠️ Warning: customerId is empty, using default ID');
-        customerId = 'customer_001';
-      }
-
-      if (orderId.isEmpty) {
-        print('⚠️ Warning: orderId is empty, using default ID');
-        orderId = 'order_${DateTime.now().millisecondsSinceEpoch}';
-      }
-
-      // Simpan notifikasi ke Firestore
-      final notificationData = {
-        'title': 'Update Status Pesanan',
-        'body':
-            'Status pesanan $orderType Anda telah diubah menjadi: $newStatus',
-        'orderId': orderId,
-        'customerId': customerId,
-        'type': 'status_update',
-        'recipientRole': 'customer',
-        'timestamp': FieldValue.serverTimestamp(),
-        'isRead': false,
-        'createdAt': FieldValue.serverTimestamp(), // Backup timestamp
-      };
-
-      print('📝 Saving status update notification data: $notificationData');
-
+      // Buat notifikasi di Firestore
       final notificationRef = await FirebaseFirestore.instance
           .collection('notifications')
-          .add(notificationData);
+          .add({
+            'title': 'Update Status Pesanan',
+            'body':
+                'Status pesanan $orderType Anda telah diubah menjadi: $newStatus',
+            'orderId': orderId,
+            'customerId': customerId,
+            'type': 'status_update',
+            'recipientRole': 'customer',
+            'recipientId': customerId, // Gunakan customerId yang sebenarnya
+            'timestamp': FieldValue.serverTimestamp(),
+            'isRead': false,
+            'createdAt': FieldValue.serverTimestamp(),
+          });
 
       print(
         '✅ Status update notification saved to Firestore with ID: ${notificationRef.id}',

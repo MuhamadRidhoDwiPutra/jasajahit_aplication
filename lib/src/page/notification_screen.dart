@@ -228,27 +228,77 @@ class _NotificationScreenState extends State<NotificationScreen> {
           ),
           child: ListTile(
             contentPadding: const EdgeInsets.all(16),
-            leading: Container(
-              width: 50,
-              height: 50,
-              decoration: BoxDecoration(
-                color: const Color(0xFFDE8500).withOpacity(0.1),
-                borderRadius: BorderRadius.circular(25),
-              ),
-              child: const Icon(
-                Icons.notifications_active,
-                color: Color(0xFFDE8500),
-                size: 24,
-              ),
+            leading: Stack(
+              children: [
+                Container(
+                  width: 50,
+                  height: 50,
+                  decoration: BoxDecoration(
+                    color: const Color(0xFFDE8500).withOpacity(0.1),
+                    borderRadius: BorderRadius.circular(25),
+                  ),
+                  child: const Icon(
+                    Icons.notifications_active,
+                    color: Color(0xFFDE8500),
+                    size: 24,
+                  ),
+                ),
+                // Badge untuk notifikasi baru
+                Positioned(
+                  right: 0,
+                  top: 0,
+                  child: Container(
+                    width: 16,
+                    height: 16,
+                    decoration: BoxDecoration(
+                      color: Colors.red,
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    child: const Center(
+                      child: Icon(
+                        Icons.fiber_manual_record,
+                        color: Colors.white,
+                        size: 8,
+                      ),
+                    ),
+                  ),
+                ),
+              ],
             ),
-            title: Text(
-              notif.notification?.title ?? 'Notifikasi',
-              style: TextStyle(
-                fontWeight: FontWeight.w600,
-                fontSize: 16,
-                color: isDark ? Colors.white : Colors.black,
-                fontFamily: 'SF Pro Display',
-              ),
+            title: Row(
+              children: [
+                Expanded(
+                  child: Text(
+                    notif.notification?.title ?? 'Notifikasi',
+                    style: TextStyle(
+                      fontWeight: FontWeight.w600,
+                      fontSize: 16,
+                      color: isDark ? Colors.white : Colors.black,
+                      fontFamily: 'SF Pro Display',
+                    ),
+                  ),
+                ),
+                Container(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 8,
+                    vertical: 4,
+                  ),
+                  decoration: BoxDecoration(
+                    color: Colors.red.withOpacity(0.1),
+                    borderRadius: BorderRadius.circular(12),
+                    border: Border.all(color: Colors.red.withOpacity(0.3)),
+                  ),
+                  child: Text(
+                    'Baru',
+                    style: TextStyle(
+                      fontSize: 10,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.red,
+                      fontFamily: 'SF Pro Text',
+                    ),
+                  ),
+                ),
+              ],
             ),
             subtitle: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -263,27 +313,31 @@ class _NotificationScreenState extends State<NotificationScreen> {
                   ),
                 ),
                 const SizedBox(height: 8),
-                Text(
-                  _formatTimestamp(notif.sentTime),
-                  style: TextStyle(
-                    fontSize: 12,
-                    color: isDark
-                        ? Colors.white.withOpacity(0.5)
-                        : Colors.black38,
-                    fontFamily: 'SF Pro Text',
-                  ),
+                Row(
+                  children: [
+                    Icon(
+                      Icons.access_time,
+                      size: 12,
+                      color: isDark
+                          ? Colors.white.withOpacity(0.5)
+                          : Colors.black38,
+                    ),
+                    const SizedBox(width: 4),
+                    Text(
+                      _formatTimestamp(notif.sentTime),
+                      style: TextStyle(
+                        fontSize: 12,
+                        color: isDark
+                            ? Colors.white.withOpacity(0.5)
+                            : Colors.black38,
+                        fontFamily: 'SF Pro Text',
+                      ),
+                    ),
+                  ],
                 ),
               ],
             ),
-            trailing: IconButton(
-              icon: Icon(
-                Icons.more_vert,
-                color: isDark ? Colors.white60 : Colors.black54,
-              ),
-              onPressed: () {
-                // TODO: Implement notification actions (mark as read, delete, etc.)
-              },
-            ),
+            trailing: null, // Hapus titik tiga
           ),
         );
       },

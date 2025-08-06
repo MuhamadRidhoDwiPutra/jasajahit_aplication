@@ -1,7 +1,9 @@
 // ignore: unused_import
 import 'package:jasa_jahit_aplication/src/customer/konfirmasi_desain_baju_customer_screen.dart';
-import 'package:jasa_jahit_aplication/src/model/order_model.dart';
+import 'package:jasa_jahit_aplication/src/model/order_model.dart'
+    as order_model;
 import 'package:jasa_jahit_aplication/src/services/firestore_service.dart';
+import 'package:jasa_jahit_aplication/src/services/notification_service.dart';
 import 'cek_detail_pesanan_baju_screen.dart';
 import 'package:flutter/material.dart';
 import 'berhasil_pesan_baju_customer_screen.dart';
@@ -10,9 +12,11 @@ import 'package:provider/provider.dart';
 import 'package:jasa_jahit_aplication/src/theme/theme_provider.dart';
 import 'dart:io';
 import 'package:image_picker/image_picker.dart';
+import 'package:cloud_firestore/cloud_firestore.dart' as firestore;
+import 'package:firebase_auth/firebase_auth.dart';
 
 class PembayaranBajuCustomerScreen extends StatefulWidget {
-  final Order order;
+  final order_model.Order order;
   final FirestoreService _firestoreService = FirestoreService();
 
   PembayaranBajuCustomerScreen({super.key, required this.order});
@@ -438,6 +442,35 @@ class _PembayaranBajuCustomerScreenState
                       paymentProofUrl,
                       _fileName ?? 'bukti_pembayaran.jpg',
                     );
+
+                    // Kirim notifikasi ke admin
+                    await NotificationService.sendJasaJahitNotification(
+                      customerName:
+                          FirebaseAuth.instance.currentUser?.displayName ??
+                          'Customer',
+                      orderType: 'Baju',
+                      orderId: orderDoc.id,
+                      price: widget.order.totalPrice ?? 0,
+                    );
+
+                    // Tambahkan notifikasi ke Firestore untuk admin
+                    await firestore.FirebaseFirestore.instance
+                        .collection('notifications')
+                        .add({
+                          'title': 'Pesanan Baru',
+                          'body':
+                              '${FirebaseAuth.instance.currentUser?.displayName ?? 'Customer'} telah membuat pesanan Baju seharga Rp ${(widget.order.totalPrice ?? 0).toStringAsFixed(0)}',
+                          'orderId': orderDoc.id,
+                          'customerId':
+                              FirebaseAuth.instance.currentUser?.uid ??
+                              'customer_001',
+                          'type': 'new_order',
+                          'recipientRole': 'admin',
+                          'recipientId': 'admin_001',
+                          'timestamp': firestore.FieldValue.serverTimestamp(),
+                          'isRead': false,
+                          'createdAt': firestore.FieldValue.serverTimestamp(),
+                        });
 
                     // Tutup loading dialog
                     Navigator.pop(context);
