@@ -13,6 +13,9 @@ import 'package:image_picker/image_picker.dart';
 import 'package:jasa_jahit_aplication/src/theme/theme_switcher.dart';
 import 'package:provider/provider.dart';
 import 'package:jasa_jahit_aplication/src/theme/theme_provider.dart';
+import 'package:jasa_jahit_aplication/Core/provider/auth_provider.dart'
+    as app_auth;
+import 'package:firebase_auth/firebase_auth.dart';
 
 class ProfileCustomerScreen extends StatefulWidget {
   const ProfileCustomerScreen({super.key});
@@ -23,14 +26,67 @@ class ProfileCustomerScreen extends StatefulWidget {
 
 class _ProfileCustomerScreenState extends State<ProfileCustomerScreen> {
   File? _profileImage;
-  String _name = 'Ridho';
-  String _nip = '199004252015021001';
-  String _posisi = 'Customer';
-  String _unit = 'Engineering';
+  String _name = '';
+  String _username = '';
+  String _position = 'Customer';
+  String _address = '';
+  bool _isLoading = true;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadUserData();
+  }
+
+  Future<void> _loadUserData() async {
+    try {
+      final currentUser = FirebaseAuth.instance.currentUser;
+      if (currentUser != null) {
+        final authProvider = Provider.of<app_auth.AuthProvider>(
+          context,
+          listen: false,
+        );
+        final userData = await authProvider.getUserData(currentUser.uid);
+
+        if (userData != null) {
+          setState(() {
+            _name = userData['name'] ?? '';
+            _username = userData['username'] ?? '';
+            _position = userData['position'] ?? 'Customer';
+            _address = userData['address'] ?? '';
+            _isLoading = false;
+          });
+        } else {
+          setState(() {
+            _isLoading = false;
+          });
+        }
+      } else {
+        setState(() {
+          _isLoading = false;
+        });
+      }
+    } catch (e) {
+      print('Error loading user data: $e');
+      setState(() {
+        _isLoading = false;
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
+
+    if (_isLoading) {
+      return Scaffold(
+        backgroundColor: isDark
+            ? const Color(0xFF1A1A1A)
+            : const Color(0xFF8FBC8F),
+        body: const Center(child: CircularProgressIndicator()),
+      );
+    }
+
     return Scaffold(
       backgroundColor: isDark
           ? const Color(0xFF1A1A1A)
@@ -137,11 +193,19 @@ class _ProfileCustomerScreenState extends State<ProfileCustomerScreen> {
                           children: [
                             _ProfileInfoRow(label: 'Nama', value: _name),
                             const SizedBox(height: 8),
-                            _ProfileInfoRow(label: 'NIP', value: _nip),
+                            _ProfileInfoRow(
+                              label: 'Username',
+                              value: _username,
+                            ),
                             const SizedBox(height: 8),
-                            _ProfileInfoRow(label: 'Posisi', value: _posisi),
+                            _ProfileInfoRow(label: 'Posisi', value: _position),
                             const SizedBox(height: 8),
-                            _ProfileInfoRow(label: 'Unit', value: _unit),
+                            _ProfileInfoRow(
+                              label: 'Alamat',
+                              value: _address.isEmpty
+                                  ? 'Belum diisi'
+                                  : _address,
+                            ),
                           ],
                         ),
                       ),
@@ -159,25 +223,18 @@ class _ProfileCustomerScreenState extends State<ProfileCustomerScreen> {
                           ),
                         ),
                         onPressed: () async {
-                          final result = await showDialog<Map<String, String>>(
+                          await showDialog<Map<String, String>>(
                             context: context,
                             builder: (context) {
-                              final nameCtrl = TextEditingController(
-                                text: _name,
-                              );
-                              final nipCtrl = TextEditingController(text: _nip);
-                              final posisiCtrl = TextEditingController(
-                                text: _posisi,
-                              );
-                              final unitCtrl = TextEditingController(
-                                text: _unit,
+                              final addressCtrl = TextEditingController(
+                                text: _address,
                               );
                               return AlertDialog(
                                 backgroundColor: isDark
                                     ? const Color(0xFF2A2A2A)
                                     : Colors.white,
                                 title: Text(
-                                  'Edit Profil',
+                                  'Edit Alamat',
                                   style: TextStyle(
                                     color: isDark ? Colors.white : Colors.black,
                                   ),
@@ -186,95 +243,15 @@ class _ProfileCustomerScreenState extends State<ProfileCustomerScreen> {
                                   child: Column(
                                     children: [
                                       TextField(
-                                        controller: nameCtrl,
+                                        controller: addressCtrl,
                                         style: TextStyle(
                                           color: isDark
                                               ? Colors.white
                                               : Colors.black,
                                         ),
+                                        maxLines: 3,
                                         decoration: InputDecoration(
-                                          labelText: 'Nama',
-                                          labelStyle: TextStyle(
-                                            color: isDark
-                                                ? Colors.white70
-                                                : Colors.grey[600],
-                                          ),
-                                          filled: true,
-                                          fillColor: isDark
-                                              ? const Color(0xFF3A3A3A)
-                                              : Colors.grey[100],
-                                          border: OutlineInputBorder(
-                                            borderRadius: BorderRadius.circular(
-                                              8,
-                                            ),
-                                            borderSide: BorderSide.none,
-                                          ),
-                                        ),
-                                      ),
-                                      const SizedBox(height: 8),
-                                      TextField(
-                                        controller: nipCtrl,
-                                        style: TextStyle(
-                                          color: isDark
-                                              ? Colors.white
-                                              : Colors.black,
-                                        ),
-                                        decoration: InputDecoration(
-                                          labelText: 'NIP',
-                                          labelStyle: TextStyle(
-                                            color: isDark
-                                                ? Colors.white70
-                                                : Colors.grey[600],
-                                          ),
-                                          filled: true,
-                                          fillColor: isDark
-                                              ? const Color(0xFF3A3A3A)
-                                              : Colors.grey[100],
-                                          border: OutlineInputBorder(
-                                            borderRadius: BorderRadius.circular(
-                                              8,
-                                            ),
-                                            borderSide: BorderSide.none,
-                                          ),
-                                        ),
-                                      ),
-                                      const SizedBox(height: 8),
-                                      TextField(
-                                        controller: posisiCtrl,
-                                        style: TextStyle(
-                                          color: isDark
-                                              ? Colors.white
-                                              : Colors.black,
-                                        ),
-                                        decoration: InputDecoration(
-                                          labelText: 'Posisi',
-                                          labelStyle: TextStyle(
-                                            color: isDark
-                                                ? Colors.white70
-                                                : Colors.grey[600],
-                                          ),
-                                          filled: true,
-                                          fillColor: isDark
-                                              ? const Color(0xFF3A3A3A)
-                                              : Colors.grey[100],
-                                          border: OutlineInputBorder(
-                                            borderRadius: BorderRadius.circular(
-                                              8,
-                                            ),
-                                            borderSide: BorderSide.none,
-                                          ),
-                                        ),
-                                      ),
-                                      const SizedBox(height: 8),
-                                      TextField(
-                                        controller: unitCtrl,
-                                        style: TextStyle(
-                                          color: isDark
-                                              ? Colors.white
-                                              : Colors.black,
-                                        ),
-                                        decoration: InputDecoration(
-                                          labelText: 'Unit',
+                                          labelText: 'Alamat',
                                           labelStyle: TextStyle(
                                             color: isDark
                                                 ? Colors.white70
@@ -311,13 +288,48 @@ class _ProfileCustomerScreenState extends State<ProfileCustomerScreen> {
                                     style: ElevatedButton.styleFrom(
                                       backgroundColor: const Color(0xFFDE8500),
                                     ),
-                                    onPressed: () {
-                                      Navigator.pop(context, {
-                                        'name': nameCtrl.text,
-                                        'nip': nipCtrl.text,
-                                        'posisi': posisiCtrl.text,
-                                        'unit': unitCtrl.text,
-                                      });
+                                    onPressed: () async {
+                                      final newAddress = addressCtrl.text
+                                          .trim();
+                                      try {
+                                        final currentUser =
+                                            FirebaseAuth.instance.currentUser;
+                                        if (currentUser != null) {
+                                          final authProvider =
+                                              Provider.of<
+                                                app_auth.AuthProvider
+                                              >(context, listen: false);
+                                          await authProvider.updateUserData(
+                                            currentUser.uid,
+                                            {'address': newAddress},
+                                          );
+
+                                          setState(() {
+                                            _address = newAddress;
+                                          });
+
+                                          Navigator.pop(context);
+                                          ScaffoldMessenger.of(
+                                            context,
+                                          ).showSnackBar(
+                                            const SnackBar(
+                                              content: Text(
+                                                'Alamat berhasil diperbarui!',
+                                              ),
+                                            ),
+                                          );
+                                        }
+                                      } catch (e) {
+                                        ScaffoldMessenger.of(
+                                          context,
+                                        ).showSnackBar(
+                                          SnackBar(
+                                            content: Text(
+                                              'Gagal memperbarui alamat: ${e.toString()}',
+                                            ),
+                                          ),
+                                        );
+                                      }
                                     },
                                     child: const Text('Simpan'),
                                   ),
@@ -325,17 +337,9 @@ class _ProfileCustomerScreenState extends State<ProfileCustomerScreen> {
                               );
                             },
                           );
-                          if (result != null) {
-                            setState(() {
-                              _name = result['name'] ?? _name;
-                              _nip = result['nip'] ?? _nip;
-                              _posisi = result['no tlp'] ?? _posisi;
-                              _unit = result['nama lain'] ?? _unit;
-                            });
-                          }
                         },
                         label: const Text(
-                          'Edit Profil',
+                          'Edit Alamat',
                           style: TextStyle(
                             color: Colors.white,
                             fontWeight: FontWeight.w600,
@@ -416,7 +420,8 @@ class _ProfileCustomerScreenState extends State<ProfileCustomerScreen> {
                                       backgroundColor: Colors.red,
                                     ),
                                     child: const Text('Logout'),
-                                    onPressed: () {
+                                    onPressed: () async {
+                                      await FirebaseAuth.instance.signOut();
                                       Navigator.of(
                                         context,
                                       ).pop(); // Close dialog

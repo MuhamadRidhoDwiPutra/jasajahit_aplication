@@ -17,6 +17,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:jasa_jahit_aplication/src/model/product_model.dart';
 import 'pembayaran_model_customer_screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:jasa_jahit_aplication/src/services/firestore_service.dart';
 
 class HomeCustomerScreen extends StatefulWidget {
   final int initialIndex;
@@ -82,11 +83,17 @@ class _HomeCustomerScreenState extends State<HomeCustomerScreen> {
 
   void _showNotificationDialog(BuildContext context) async {
     // Tandai semua notifikasi customer sebagai sudah dibaca
+    final currentUser = FirebaseAuth.instance.currentUser;
+    if (currentUser == null) {
+      print('⚠️ No current user found for marking notifications as read');
+      return;
+    }
+
     final notificationsRef = FirebaseFirestore.instance.collection(
       'notifications',
     );
     final unreadNotifications = await notificationsRef
-        .where('recipientId', isEqualTo: FirebaseAuth.instance.currentUser?.uid)
+        .where('recipientId', isEqualTo: currentUser.uid)
         .where('isRead', isEqualTo: false)
         .get();
 
@@ -773,6 +780,8 @@ class _ModelCard extends StatelessWidget {
                                     builder: (context) =>
                                         PembayaranModelCustomerScreen(
                                           product: product,
+                                          selectedSize: 'L',
+                                          firestoreService: FirestoreService(),
                                         ),
                                   ),
                                 );
@@ -938,6 +947,8 @@ class _ModelCard extends StatelessWidget {
                                   builder: (context) =>
                                       PembayaranModelCustomerScreen(
                                         product: product,
+                                        selectedSize: 'L',
+                                        firestoreService: FirestoreService(),
                                       ),
                                 ),
                               );

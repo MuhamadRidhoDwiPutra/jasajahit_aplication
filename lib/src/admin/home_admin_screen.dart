@@ -325,6 +325,143 @@ class _HomeAdminContent extends StatefulWidget {
 class _HomeAdminContentState extends State<_HomeAdminContent> {
   int selectedMonthIndex = DateTime.now().month - 1; // Bulan saat ini (0-11)
 
+  // Fungsi untuk mendapatkan nama bulan
+  String _getMonthName(int monthIndex) {
+    const months = [
+      'Januari',
+      'Februari',
+      'Maret',
+      'April',
+      'Mei',
+      'Juni',
+      'Juli',
+      'Agustus',
+      'September',
+      'Oktober',
+      'November',
+      'Desember',
+    ];
+    return months[monthIndex];
+  }
+
+  // Fungsi untuk menghitung data berdasarkan bulan yang dipilih
+  Map<String, dynamic> _calculateDataForMonth(
+    List<order_model.Order> orders,
+    int monthIndex,
+  ) {
+    final now = DateTime.now();
+    final selectedMonth = DateTime(now.year, monthIndex + 1);
+    final nextMonth = DateTime(now.year, monthIndex + 2);
+
+    // Filter orders berdasarkan bulan yang dipilih
+    final ordersThisMonth = orders.where((order) {
+      final orderDate = order.orderDate.toDate();
+      return orderDate.isAfter(
+            selectedMonth.subtract(const Duration(days: 1)),
+          ) &&
+          orderDate.isBefore(nextMonth);
+    }).toList();
+
+    // Hitung status pesanan untuk bulan yang dipilih
+    final masuk = ordersThisMonth
+        .where((order) => order.status == 'Menunggu Konfirmasi')
+        .length;
+    final dikonfirmasi = ordersThisMonth
+        .where((order) => order.status == 'Dikonfirmasi')
+        .length;
+    final dikerjakan = ordersThisMonth
+        .where((order) => order.status == 'Sedang dikerjakan')
+        .length;
+    final selesai = ordersThisMonth
+        .where((order) => order.status == 'Selesai')
+        .length;
+    final dibatalkan = ordersThisMonth
+        .where((order) => order.status == 'Dibatalkan')
+        .length;
+
+    // Hitung keuntungan dari pesanan yang selesai
+    final completedOrdersThisMonth = ordersThisMonth.where((order) {
+      return order.status == 'Selesai';
+    }).toList();
+
+    final totalRevenue = completedOrdersThisMonth.fold<double>(
+      0,
+      (sum, order) =>
+          sum + (order.estimatedPrice?.toDouble() ?? order.totalPrice ?? 0),
+    );
+
+    // Hitung keuntungan (asumsi margin 30%)
+    final totalProfit = totalRevenue * 0.3;
+
+    // Data untuk pie chart berdasarkan jenis pesanan yang selesai
+    final bajuOrders = completedOrdersThisMonth.where((order) {
+      return order.items.any((item) => item['orderType'] == 'Baju');
+    }).toList();
+
+    final celanaOrders = completedOrdersThisMonth.where((order) {
+      return order.items.any((item) => item['orderType'] == 'Celana');
+    }).toList();
+
+    final modelOrders = completedOrdersThisMonth.where((order) {
+      return order.items.any((item) => item['orderType'] == 'Model');
+    }).toList();
+
+    final bajuRevenue = bajuOrders.fold<double>(
+      0,
+      (sum, order) =>
+          sum + (order.estimatedPrice?.toDouble() ?? order.totalPrice ?? 0),
+    );
+    final celanaRevenue = celanaOrders.fold<double>(
+      0,
+      (sum, order) =>
+          sum + (order.estimatedPrice?.toDouble() ?? order.totalPrice ?? 0),
+    );
+    final modelRevenue = modelOrders.fold<double>(
+      0,
+      (sum, order) =>
+          sum + (order.estimatedPrice?.toDouble() ?? order.totalPrice ?? 0),
+    );
+
+    final bajuProfit = bajuRevenue * 0.3;
+    final celanaProfit = celanaRevenue * 0.3;
+    final modelProfit = modelRevenue * 0.3;
+
+    // Hitung jumlah item terjual
+    final bajuSold = bajuOrders.fold<int>(
+      0,
+      (sum, order) =>
+          sum + order.items.where((item) => item['orderType'] == 'Baju').length,
+    );
+    final celanaSold = celanaOrders.fold<int>(
+      0,
+      (sum, order) =>
+          sum +
+          order.items.where((item) => item['orderType'] == 'Celana').length,
+    );
+    final modelSold = modelOrders.fold<int>(
+      0,
+      (sum, order) =>
+          sum +
+          order.items.where((item) => item['orderType'] == 'Model').length,
+    );
+
+    return {
+      'masuk': masuk,
+      'dikonfirmasi': dikonfirmasi,
+      'dikerjakan': dikerjakan,
+      'selesai': selesai,
+      'dibatalkan': dibatalkan,
+      'totalProfit': totalProfit,
+      'bajuProfit': bajuProfit,
+      'celanaProfit': celanaProfit,
+      'modelProfit': modelProfit,
+      'bajuSold': bajuSold,
+      'celanaSold': celanaSold,
+      'modelSold': modelSold,
+      'completedOrders': completedOrdersThisMonth.length,
+    };
+  }
+
   @override
   Widget build(BuildContext context) {
     return ListView(
@@ -339,37 +476,22 @@ class _HomeAdminContentState extends State<_HomeAdminContent> {
             }
             final orders = snapshot.data ?? [];
 
-            // Hitung status pesanan
-            final masuk = orders
-                .where((order) => order.status == 'Menunggu Konfirmasi')
-                .length;
-            final dikonfirmasi = orders
-                .where((order) => order.status == 'Dikonfirmasi')
-                .length;
-            final dikerjakan = orders
-                .where((order) => order.status == 'Sedang dikerjakan')
-                .length;
-            final selesai = orders
-                .where((order) => order.status == 'Selesai')
-                .length;
-            final dibatalkan = orders
-                .where((order) => order.status == 'Dibatalkan')
-                .length;
+            // Hitung data untuk bulan yang dipilih
+            final monthData = _calculateDataForMonth(
+              orders,
+              selectedMonthIndex,
+            );
 
             // Debug: Print status counts untuk troubleshooting
-            print('Debug Status Counts:');
-            print('Masuk: $masuk');
-            print('Dikonfirmasi: $dikonfirmasi');
-            print('Dikerjakan: $dikerjakan');
-            print('Selesai: $selesai');
-            print('Dibatalkan: $dibatalkan');
-
-            // Gunakan data real saja, tidak ada test data
-            final finalMasuk = masuk;
-            final finalDikonfirmasi = dikonfirmasi;
-            final finalDikerjakan = dikerjakan;
-            final finalSelesai = selesai;
-            final finalDibatalkan = dibatalkan;
+            print(
+              'Debug Status Counts for ${_getMonthName(selectedMonthIndex)}:',
+            );
+            print('Masuk: ${monthData['masuk']}');
+            print('Dikonfirmasi: ${monthData['dikonfirmasi']}');
+            print('Dikerjakan: ${monthData['dikerjakan']}');
+            print('Selesai: ${monthData['selesai']}');
+            print('Dibatalkan: ${monthData['dibatalkan']}');
+            print('Total Profit: ${monthData['totalProfit']}');
 
             return Column(
               children: [
@@ -391,31 +513,31 @@ class _HomeAdminContentState extends State<_HomeAdminContent> {
                       children: [
                         _DashboardItem(
                           label: 'Masuk',
-                          count: finalMasuk,
+                          count: monthData['masuk'],
                           color: Colors.orange,
                           icon: Icons.inbox,
                         ),
                         _DashboardItem(
                           label: 'Dikonfirmasi',
-                          count: finalDikonfirmasi,
+                          count: monthData['dikonfirmasi'],
                           color: Colors.blue,
                           icon: Icons.check_circle_outline,
                         ),
                         _DashboardItem(
                           label: 'Dikerjakan',
-                          count: finalDikerjakan,
+                          count: monthData['dikerjakan'],
                           color: Colors.purple,
                           icon: Icons.build,
                         ),
                         _DashboardItem(
                           label: 'Selesai',
-                          count: finalSelesai,
+                          count: monthData['selesai'],
                           color: Colors.green,
                           icon: Icons.done_all,
                         ),
                         _DashboardItem(
                           label: 'Batal',
-                          count: finalDibatalkan,
+                          count: monthData['dibatalkan'],
                           color: Colors.red,
                           icon: Icons.cancel,
                         ),
@@ -438,16 +560,58 @@ class _HomeAdminContentState extends State<_HomeAdminContent> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(
-                          'Status Pesanan Real-time',
-                          style: TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.bold,
-                            color:
-                                Theme.of(context).brightness == Brightness.dark
-                                ? Colors.white
-                                : Colors.black,
-                          ),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text(
+                              'Status Pesanan Real-time',
+                              style: TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.bold,
+                                color:
+                                    Theme.of(context).brightness ==
+                                        Brightness.dark
+                                    ? Colors.white
+                                    : Colors.black,
+                              ),
+                            ),
+                            // Selector Bulan untuk Bar Chart
+                            Container(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 8,
+                                vertical: 4,
+                              ),
+                              decoration: BoxDecoration(
+                                color: const Color(0xFFDE8500).withOpacity(0.1),
+                                borderRadius: BorderRadius.circular(6),
+                                border: Border.all(
+                                  color: const Color(0xFFDE8500),
+                                ),
+                              ),
+                              child: DropdownButton<int>(
+                                value: selectedMonthIndex,
+                                underline: Container(),
+                                style: TextStyle(
+                                  color: const Color(0xFFDE8500),
+                                  fontWeight: FontWeight.w600,
+                                  fontSize: 12,
+                                ),
+                                items: List.generate(12, (index) {
+                                  return DropdownMenuItem<int>(
+                                    value: index,
+                                    child: Text(_getMonthName(index)),
+                                  );
+                                }),
+                                onChanged: (int? newValue) {
+                                  if (newValue != null) {
+                                    setState(() {
+                                      selectedMonthIndex = newValue;
+                                    });
+                                  }
+                                },
+                              ),
+                            ),
+                          ],
                         ),
                         const SizedBox(height: 12),
                         SizedBox(
@@ -457,11 +621,11 @@ class _HomeAdminContentState extends State<_HomeAdminContent> {
                               alignment: BarChartAlignment.spaceAround,
                               maxY:
                                   [
-                                    finalMasuk,
-                                    finalDikonfirmasi,
-                                    finalDikerjakan,
-                                    finalSelesai,
-                                    finalDibatalkan,
+                                    monthData['masuk'],
+                                    monthData['dikonfirmasi'],
+                                    monthData['dikerjakan'],
+                                    monthData['selesai'],
+                                    monthData['dibatalkan'],
                                   ].reduce((a, b) => a > b ? a : b).toDouble() +
                                   2,
                               barTouchData: BarTouchData(
@@ -565,7 +729,7 @@ class _HomeAdminContentState extends State<_HomeAdminContent> {
                                   x: 0,
                                   barRods: [
                                     BarChartRodData(
-                                      toY: finalMasuk.toDouble(),
+                                      toY: monthData['masuk'].toDouble(),
                                       color: Colors.orange,
                                       width: 20,
                                       borderRadius: const BorderRadius.only(
@@ -579,7 +743,7 @@ class _HomeAdminContentState extends State<_HomeAdminContent> {
                                   x: 1,
                                   barRods: [
                                     BarChartRodData(
-                                      toY: finalDikonfirmasi.toDouble(),
+                                      toY: monthData['dikonfirmasi'].toDouble(),
                                       color: Colors.blue,
                                       width: 20,
                                       borderRadius: const BorderRadius.only(
@@ -593,7 +757,7 @@ class _HomeAdminContentState extends State<_HomeAdminContent> {
                                   x: 2,
                                   barRods: [
                                     BarChartRodData(
-                                      toY: finalDikerjakan.toDouble(),
+                                      toY: monthData['dikerjakan'].toDouble(),
                                       color: Colors.purple,
                                       width: 20,
                                       borderRadius: const BorderRadius.only(
@@ -607,7 +771,7 @@ class _HomeAdminContentState extends State<_HomeAdminContent> {
                                   x: 3,
                                   barRods: [
                                     BarChartRodData(
-                                      toY: finalSelesai.toDouble(),
+                                      toY: monthData['selesai'].toDouble(),
                                       color: Colors.green,
                                       width: 20,
                                       borderRadius: const BorderRadius.only(
@@ -621,7 +785,7 @@ class _HomeAdminContentState extends State<_HomeAdminContent> {
                                   x: 4,
                                   barRods: [
                                     BarChartRodData(
-                                      toY: finalDibatalkan.toDouble(),
+                                      toY: monthData['dibatalkan'].toDouble(),
                                       color: Colors.red,
                                       width: 20,
                                       borderRadius: const BorderRadius.only(
@@ -639,531 +803,223 @@ class _HomeAdminContentState extends State<_HomeAdminContent> {
                     ),
                   ),
                 ),
-              ],
-            );
-          },
-        ),
-        const SizedBox(height: 24),
-        // PIE CHART KEUNTUNGAN BULANAN
-        StreamBuilder<List<order_model.Order>>(
-          stream: FirestoreService().getAllOrders(),
-          builder: (context, snapshot) {
-            if (snapshot.connectionState == ConnectionState.waiting) {
-              return const Center(child: CircularProgressIndicator());
-            }
-            final orders = snapshot.data ?? [];
-
-            // State untuk bulan yang dipilih
-            final now = DateTime.now();
-            final selectedMonth = DateTime(now.year, selectedMonthIndex + 1);
-            final nextMonth = DateTime(now.year, selectedMonthIndex + 2);
-
-            // Hitung keuntungan dari pesanan yang selesai dalam bulan yang dipilih
-            final completedOrdersThisMonth = orders.where((order) {
-              final orderDate = order.orderDate.toDate();
-              return order.status == 'Selesai' &&
-                  orderDate.isAfter(
-                    selectedMonth.subtract(const Duration(days: 1)),
-                  ) &&
-                  orderDate.isBefore(nextMonth);
-            }).toList();
-
-            final totalRevenue = completedOrdersThisMonth.fold<double>(
-              0,
-              (sum, order) =>
-                  sum +
-                  (order.estimatedPrice?.toDouble() ?? order.totalPrice ?? 0),
-            );
-
-            // Hitung keuntungan (asumsi margin 30%)
-            final totalProfit = totalRevenue * 0.3;
-
-            // Data untuk pie chart berdasarkan jenis pesanan yang selesai
-            final bajuOrders = completedOrdersThisMonth.where((order) {
-              return order.items.any((item) => item['orderType'] == 'Baju');
-            }).toList();
-
-            final celanaOrders = completedOrdersThisMonth.where((order) {
-              return order.items.any((item) => item['orderType'] == 'Celana');
-            }).toList();
-
-            final bajuRevenue = bajuOrders.fold<double>(
-              0,
-              (sum, order) =>
-                  sum +
-                  (order.estimatedPrice?.toDouble() ?? order.totalPrice ?? 0),
-            );
-            final celanaRevenue = celanaOrders.fold<double>(
-              0,
-              (sum, order) =>
-                  sum +
-                  (order.estimatedPrice?.toDouble() ?? order.totalPrice ?? 0),
-            );
-
-            final bajuProfit = bajuRevenue * 0.3;
-            final celanaProfit = celanaRevenue * 0.3;
-
-            // Hitung jumlah item terjual
-            final bajuSold = bajuOrders.fold<int>(
-              0,
-              (sum, order) =>
-                  sum +
-                  order.items
-                      .where((item) => item['orderType'] == 'Baju')
-                      .length,
-            );
-            final celanaSold = celanaOrders.fold<int>(
-              0,
-              (sum, order) =>
-                  sum +
-                  order.items
-                      .where((item) => item['orderType'] == 'Celana')
-                      .length,
-            );
-
-            // Jika tidak ada data, gunakan data test untuk demonstrasi
-            if (totalProfit == 0 && completedOrdersThisMonth.isEmpty) {
-              print(
-                'No profit data found, using test data for pie chart demonstration',
-              );
-              // Data test untuk demonstrasi
-              final testProfitData = [
-                {
-                  'label': 'Baju',
-                  'value': 150000.0,
-                  'color': Colors.blue,
-                  'sold': 2,
-                },
-                {
-                  'label': 'Celana',
-                  'value': 80000.0,
-                  'color': Colors.green,
-                  'sold': 1,
-                },
-              ];
-
-              return Card(
-                color: Theme.of(context).brightness == Brightness.dark
-                    ? const Color(0xFF232323)
-                    : Colors.white,
-                elevation: 2,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(16),
-                ),
-                child: Padding(
-                  padding: const EdgeInsets.all(16.0),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Text(
-                            'Keuntungan Bulanan',
-                            style: TextStyle(
-                              fontSize: 18,
-                              fontWeight: FontWeight.bold,
+                const SizedBox(height: 24),
+                // PIE CHART KEUNTUNGAN BULANAN
+                Card(
+                  color: Theme.of(context).brightness == Brightness.dark
+                      ? const Color(0xFF232323)
+                      : Colors.white,
+                  elevation: 2,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(16),
+                  ),
+                  child: Padding(
+                    padding: const EdgeInsets.all(16.0),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text(
+                              'Keuntungan Bulanan',
+                              style: TextStyle(
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold,
+                                color:
+                                    Theme.of(context).brightness ==
+                                        Brightness.dark
+                                    ? Colors.white
+                                    : Colors.black,
+                                fontFamily: 'SF Pro Display',
+                              ),
+                            ),
+                            // Selector Bulan untuk Pie Chart
+                            Container(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 12,
+                                vertical: 4,
+                              ),
+                              decoration: BoxDecoration(
+                                color: const Color(0xFFDE8500).withOpacity(0.1),
+                                borderRadius: BorderRadius.circular(8),
+                                border: Border.all(
+                                  color: const Color(0xFFDE8500),
+                                ),
+                              ),
+                              child: DropdownButton<int>(
+                                value: selectedMonthIndex,
+                                underline: Container(),
+                                style: TextStyle(
+                                  color: const Color(0xFFDE8500),
+                                  fontWeight: FontWeight.w600,
+                                  fontSize: 14,
+                                ),
+                                items: List.generate(12, (index) {
+                                  return DropdownMenuItem<int>(
+                                    value: index,
+                                    child: Text(_getMonthName(index)),
+                                  );
+                                }),
+                                onChanged: (int? newValue) {
+                                  if (newValue != null) {
+                                    setState(() {
+                                      selectedMonthIndex = newValue;
+                                    });
+                                  }
+                                },
+                              ),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 8),
+                        Text(
+                          'Total Keuntungan: Rp ${monthData['totalProfit'].toStringAsFixed(0).replaceAllMapped(RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'), (m) => '${m[1]}.')}',
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.w600,
+                            color: Colors.green,
+                            fontFamily: 'SF Pro Text',
+                          ),
+                        ),
+                        const SizedBox(height: 16),
+                        // Pie Chart dan Legend
+                        if (monthData['totalProfit'] > 0) ...[
+                          SizedBox(
+                            height: 200,
+                            child: Row(
+                              children: [
+                                Expanded(
+                                  flex: 2,
+                                  child: PieChart(
+                                    PieChartData(
+                                      sections: [
+                                        if (monthData['bajuProfit'] > 0)
+                                          PieChartSectionData(
+                                            value: monthData['bajuProfit'],
+                                            title:
+                                                'Baju\n${((monthData['bajuProfit'] / monthData['totalProfit']) * 100).toStringAsFixed(1)}%',
+                                            color: Colors.blue,
+                                            radius: 80,
+                                            titleStyle: const TextStyle(
+                                              fontSize: 12,
+                                              fontWeight: FontWeight.bold,
+                                              color: Colors.white,
+                                            ),
+                                          ),
+                                        if (monthData['celanaProfit'] > 0)
+                                          PieChartSectionData(
+                                            value: monthData['celanaProfit'],
+                                            title:
+                                                'Celana\n${((monthData['celanaProfit'] / monthData['totalProfit']) * 100).toStringAsFixed(1)}%',
+                                            color: Colors.green,
+                                            radius: 80,
+                                            titleStyle: const TextStyle(
+                                              fontSize: 12,
+                                              fontWeight: FontWeight.bold,
+                                              color: Colors.white,
+                                            ),
+                                          ),
+                                        if (monthData['modelProfit'] > 0)
+                                          PieChartSectionData(
+                                            value: monthData['modelProfit'],
+                                            title:
+                                                'Model\n${((monthData['modelProfit'] / monthData['totalProfit']) * 100).toStringAsFixed(1)}%',
+                                            color: Colors.orange,
+                                            radius: 80,
+                                            titleStyle: const TextStyle(
+                                              fontSize: 12,
+                                              fontWeight: FontWeight.bold,
+                                              color: Colors.white,
+                                            ),
+                                          ),
+                                      ],
+                                      centerSpaceRadius: 40,
+                                      sectionsSpace: 2,
+                                    ),
+                                  ),
+                                ),
+                                const SizedBox(width: 16),
+                                Expanded(
+                                  flex: 1,
+                                  child: Column(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      if (monthData['bajuProfit'] > 0)
+                                        _PieChartLegend(
+                                          label: 'Baju',
+                                          value: monthData['bajuProfit'],
+                                          sold: monthData['bajuSold'],
+                                          color: Colors.blue,
+                                        ),
+                                      if (monthData['celanaProfit'] > 0)
+                                        _PieChartLegend(
+                                          label: 'Celana',
+                                          value: monthData['celanaProfit'],
+                                          sold: monthData['celanaSold'],
+                                          color: Colors.green,
+                                        ),
+                                      if (monthData['modelProfit'] > 0)
+                                        _PieChartLegend(
+                                          label: 'Model',
+                                          value: monthData['modelProfit'],
+                                          sold: monthData['modelSold'],
+                                          color: Colors.orange,
+                                        ),
+                                    ],
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ] else ...[
+                          Container(
+                            height: 200,
+                            decoration: BoxDecoration(
                               color:
                                   Theme.of(context).brightness ==
                                       Brightness.dark
-                                  ? Colors.white
-                                  : Colors.black,
-                              fontFamily: 'SF Pro Display',
+                                  ? Colors.grey[800]
+                                  : Colors.grey[200],
+                              borderRadius: BorderRadius.circular(12),
                             ),
-                          ),
-                          Container(
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 12,
-                              vertical: 4,
-                            ),
-                            decoration: BoxDecoration(
-                              color: const Color(0xFFDE8500).withOpacity(0.1),
-                              borderRadius: BorderRadius.circular(8),
-                              border: Border.all(
-                                color: const Color(0xFFDE8500),
-                              ),
-                            ),
-                            child: Text(
-                              'Agustus',
-                              style: TextStyle(
-                                color: const Color(0xFFDE8500),
-                                fontWeight: FontWeight.w600,
-                                fontSize: 12,
+                            child: Center(
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Icon(
+                                    Icons.pie_chart_outline,
+                                    size: 48,
+                                    color:
+                                        Theme.of(context).brightness ==
+                                            Brightness.dark
+                                        ? Colors.grey[600]
+                                        : Colors.grey[400],
+                                  ),
+                                  const SizedBox(height: 8),
+                                  Text(
+                                    'Belum ada data keuntungan',
+                                    style: TextStyle(
+                                      color:
+                                          Theme.of(context).brightness ==
+                                              Brightness.dark
+                                          ? Colors.grey[600]
+                                          : Colors.grey[400],
+                                      fontSize: 14,
+                                    ),
+                                  ),
+                                ],
                               ),
                             ),
                           ),
                         ],
-                      ),
-                      const SizedBox(height: 16),
-                      Text(
-                        'Total Keuntungan: Rp 230.000',
-                        style: TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.w600,
-                          color: Colors.green,
-                          fontFamily: 'SF Pro Text',
-                        ),
-                      ),
-                      const SizedBox(height: 16),
-                      SizedBox(
-                        height: 200,
-                        child: Row(
-                          children: [
-                            Expanded(
-                              flex: 2,
-                              child: PieChart(
-                                PieChartData(
-                                  sections: testProfitData.map((data) {
-                                    final percentage = 230000 > 0
-                                        ? ((data['value'] as double) / 230000) *
-                                              100
-                                        : 0;
-                                    return PieChartSectionData(
-                                      value: data['value'] as double,
-                                      title:
-                                          '${data['label']}\n${percentage.toStringAsFixed(1)}%',
-                                      color: data['color'] as Color,
-                                      radius: 80,
-                                      titleStyle: const TextStyle(
-                                        fontSize: 12,
-                                        fontWeight: FontWeight.bold,
-                                        color: Colors.white,
-                                      ),
-                                    );
-                                  }).toList(),
-                                  centerSpaceRadius: 40,
-                                  sectionsSpace: 2,
-                                ),
-                              ),
-                            ),
-                            const SizedBox(width: 16),
-                            Expanded(
-                              flex: 1,
-                              child: Column(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: testProfitData.map((data) {
-                                  return Padding(
-                                    padding: const EdgeInsets.symmetric(
-                                      vertical: 4,
-                                    ),
-                                    child: Row(
-                                      children: [
-                                        Container(
-                                          width: 12,
-                                          height: 12,
-                                          decoration: BoxDecoration(
-                                            color: data['color'] as Color,
-                                            shape: BoxShape.circle,
-                                          ),
-                                        ),
-                                        const SizedBox(width: 8),
-                                        Expanded(
-                                          child: Column(
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.start,
-                                            children: [
-                                              Text(
-                                                data['label'] as String,
-                                                style: TextStyle(
-                                                  fontSize: 12,
-                                                  fontWeight: FontWeight.w600,
-                                                  color:
-                                                      Theme.of(
-                                                            context,
-                                                          ).brightness ==
-                                                          Brightness.dark
-                                                      ? Colors.white
-                                                      : Colors.black,
-                                                ),
-                                              ),
-                                              Text(
-                                                '${data['sold']} terjual',
-                                                style: TextStyle(
-                                                  fontSize: 10,
-                                                  color:
-                                                      Theme.of(
-                                                            context,
-                                                          ).brightness ==
-                                                          Brightness.dark
-                                                      ? Colors.white70
-                                                      : Colors.black54,
-                                                ),
-                                              ),
-                                            ],
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  );
-                                }).toList(),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              );
-            }
-
-            final profitData = [
-              {
-                'label': 'Baju',
-                'value': bajuProfit,
-                'color': Colors.blue,
-                'sold': bajuSold,
-              },
-              {
-                'label': 'Celana',
-                'value': celanaProfit,
-                'color': Colors.green,
-                'sold': celanaSold,
-              },
-            ];
-
-            // Debug: Print informasi untuk troubleshooting
-            print('Debug Info:');
-            print('Total orders: ${orders.length}');
-            print(
-              'Completed orders this month: ${completedOrdersThisMonth.length}',
-            );
-            print('Total revenue: $totalRevenue');
-            print('Total profit: $totalProfit');
-            print('Baju orders: ${bajuOrders.length}');
-            print('Celana orders: ${celanaOrders.length}');
-            print('Baju sold: $bajuSold');
-            print('Celana sold: $celanaSold');
-            print('Baju profit: $bajuProfit');
-            print('Celana profit: $celanaProfit');
-
-            // Jika tidak ada data, gunakan data test untuk memastikan pie chart berfungsi
-            if (totalProfit == 0) {
-              print(
-                'No profit data found, using test data for pie chart demonstration',
-              );
-            }
-
-            return Card(
-              color: Theme.of(context).brightness == Brightness.dark
-                  ? const Color(0xFF232323)
-                  : Colors.white,
-              elevation: 2,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(16),
-              ),
-              child: Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text(
-                          'Keuntungan Bulanan',
-                          style: TextStyle(
-                            fontSize: 18,
-                            fontWeight: FontWeight.bold,
-                            color:
-                                Theme.of(context).brightness == Brightness.dark
-                                ? Colors.white
-                                : Colors.black,
-                            fontFamily: 'SF Pro Display',
-                          ),
-                        ),
-                        // Selector Bulan
-                        Container(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 12,
-                            vertical: 4,
-                          ),
-                          decoration: BoxDecoration(
-                            color: const Color(0xFFDE8500).withOpacity(0.1),
-                            borderRadius: BorderRadius.circular(8),
-                            border: Border.all(color: const Color(0xFFDE8500)),
-                          ),
-                          child: DropdownButton<int>(
-                            value: selectedMonthIndex,
-                            underline: Container(),
-                            style: TextStyle(
-                              color: const Color(0xFFDE8500),
-                              fontWeight: FontWeight.w600,
-                              fontSize: 14,
-                            ),
-                            items:
-                                [
-                                  'Januari',
-                                  'Februari',
-                                  'Maret',
-                                  'April',
-                                  'Mei',
-                                  'Juni',
-                                  'Juli',
-                                  'Agustus',
-                                  'September',
-                                  'Oktober',
-                                  'November',
-                                  'Desember',
-                                ].asMap().entries.map((entry) {
-                                  return DropdownMenuItem<int>(
-                                    value: entry.key,
-                                    child: Text(entry.value),
-                                  );
-                                }).toList(),
-                            onChanged: (int? newValue) {
-                              if (newValue != null) {
-                                setState(() {
-                                  selectedMonthIndex = newValue;
-                                });
-                              }
-                            },
-                          ),
-                        ),
                       ],
                     ),
-                    const SizedBox(height: 8),
-                    Text(
-                      'Total Keuntungan: Rp ${totalProfit.toStringAsFixed(0).replaceAllMapped(RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'), (m) => '${m[1]}.')}',
-                      style: TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.w600,
-                        color: Colors.green,
-                        fontFamily: 'SF Pro Text',
-                      ),
-                    ),
-                    const SizedBox(height: 16),
-                    // Pie Chart dan Legend
-                    if (totalProfit > 0 ||
-                        bajuProfit > 0 ||
-                        celanaProfit > 0) ...[
-                      SizedBox(
-                        height: 200,
-                        child: Row(
-                          children: [
-                            Expanded(
-                              flex: 2,
-                              child: PieChart(
-                                PieChartData(
-                                  sections: profitData
-                                      .where(
-                                        (data) => (data['value'] as double) > 0,
-                                      )
-                                      .map((data) {
-                                        final percentage = totalProfit > 0
-                                            ? ((data['value'] as double) /
-                                                      totalProfit) *
-                                                  100
-                                            : 0;
-                                        return PieChartSectionData(
-                                          value: data['value'] as double,
-                                          title:
-                                              '${data['label']}\n${percentage.toStringAsFixed(1)}%',
-                                          color: data['color'] as Color,
-                                          radius: 80,
-                                          titleStyle: const TextStyle(
-                                            fontSize: 12,
-                                            fontWeight: FontWeight.bold,
-                                            color: Colors.white,
-                                          ),
-                                        );
-                                      })
-                                      .toList(),
-                                  centerSpaceRadius: 40,
-                                  sectionsSpace: 2,
-                                ),
-                              ),
-                            ),
-                            const SizedBox(width: 16),
-                            Expanded(
-                              flex: 1,
-                              child: Column(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: profitData.map((data) {
-                                  return Padding(
-                                    padding: const EdgeInsets.symmetric(
-                                      vertical: 4,
-                                    ),
-                                    child: Row(
-                                      children: [
-                                        Container(
-                                          width: 12,
-                                          height: 12,
-                                          decoration: BoxDecoration(
-                                            color: data['color'] as Color,
-                                            shape: BoxShape.circle,
-                                          ),
-                                        ),
-                                        const SizedBox(width: 8),
-                                        Expanded(
-                                          child: Text(
-                                            '${data['label']}\nRp ${(data['value'] as double).toStringAsFixed(0).replaceAllMapped(RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'), (m) => '${m[1]}.')}\nTerjual: ${data['sold']} item',
-                                            style: TextStyle(
-                                              fontSize: 12,
-                                              color:
-                                                  Theme.of(
-                                                        context,
-                                                      ).brightness ==
-                                                      Brightness.dark
-                                                  ? Colors.white70
-                                                  : Colors.black54,
-                                              fontFamily: 'SF Pro Text',
-                                            ),
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  );
-                                }).toList(),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ] else ...[
-                      Container(
-                        height: 200,
-                        decoration: BoxDecoration(
-                          color: Theme.of(context).brightness == Brightness.dark
-                              ? Colors.grey[800]
-                              : Colors.grey[200],
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                        child: Center(
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Icon(
-                                Icons.pie_chart_outline,
-                                size: 48,
-                                color:
-                                    Theme.of(context).brightness ==
-                                        Brightness.dark
-                                    ? Colors.grey[600]
-                                    : Colors.grey[400],
-                              ),
-                              const SizedBox(height: 8),
-                              Text(
-                                'Belum ada data keuntungan',
-                                style: TextStyle(
-                                  color:
-                                      Theme.of(context).brightness ==
-                                          Brightness.dark
-                                      ? Colors.grey[600]
-                                      : Colors.grey[400],
-                                  fontSize: 14,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                    ],
-                  ],
+                  ),
                 ),
-              ),
+              ],
             );
           },
         ),
@@ -1208,6 +1064,50 @@ class _DashboardItem extends StatelessWidget {
           ),
         ),
       ],
+    );
+  }
+}
+
+// Widget untuk legend pie chart
+class _PieChartLegend extends StatelessWidget {
+  final String label;
+  final double value;
+  final int sold;
+  final Color color;
+
+  const _PieChartLegend({
+    required this.label,
+    required this.value,
+    required this.sold,
+    required this.color,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 4),
+      child: Row(
+        children: [
+          Container(
+            width: 12,
+            height: 12,
+            decoration: BoxDecoration(color: color, shape: BoxShape.circle),
+          ),
+          const SizedBox(width: 8),
+          Expanded(
+            child: Text(
+              '$label\nRp ${value.toStringAsFixed(0).replaceAllMapped(RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'), (m) => '${m[1]}.')}\nTerjual: $sold item',
+              style: TextStyle(
+                fontSize: 12,
+                color: Theme.of(context).brightness == Brightness.dark
+                    ? Colors.white70
+                    : Colors.black54,
+                fontFamily: 'SF Pro Text',
+              ),
+            ),
+          ),
+        ],
+      ),
     );
   }
 }

@@ -12,12 +12,20 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'berhasil_pesan_model_customer_screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:jasa_jahit_aplication/Core/provider/auth_provider.dart'
+    as app_auth;
 
 class PembayaranModelCustomerScreen extends StatefulWidget {
   final Product product;
-  final FirestoreService _firestoreService = FirestoreService();
+  final String selectedSize;
+  final FirestoreService _firestoreService;
 
-  PembayaranModelCustomerScreen({super.key, required this.product});
+  const PembayaranModelCustomerScreen({
+    super.key,
+    required this.product,
+    required this.selectedSize,
+    required FirestoreService firestoreService,
+  }) : _firestoreService = firestoreService;
 
   @override
   State<PembayaranModelCustomerScreen> createState() =>
@@ -28,8 +36,41 @@ class _PembayaranModelCustomerScreenState
     extends State<PembayaranModelCustomerScreen> {
   File? _selectedFile;
   String? _fileName;
+  bool _isLoading = false;
   final ImagePicker _picker = ImagePicker();
   String _selectedSize = 'L'; // Default size
+
+  // Fungsi untuk mendapatkan data customer dari Firestore
+  Future<Map<String, String>> _getCustomerData() async {
+    try {
+      final currentUser = FirebaseAuth.instance.currentUser;
+      if (currentUser != null) {
+        final authProvider = Provider.of<app_auth.AuthProvider>(
+          context,
+          listen: false,
+        );
+        final userData = await authProvider.getUserData(currentUser.uid);
+
+        if (userData != null) {
+          return {
+            'name': userData['name'] ?? 'Customer',
+            'username': userData['username'] ?? currentUser.email ?? 'Customer',
+            'address': userData['address'] ?? '',
+          };
+        }
+      }
+
+      // Fallback jika tidak ada data di Firestore
+      return {
+        'name': FirebaseAuth.instance.currentUser?.displayName ?? 'Customer',
+        'username': FirebaseAuth.instance.currentUser?.email ?? 'Customer',
+        'address': '',
+      };
+    } catch (e) {
+      print('Error getting customer data: $e');
+      return {'name': 'Customer', 'username': 'Customer', 'address': ''};
+    }
+  }
 
   Future<void> _pickFile() async {
     try {
@@ -464,14 +505,17 @@ class _PembayaranModelCustomerScreenState
                       },
                     );
 
+                    // Dapatkan data customer
+                    final customerData = await _getCustomerData();
+
                     // Buat order untuk model
                     final order = order_model.Order(
                       userId:
                           FirebaseAuth.instance.currentUser?.uid ??
                           'customer_001',
-                      userName:
-                          FirebaseAuth.instance.currentUser?.displayName ??
-                          'Customer',
+                      userName: customerData['username'] ?? 'Customer',
+                      customerName: customerData['name'],
+                      customerAddress: customerData['address'],
                       items: [
                         {
                           'orderType': 'Model',
@@ -480,7 +524,7 @@ class _PembayaranModelCustomerScreenState
                           'price': widget.product.price,
                           'imagePath': widget.product.imagePath,
                           'category': widget.product.category,
-                          'size': _selectedSize,
+                          'size': widget.selectedSize,
                         },
                       ],
                       orderDate: Timestamp.now(),
@@ -506,9 +550,7 @@ class _PembayaranModelCustomerScreenState
 
                     // Kirim notifikasi ke admin
                     await NotificationService.sendModelPurchaseNotification(
-                      customerName:
-                          FirebaseAuth.instance.currentUser?.displayName ??
-                          'Customer',
+                      customerName: customerData['name'] ?? 'Customer',
                       productName: widget.product.name,
                       orderId: orderDoc.id,
                       price: widget.product.price,
@@ -520,7 +562,7 @@ class _PembayaranModelCustomerScreenState
                         .add({
                           'title': 'Pesanan Baru',
                           'body':
-                              '${FirebaseAuth.instance.currentUser?.displayName ?? 'Customer'} telah membuat pesanan ${widget.product.name} seharga Rp ${widget.product.price.toStringAsFixed(0)}',
+                              '${customerData['name'] ?? 'Customer'} telah membuat pesanan ${widget.product.name} seharga Rp ${widget.product.price.toStringAsFixed(0)}',
                           'orderId': orderDoc.id,
                           'customerId':
                               FirebaseAuth.instance.currentUser?.uid ??

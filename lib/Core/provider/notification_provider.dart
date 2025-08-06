@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart'; // Added for currentUser
 
 class NotificationProvider extends ChangeNotifier {
   List<RemoteMessage> _notifications = [];
@@ -251,21 +252,28 @@ class NotificationProvider extends ChangeNotifier {
     String role,
   ) async {
     try {
-      print('🔍 Querying Firestore for notifications with role: $role');
+      print(
+        '🔍 Querying Firestore for notifications with role: $role, userId: $userId',
+      );
 
-      // Coba query tanpa orderBy dulu untuk debugging
-      final snapshot = await FirebaseFirestore.instance
-          .collection('notifications')
-          .where('recipientRole', isEqualTo: role)
-          .limit(50)
-          .get();
+      Query query = FirebaseFirestore.instance.collection('notifications');
+
+      // Jika role adalah customer, filter berdasarkan recipientId (userId)
+      if (role == 'customer' && userId.isNotEmpty) {
+        query = query.where('recipientId', isEqualTo: userId);
+      } else {
+        // Untuk admin, filter berdasarkan recipientRole
+        query = query.where('recipientRole', isEqualTo: role);
+      }
+
+      final snapshot = await query.limit(50).get();
 
       print(
-        '📊 Found ${snapshot.docs.length} notifications in Firestore for role: $role',
+        '📊 Found ${snapshot.docs.length} notifications in Firestore for role: $role, userId: $userId',
       );
 
       final notifications = snapshot.docs.map((doc) {
-        final data = doc.data();
+        final data = doc.data() as Map<String, dynamic>;
         data['id'] = doc.id;
         print('📝 Notification data: ${data['title']} - ${data['body']}');
         return data;
@@ -286,14 +294,20 @@ class NotificationProvider extends ChangeNotifier {
 
       try {
         // Fallback query tanpa orderBy
-        final snapshot = await FirebaseFirestore.instance
-            .collection('notifications')
-            .where('recipientRole', isEqualTo: role)
-            .limit(50)
-            .get();
+        Query query = FirebaseFirestore.instance.collection('notifications');
+
+        // Jika role adalah customer, filter berdasarkan recipientId (userId)
+        if (role == 'customer' && userId.isNotEmpty) {
+          query = query.where('recipientId', isEqualTo: userId);
+        } else {
+          // Untuk admin, filter berdasarkan recipientRole
+          query = query.where('recipientRole', isEqualTo: role);
+        }
+
+        final snapshot = await query.limit(50).get();
 
         return snapshot.docs.map((doc) {
-          final data = doc.data();
+          final data = doc.data() as Map<String, dynamic>;
           data['id'] = doc.id;
           return data;
         }).toList();
@@ -309,7 +323,20 @@ class NotificationProvider extends ChangeNotifier {
     try {
       print('🔄 Loading notifications from Firestore for $role...');
 
-      final notifications = await getNotificationsFromFirestore('', role);
+      String userId = '';
+      // Jika role adalah customer, ambil userId dari Firebase Auth
+      if (role == 'customer') {
+        final currentUser = FirebaseAuth.instance.currentUser;
+        if (currentUser != null) {
+          userId = currentUser.uid;
+          print('👤 Current user ID: $userId');
+        } else {
+          print('⚠️ No current user found for customer notifications');
+          return;
+        }
+      }
+
+      final notifications = await getNotificationsFromFirestore(userId, role);
       print('📊 Found ${notifications.length} notifications in Firestore');
 
       // Clear existing notifications

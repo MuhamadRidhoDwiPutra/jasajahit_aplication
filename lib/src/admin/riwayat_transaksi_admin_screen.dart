@@ -203,7 +203,45 @@ class _RiwayatTransaksiAdminScreenState
                                         ),
                                       ),
                                       Text(
-                                        orderData['userName'] ?? 'Tanpa Nama',
+                                        orderData['customerName'] ?? orderData['userName'] ?? 'Tanpa Nama',
+                                        style: TextStyle(
+                                          fontWeight: FontWeight.w500,
+                                          color: isDark
+                                              ? Colors.white
+                                              : Colors.black,
+                                        ),
+                                      ),
+                                      const SizedBox(height: 8),
+                                      Text(
+                                        'Username',
+                                        style: TextStyle(
+                                          color: isDark
+                                              ? Colors.white70
+                                              : Colors.grey[600],
+                                          fontSize: 12,
+                                        ),
+                                      ),
+                                      Text(
+                                        orderData['userName'] ?? 'Tanpa Username',
+                                        style: TextStyle(
+                                          fontWeight: FontWeight.w500,
+                                          color: isDark
+                                              ? Colors.white
+                                              : Colors.black,
+                                        ),
+                                      ),
+                                      const SizedBox(height: 8),
+                                      Text(
+                                        'Alamat',
+                                        style: TextStyle(
+                                          color: isDark
+                                              ? Colors.white70
+                                              : Colors.grey[600],
+                                          fontSize: 12,
+                                        ),
+                                      ),
+                                      Text(
+                                        orderData['customerAddress'] ?? 'Alamat belum diisi',
                                         style: TextStyle(
                                           fontWeight: FontWeight.w500,
                                           color: isDark

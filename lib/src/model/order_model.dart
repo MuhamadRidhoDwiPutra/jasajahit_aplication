@@ -4,6 +4,8 @@ class Order {
   final String? id;
   final String userId;
   final String userName;
+  final String? customerName; // Nama lengkap customer
+  final String? customerAddress; // Alamat customer
   final List<Map<String, dynamic>> items; // Multi-item support
   final String status;
   final Timestamp orderDate;
@@ -21,6 +23,8 @@ class Order {
     this.id,
     required this.userId,
     required this.userName,
+    this.customerName,
+    this.customerAddress,
     required this.items,
     this.status = 'Menunggu Konfirmasi',
     required this.orderDate,
@@ -37,6 +41,8 @@ class Order {
     return {
       'userId': userId,
       'userName': userName,
+      'customerName': customerName,
+      'customerAddress': customerAddress,
       'items': items,
       'status': status,
       'orderDate': orderDate,
@@ -55,6 +61,8 @@ class Order {
       id: id,
       userId: data['userId'] ?? '',
       userName: data['userName'] ?? '',
+      customerName: data['customerName'],
+      customerAddress: data['customerAddress'],
       items:
           (data['items'] as List?)
               ?.map((e) => Map<String, dynamic>.from(e))

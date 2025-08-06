@@ -9,6 +9,9 @@ import 'konfirmasi_desain_baju_customer_screen.dart';
 import 'package:provider/provider.dart';
 import 'package:jasa_jahit_aplication/src/theme/theme_provider.dart';
 import 'package:jasa_jahit_aplication/src/services/firestore_service.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:jasa_jahit_aplication/Core/provider/auth_provider.dart'
+    as app_auth;
 import 'ukuran_celana_customer_screen.dart';
 
 class KonfirmasiPesananCustomerScreen extends StatefulWidget {
@@ -40,6 +43,38 @@ class _KonfirmasiPesananCustomerScreenState
   void initState() {
     super.initState();
     _items = List<Map<String, dynamic>>.from(widget.items);
+  }
+
+  // Fungsi untuk mendapatkan data customer dari Firestore
+  Future<Map<String, String>> _getCustomerData() async {
+    try {
+      final currentUser = FirebaseAuth.instance.currentUser;
+      if (currentUser != null) {
+        final authProvider = Provider.of<app_auth.AuthProvider>(
+          context,
+          listen: false,
+        );
+        final userData = await authProvider.getUserData(currentUser.uid);
+
+        if (userData != null) {
+          return {
+            'name': userData['name'] ?? 'Customer',
+            'username': userData['username'] ?? currentUser.email ?? 'Customer',
+            'address': userData['address'] ?? '',
+          };
+        }
+      }
+
+      // Fallback jika tidak ada data di Firestore
+      return {
+        'name': FirebaseAuth.instance.currentUser?.displayName ?? 'Customer',
+        'username': FirebaseAuth.instance.currentUser?.email ?? 'Customer',
+        'address': '',
+      };
+    } catch (e) {
+      print('Error getting customer data: $e');
+      return {'name': 'Customer', 'username': 'Customer', 'address': ''};
+    }
   }
 
   double getTotal() {
@@ -112,6 +147,9 @@ class _KonfirmasiPesananCustomerScreenState
   void _lanjutkanPembayaran() async {
     if (_items.isEmpty) return;
 
+    // Dapatkan data customer
+    final customerData = await _getCustomerData();
+
     // Hitung total harga
     double totalPrice = 0;
     for (var item in _items) {
@@ -127,7 +165,9 @@ class _KonfirmasiPesananCustomerScreenState
 
     final order = mymodel.Order(
       userId: widget.userId,
-      userName: widget.userName,
+      userName: customerData['username'] ?? widget.userName,
+      customerName: customerData['name'],
+      customerAddress: customerData['address'],
       items: _items,
       status: widget.status,
       orderDate: Timestamp.now(),

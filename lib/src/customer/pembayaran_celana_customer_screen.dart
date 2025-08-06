@@ -12,6 +12,8 @@ import 'dart:io';
 import 'package:image_picker/image_picker.dart';
 import 'package:cloud_firestore/cloud_firestore.dart' as firestore;
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:jasa_jahit_aplication/Core/provider/auth_provider.dart'
+    as app_auth;
 
 class PembayaranCelanaCustomerScreen extends StatefulWidget {
   final order_model.Order order;
@@ -29,6 +31,38 @@ class _PembayaranCelanaCustomerScreenState
   File? _selectedFile;
   String? _fileName;
   final ImagePicker _picker = ImagePicker();
+
+  // Fungsi untuk mendapatkan data customer dari Firestore
+  Future<Map<String, String>> _getCustomerData() async {
+    try {
+      final currentUser = FirebaseAuth.instance.currentUser;
+      if (currentUser != null) {
+        final authProvider = Provider.of<app_auth.AuthProvider>(
+          context,
+          listen: false,
+        );
+        final userData = await authProvider.getUserData(currentUser.uid);
+
+        if (userData != null) {
+          return {
+            'name': userData['name'] ?? 'Customer',
+            'username': userData['username'] ?? currentUser.email ?? 'Customer',
+            'address': userData['address'] ?? '',
+          };
+        }
+      }
+
+      // Fallback jika tidak ada data di Firestore
+      return {
+        'name': FirebaseAuth.instance.currentUser?.displayName ?? 'Customer',
+        'username': FirebaseAuth.instance.currentUser?.email ?? 'Customer',
+        'address': '',
+      };
+    } catch (e) {
+      print('Error getting customer data: $e');
+      return {'name': 'Customer', 'username': 'Customer', 'address': ''};
+    }
+  }
 
   Future<void> _pickFile() async {
     try {
@@ -426,6 +460,9 @@ class _PembayaranCelanaCustomerScreenState
                       },
                     );
 
+                    // Dapatkan data customer
+                    final customerData = await _getCustomerData();
+
                     // Simpan order terlebih dahulu
                     final orderDoc = await widget._firestoreService.saveOrder(
                       widget.order,
@@ -444,9 +481,7 @@ class _PembayaranCelanaCustomerScreenState
 
                     // Kirim notifikasi ke admin
                     await NotificationService.sendJasaJahitNotification(
-                      customerName:
-                          FirebaseAuth.instance.currentUser?.displayName ??
-                          'Customer',
+                      customerName: customerData['name'] ?? 'Customer',
                       orderType: 'Celana',
                       orderId: orderDoc.id,
                       price: widget.order.totalPrice ?? 0,
@@ -458,7 +493,7 @@ class _PembayaranCelanaCustomerScreenState
                         .add({
                           'title': 'Pesanan Baru',
                           'body':
-                              '${FirebaseAuth.instance.currentUser?.displayName ?? 'Customer'} telah membuat pesanan Celana seharga Rp ${(widget.order.totalPrice ?? 0).toStringAsFixed(0)}',
+                              '${customerData['name'] ?? 'Customer'} telah membuat pesanan Celana seharga Rp ${(widget.order.totalPrice ?? 0).toStringAsFixed(0)}',
                           'orderId': orderDoc.id,
                           'customerId':
                               FirebaseAuth.instance.currentUser?.uid ??

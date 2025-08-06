@@ -417,6 +417,9 @@ class _RiwayatCustomerScreenState extends State<RiwayatCustomerScreen> {
                                                                 'assets/images/default_product.jpg',
                                                             category: orderType,
                                                           ),
+                                                          selectedSize: 'L',
+                                                          firestoreService:
+                                                              FirestoreService(),
                                                         ),
                                                   ),
                                                 );

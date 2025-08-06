@@ -1,7 +1,9 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 final _fireAuth = FirebaseAuth.instance;
+final _firestore = FirebaseFirestore.instance;
 
 class AuthProvider extends ChangeNotifier {
   final form = GlobalKey<FormState>();
@@ -9,6 +11,7 @@ class AuthProvider extends ChangeNotifier {
   var islogin = true;
   var enteredEmail = '';
   var enteredPassword = '';
+  var enteredName = '';
 
   Future<void> submit() async {
     final isvalid =
@@ -27,8 +30,21 @@ class AuthProvider extends ChangeNotifier {
         await _fireAuth.signInWithEmailAndPassword(
             email: enteredEmail, password: enteredPassword);
       } else {
-        await _fireAuth.createUserWithEmailAndPassword(
+        // Create user account
+        final userCredential = await _fireAuth.createUserWithEmailAndPassword(
             email: enteredEmail, password: enteredPassword);
+        
+        // Save user data to Firestore
+        if (userCredential.user != null) {
+          await _firestore.collection('users').doc(userCredential.user!.uid).set({
+            'name': enteredName,
+            'username': enteredEmail,
+            'position': 'Customer',
+            'address': '',
+            'createdAt': FieldValue.serverTimestamp(),
+            'updatedAt': FieldValue.serverTimestamp(),
+          });
+        }
       }
     } catch (e) {
       if (e is FirebaseAuthException) {
@@ -39,6 +55,31 @@ class AuthProvider extends ChangeNotifier {
     }
 
     notifyListeners();
+  }
+
+  Future<Map<String, dynamic>?> getUserData(String uid) async {
+    try {
+      final doc = await _firestore.collection('users').doc(uid).get();
+      if (doc.exists) {
+        return doc.data();
+      }
+      return null;
+    } catch (e) {
+      print('Error getting user data: $e');
+      return null;
+    }
+  }
+
+  Future<void> updateUserData(String uid, Map<String, dynamic> data) async {
+    try {
+      await _firestore.collection('users').doc(uid).update({
+        ...data,
+        'updatedAt': FieldValue.serverTimestamp(),
+      });
+    } catch (e) {
+      print('Error updating user data: $e');
+      throw Exception('Gagal mengupdate data user');
+    }
   }
 
   Future<void> sendPasswordResetEmail(String email) async {

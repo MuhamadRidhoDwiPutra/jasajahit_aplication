@@ -225,48 +225,82 @@ class _StatusPesananAdminScreenState extends State<StatusPesananAdminScreen> {
                             ),
                           ),
                           const SizedBox(width: 16),
-                          Expanded(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  'Nama Pelanggan',
-                                  style: TextStyle(
-                                    color: isDark
-                                        ? Colors.white70
-                                        : Colors.grey[600],
-                                    fontSize: 12,
+                                                          Expanded(
+                                  child: Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        'Nama Pelanggan',
+                                        style: TextStyle(
+                                          color: isDark
+                                              ? Colors.white70
+                                              : Colors.grey[600],
+                                          fontSize: 12,
+                                        ),
+                                      ),
+                                      Text(
+                                        orderData['customerName'] ?? orderData['userName'] ?? 'Tanpa Nama',
+                                        style: TextStyle(
+                                          fontWeight: FontWeight.w500,
+                                          color: isDark ? Colors.white : Colors.black,
+                                        ),
+                                      ),
+                                      const SizedBox(height: 8),
+                                      Text(
+                                        'Username',
+                                        style: TextStyle(
+                                          color: isDark
+                                              ? Colors.white70
+                                              : Colors.grey[600],
+                                          fontSize: 12,
+                                        ),
+                                      ),
+                                      Text(
+                                        orderData['userName'] ?? 'Tanpa Username',
+                                        style: TextStyle(
+                                          fontWeight: FontWeight.w500,
+                                          color: isDark ? Colors.white : Colors.black,
+                                        ),
+                                      ),
+                                      const SizedBox(height: 8),
+                                      Text(
+                                        'Alamat',
+                                        style: TextStyle(
+                                          color: isDark
+                                              ? Colors.white70
+                                              : Colors.grey[600],
+                                          fontSize: 12,
+                                        ),
+                                      ),
+                                      Text(
+                                        orderData['customerAddress'] ?? 'Alamat belum diisi',
+                                        style: TextStyle(
+                                          fontWeight: FontWeight.w500,
+                                          color: isDark ? Colors.white : Colors.black,
+                                        ),
+                                      ),
+                                      const SizedBox(height: 8),
+                                      Text(
+                                        'Tanggal Pesan',
+                                        style: TextStyle(
+                                          color: isDark
+                                              ? Colors.white70
+                                              : Colors.grey[600],
+                                          fontSize: 12,
+                                        ),
+                                      ),
+                                      Text(
+                                        (orderData['orderDate'] as Timestamp)
+                                            .toDate()
+                                            .toString(),
+                                        style: TextStyle(
+                                          fontWeight: FontWeight.w500,
+                                          color: isDark ? Colors.white : Colors.black,
+                                        ),
+                                      ),
+                                    ],
                                   ),
                                 ),
-                                Text(
-                                  orderData['userName'] ?? 'Tanpa Nama',
-                                  style: TextStyle(
-                                    fontWeight: FontWeight.w500,
-                                    color: isDark ? Colors.white : Colors.black,
-                                  ),
-                                ),
-                                const SizedBox(height: 8),
-                                Text(
-                                  'Tanggal Pesan',
-                                  style: TextStyle(
-                                    color: isDark
-                                        ? Colors.white70
-                                        : Colors.grey[600],
-                                    fontSize: 12,
-                                  ),
-                                ),
-                                Text(
-                                  (orderData['orderDate'] as Timestamp)
-                                      .toDate()
-                                      .toString(),
-                                  style: TextStyle(
-                                    fontWeight: FontWeight.w500,
-                                    color: isDark ? Colors.white : Colors.black,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
                         ],
                       ),
                       const SizedBox(height: 16),
