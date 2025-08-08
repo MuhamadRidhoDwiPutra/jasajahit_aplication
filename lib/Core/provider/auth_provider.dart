@@ -14,8 +14,9 @@ class AuthProvider extends ChangeNotifier {
   var enteredName = '';
 
   Future<void> submit() async {
-    final isvalid =
-        form.currentState != null ? form.currentState!.validate() : true;
+    final isvalid = form.currentState != null
+        ? form.currentState!.validate()
+        : true;
 
     if (!isvalid) {
       return;
@@ -28,22 +29,31 @@ class AuthProvider extends ChangeNotifier {
     try {
       if (islogin) {
         await _fireAuth.signInWithEmailAndPassword(
-            email: enteredEmail, password: enteredPassword);
+          email: enteredEmail,
+          password: enteredPassword,
+        );
       } else {
         // Create user account
         final userCredential = await _fireAuth.createUserWithEmailAndPassword(
-            email: enteredEmail, password: enteredPassword);
-        
-        // Save user data to Firestore
+          email: enteredEmail,
+          password: enteredPassword,
+        );
+
+        // Save user data to Firestore dengan data yang benar
         if (userCredential.user != null) {
-          await _firestore.collection('users').doc(userCredential.user!.uid).set({
-            'name': enteredName,
-            'username': enteredEmail,
-            'position': 'Customer',
-            'address': '',
-            'createdAt': FieldValue.serverTimestamp(),
-            'updatedAt': FieldValue.serverTimestamp(),
-          });
+          await _firestore
+              .collection('users')
+              .doc(userCredential.user!.uid)
+              .set({
+                'name': enteredName, // Nama asli user
+                'username':
+                    enteredName, // Username menggunakan nama, bukan email
+                'email': enteredEmail, // Email tersimpan terpisah
+                'position': 'Customer',
+                'address': 'Alamat belum diisi', // Default address
+                'createdAt': FieldValue.serverTimestamp(),
+                'updatedAt': FieldValue.serverTimestamp(),
+              });
         }
       }
     } catch (e) {

@@ -71,365 +71,451 @@ class _ModelKainAdminScreenState extends State<ModelKainAdminScreen> {
     final biayaLansiaController = TextEditingController(
       text: kain?.biayaJahitPerKategori['lansia']?.toString() ?? '70000',
     );
+
     showDialog(
       context: context,
-      builder: (context) => LayoutBuilder(
-        builder: (context, constraints) {
-          return AlertDialog(
-            title: Text(kain == null ? 'Tambah Kain' : 'Edit Kain'),
-            content: SingleChildScrollView(
-              child: ConstrainedBox(
-                constraints: BoxConstraints(
-                  maxWidth: constraints.maxWidth > 600
-                      ? 400
-                      : constraints.maxWidth * 0.9,
-                  maxHeight: constraints.maxHeight * 0.7,
+      barrierDismissible: false,
+      builder: (context) => Dialog(
+        child: Container(
+          width: double.maxFinite,
+          constraints: const BoxConstraints(maxHeight: 600),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              // Header
+              Container(
+                padding: const EdgeInsets.all(16),
+                decoration: BoxDecoration(
+                  color: Theme.of(context).primaryColor,
+                  borderRadius: const BorderRadius.only(
+                    topLeft: Radius.circular(8),
+                    topRight: Radius.circular(8),
+                  ),
                 ),
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
+                child: Row(
                   children: [
-                    TextField(
-                      controller: namaController,
-                      decoration: const InputDecoration(labelText: 'Nama Kain'),
+                    Icon(
+                      kain == null ? Icons.add : Icons.edit,
+                      color: Colors.white,
                     ),
-                    const SizedBox(height: 16),
-                    TextField(
-                      controller: warnaController,
-                      decoration: const InputDecoration(labelText: 'Warna'),
-                    ),
-                    const SizedBox(height: 16),
-                    TextField(
-                      controller: hargaController,
-                      decoration: const InputDecoration(
-                        labelText: 'Harga per meter',
-                      ),
-                      keyboardType: TextInputType.number,
-                    ),
-                    const SizedBox(height: 16),
-                    TextField(
-                      controller: deskripsiController,
-                      decoration: const InputDecoration(
-                        labelText: 'Deskripsi',
-                        alignLabelWithHint: true,
-                      ),
-                      maxLines: constraints.maxWidth > 600 ? 4 : 3,
-                      textInputAction: TextInputAction.newline,
-                    ),
-                    const SizedBox(height: 16),
-                    TextField(
-                      controller: kebutuhanMeterController,
-                      decoration: const InputDecoration(
-                        labelText: 'Kebutuhan Kain (meter)',
-                        helperText: 'Contoh: 1.5 untuk celana, 1.0 untuk kaos',
-                      ),
-                      keyboardType: const TextInputType.numberWithOptions(
-                        decimal: true,
+                    const SizedBox(width: 8),
+                    Text(
+                      kain == null ? 'Tambah Kain' : 'Edit Kain',
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
                       ),
                     ),
-                    const SizedBox(height: 16),
-                    TextField(
-                      controller: biayaJahitController,
-                      decoration: const InputDecoration(
-                        labelText: 'Biaya Jahit Dasar (Rp)',
-                        helperText: 'Biaya jahit untuk ukuran M',
-                      ),
-                      keyboardType: TextInputType.number,
-                    ),
-                    const SizedBox(height: 16),
-
-                    // Section untuk kebutuhan kain per kategori
-                    const Text(
-                      'Kebutuhan Kain per Kategori (meter)',
-                      style: TextStyle(fontWeight: FontWeight.bold),
-                    ),
-                    const SizedBox(height: 8),
-                    Row(
-                      children: [
-                        Expanded(
-                          child: TextField(
-                            controller: kebutuhanBayiController,
-                            decoration: const InputDecoration(
-                              labelText: 'Bayi',
-                              helperText: '0.4m',
-                            ),
-                            keyboardType: const TextInputType.numberWithOptions(
-                              decimal: true,
-                            ),
-                          ),
-                        ),
-                        const SizedBox(width: 8),
-                        Expanded(
-                          child: TextField(
-                            controller: kebutuhanBalitaController,
-                            decoration: const InputDecoration(
-                              labelText: 'Balita',
-                              helperText: '0.6m',
-                            ),
-                            keyboardType: const TextInputType.numberWithOptions(
-                              decimal: true,
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 8),
-                    Row(
-                      children: [
-                        Expanded(
-                          child: TextField(
-                            controller: kebutuhanAnakController,
-                            decoration: const InputDecoration(
-                              labelText: 'Anak',
-                              helperText: '0.8m',
-                            ),
-                            keyboardType: const TextInputType.numberWithOptions(
-                              decimal: true,
-                            ),
-                          ),
-                        ),
-                        const SizedBox(width: 8),
-                        Expanded(
-                          child: TextField(
-                            controller: kebutuhanRemajaController,
-                            decoration: const InputDecoration(
-                              labelText: 'Remaja',
-                              helperText: '1.0m',
-                            ),
-                            keyboardType: const TextInputType.numberWithOptions(
-                              decimal: true,
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 8),
-                    Row(
-                      children: [
-                        Expanded(
-                          child: TextField(
-                            controller: kebutuhanDewasaController,
-                            decoration: const InputDecoration(
-                              labelText: 'Dewasa',
-                              helperText: '1.2m',
-                            ),
-                            keyboardType: const TextInputType.numberWithOptions(
-                              decimal: true,
-                            ),
-                          ),
-                        ),
-                        const SizedBox(width: 8),
-                        Expanded(
-                          child: TextField(
-                            controller: kebutuhanLansiaController,
-                            decoration: const InputDecoration(
-                              labelText: 'Lansia',
-                              helperText: '1.3m',
-                            ),
-                            keyboardType: const TextInputType.numberWithOptions(
-                              decimal: true,
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 16),
-
-                    // Section untuk biaya jahit per kategori
-                    const Text(
-                      'Biaya Jahit per Kategori (Rp)',
-                      style: TextStyle(fontWeight: FontWeight.bold),
-                    ),
-                    const SizedBox(height: 8),
-                    Row(
-                      children: [
-                        Expanded(
-                          child: TextField(
-                            controller: biayaBayiController,
-                            decoration: const InputDecoration(
-                              labelText: 'Bayi',
-                              helperText: 'Rp 25.000',
-                            ),
-                            keyboardType: TextInputType.number,
-                          ),
-                        ),
-                        const SizedBox(width: 8),
-                        Expanded(
-                          child: TextField(
-                            controller: biayaBalitaController,
-                            decoration: const InputDecoration(
-                              labelText: 'Balita',
-                              helperText: 'Rp 35.000',
-                            ),
-                            keyboardType: TextInputType.number,
-                          ),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 8),
-                    Row(
-                      children: [
-                        Expanded(
-                          child: TextField(
-                            controller: biayaAnakController,
-                            decoration: const InputDecoration(
-                              labelText: 'Anak',
-                              helperText: 'Rp 45.000',
-                            ),
-                            keyboardType: TextInputType.number,
-                          ),
-                        ),
-                        const SizedBox(width: 8),
-                        Expanded(
-                          child: TextField(
-                            controller: biayaRemajaController,
-                            decoration: const InputDecoration(
-                              labelText: 'Remaja',
-                              helperText: 'Rp 55.000',
-                            ),
-                            keyboardType: TextInputType.number,
-                          ),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 8),
-                    Row(
-                      children: [
-                        Expanded(
-                          child: TextField(
-                            controller: biayaDewasaController,
-                            decoration: const InputDecoration(
-                              labelText: 'Dewasa',
-                              helperText: 'Rp 60.000',
-                            ),
-                            keyboardType: TextInputType.number,
-                          ),
-                        ),
-                        const SizedBox(width: 8),
-                        Expanded(
-                          child: TextField(
-                            controller: biayaLansiaController,
-                            decoration: const InputDecoration(
-                              labelText: 'Lansia',
-                              helperText: 'Rp 70.000',
-                            ),
-                            keyboardType: TextInputType.number,
-                          ),
-                        ),
-                      ],
+                    const Spacer(),
+                    IconButton(
+                      onPressed: () => Navigator.pop(context),
+                      icon: const Icon(Icons.close, color: Colors.white),
                     ),
                   ],
                 ),
               ),
-            ),
-            actions: [
-              TextButton(
-                onPressed: () => Navigator.pop(context),
-                child: const Text('Batal'),
+              // Content
+              Expanded(
+                child: SingleChildScrollView(
+                  padding: const EdgeInsets.all(16),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      // Informasi Dasar
+                      const Text(
+                        'Informasi Dasar',
+                        style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      const SizedBox(height: 12),
+                      TextField(
+                        controller: namaController,
+                        decoration: const InputDecoration(
+                          labelText: 'Nama Kain',
+                          border: OutlineInputBorder(),
+                          prefixIcon: Icon(Icons.inventory),
+                        ),
+                      ),
+                      const SizedBox(height: 12),
+                      TextField(
+                        controller: warnaController,
+                        decoration: const InputDecoration(
+                          labelText: 'Warna',
+                          border: OutlineInputBorder(),
+                          prefixIcon: Icon(Icons.color_lens),
+                        ),
+                      ),
+                      const SizedBox(height: 12),
+                      TextField(
+                        controller: hargaController,
+                        decoration: const InputDecoration(
+                          labelText: 'Harga per meter (Rp)',
+                          border: OutlineInputBorder(),
+                          prefixIcon: Icon(Icons.attach_money),
+                        ),
+                        keyboardType: TextInputType.number,
+                      ),
+                      const SizedBox(height: 12),
+                      TextField(
+                        controller: deskripsiController,
+                        decoration: const InputDecoration(
+                          labelText: 'Deskripsi',
+                          border: OutlineInputBorder(),
+                          prefixIcon: Icon(Icons.description),
+                          alignLabelWithHint: true,
+                        ),
+                        maxLines: 3,
+                      ),
+                      const SizedBox(height: 16),
+
+                      // Kebutuhan dan Biaya Dasar
+                      const Text(
+                        'Kebutuhan dan Biaya Dasar',
+                        style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      const SizedBox(height: 12),
+                      Row(
+                        children: [
+                          Expanded(
+                            child: TextField(
+                              controller: kebutuhanMeterController,
+                              decoration: const InputDecoration(
+                                labelText: 'Kebutuhan (meter)',
+                                border: OutlineInputBorder(),
+                                helperText:
+                                    'Contoh: 1.5 untuk celana, 1.0 untuk kaos',
+                              ),
+                              keyboardType:
+                                  const TextInputType.numberWithOptions(
+                                    decimal: true,
+                                  ),
+                            ),
+                          ),
+                          const SizedBox(width: 12),
+                          Expanded(
+                            child: TextField(
+                              controller: biayaJahitController,
+                              decoration: const InputDecoration(
+                                labelText: 'Biaya Jahit Dasar (Rp)',
+                                border: OutlineInputBorder(),
+                                helperText: 'Biaya jahit untuk ukuran M',
+                              ),
+                              keyboardType: TextInputType.number,
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 16),
+
+                      // Kebutuhan Kain per Kategori
+                      const Text(
+                        'Kebutuhan Kain per Kategori (meter)',
+                        style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      const SizedBox(height: 12),
+                      _buildCategoryRow(
+                        'Bayi',
+                        kebutuhanBayiController,
+                        '0.4m',
+                      ),
+                      const SizedBox(height: 8),
+                      _buildCategoryRow(
+                        'Balita',
+                        kebutuhanBalitaController,
+                        '0.6m',
+                      ),
+                      const SizedBox(height: 8),
+                      _buildCategoryRow(
+                        'Anak',
+                        kebutuhanAnakController,
+                        '0.8m',
+                      ),
+                      const SizedBox(height: 8),
+                      _buildCategoryRow(
+                        'Remaja',
+                        kebutuhanRemajaController,
+                        '1.0m',
+                      ),
+                      const SizedBox(height: 8),
+                      _buildCategoryRow(
+                        'Dewasa',
+                        kebutuhanDewasaController,
+                        '1.2m',
+                      ),
+                      const SizedBox(height: 8),
+                      _buildCategoryRow(
+                        'Lansia',
+                        kebutuhanLansiaController,
+                        '1.3m',
+                      ),
+                      const SizedBox(height: 16),
+
+                      // Biaya Jahit per Kategori
+                      const Text(
+                        'Biaya Jahit per Kategori (Rp)',
+                        style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      const SizedBox(height: 12),
+                      _buildCategoryRow(
+                        'Bayi',
+                        biayaBayiController,
+                        'Rp 25.000',
+                      ),
+                      const SizedBox(height: 8),
+                      _buildCategoryRow(
+                        'Balita',
+                        biayaBalitaController,
+                        'Rp 35.000',
+                      ),
+                      const SizedBox(height: 8),
+                      _buildCategoryRow(
+                        'Anak',
+                        biayaAnakController,
+                        'Rp 45.000',
+                      ),
+                      const SizedBox(height: 8),
+                      _buildCategoryRow(
+                        'Remaja',
+                        biayaRemajaController,
+                        'Rp 55.000',
+                      ),
+                      const SizedBox(height: 8),
+                      _buildCategoryRow(
+                        'Dewasa',
+                        biayaDewasaController,
+                        'Rp 60.000',
+                      ),
+                      const SizedBox(height: 8),
+                      _buildCategoryRow(
+                        'Lansia',
+                        biayaLansiaController,
+                        'Rp 70.000',
+                      ),
+                    ],
+                  ),
+                ),
               ),
-              ElevatedButton(
-                onPressed: () async {
-                  final nama = namaController.text.trim();
-                  final warna = warnaController.text.trim();
-                  final harga = int.tryParse(hargaController.text.trim()) ?? 0;
-                  final deskripsi = deskripsiController.text.trim();
-                  final kebutuhanMeter =
-                      double.tryParse(kebutuhanMeterController.text.trim()) ??
-                      1.0;
-                  final biayaJahitDasar =
-                      int.tryParse(biayaJahitController.text.trim()) ?? 50000;
+              // Actions
+              Container(
+                padding: const EdgeInsets.all(16),
+                decoration: BoxDecoration(
+                  color: Colors.grey[100],
+                  borderRadius: const BorderRadius.only(
+                    bottomLeft: Radius.circular(8),
+                    bottomRight: Radius.circular(8),
+                  ),
+                ),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    TextButton(
+                      onPressed: () => Navigator.pop(context),
+                      child: const Text('Batal'),
+                    ),
+                    const SizedBox(width: 8),
+                    ElevatedButton(
+                      onPressed: () async {
+                        final nama = namaController.text.trim();
+                        final warna = warnaController.text.trim();
+                        final harga =
+                            int.tryParse(hargaController.text.trim()) ?? 0;
+                        final deskripsi = deskripsiController.text.trim();
+                        final kebutuhanMeter =
+                            double.tryParse(
+                              kebutuhanMeterController.text.trim(),
+                            ) ??
+                            1.0;
+                        final biayaJahitDasar =
+                            int.tryParse(biayaJahitController.text.trim()) ??
+                            50000;
 
-                  // Kumpulkan data kebutuhan kain per kategori
-                  final kebutuhanKainPerKategori = {
-                    'bayi':
-                        double.tryParse(kebutuhanBayiController.text.trim()) ??
-                        0.4,
-                    'balita':
-                        double.tryParse(
-                          kebutuhanBalitaController.text.trim(),
-                        ) ??
-                        0.6,
-                    'anak':
-                        double.tryParse(kebutuhanAnakController.text.trim()) ??
-                        0.8,
-                    'remaja':
-                        double.tryParse(
-                          kebutuhanRemajaController.text.trim(),
-                        ) ??
-                        1.0,
-                    'dewasa':
-                        double.tryParse(
-                          kebutuhanDewasaController.text.trim(),
-                        ) ??
-                        1.2,
-                    'lansia':
-                        double.tryParse(
-                          kebutuhanLansiaController.text.trim(),
-                        ) ??
-                        1.3,
-                  };
+                        // Kumpulkan data kebutuhan kain per kategori
+                        final kebutuhanKainPerKategori = {
+                          'bayi':
+                              double.tryParse(
+                                kebutuhanBayiController.text.trim(),
+                              ) ??
+                              0.4,
+                          'balita':
+                              double.tryParse(
+                                kebutuhanBalitaController.text.trim(),
+                              ) ??
+                              0.6,
+                          'anak':
+                              double.tryParse(
+                                kebutuhanAnakController.text.trim(),
+                              ) ??
+                              0.8,
+                          'remaja':
+                              double.tryParse(
+                                kebutuhanRemajaController.text.trim(),
+                              ) ??
+                              1.0,
+                          'dewasa':
+                              double.tryParse(
+                                kebutuhanDewasaController.text.trim(),
+                              ) ??
+                              1.2,
+                          'lansia':
+                              double.tryParse(
+                                kebutuhanLansiaController.text.trim(),
+                              ) ??
+                              1.3,
+                        };
 
-                  // Kumpulkan data biaya jahit per kategori
-                  final biayaJahitPerKategori = {
-                    'bayi':
-                        int.tryParse(biayaBayiController.text.trim()) ?? 25000,
-                    'balita':
-                        int.tryParse(biayaBalitaController.text.trim()) ??
-                        35000,
-                    'anak':
-                        int.tryParse(biayaAnakController.text.trim()) ?? 45000,
-                    'remaja':
-                        int.tryParse(biayaRemajaController.text.trim()) ??
-                        55000,
-                    'dewasa':
-                        int.tryParse(biayaDewasaController.text.trim()) ??
-                        60000,
-                    'lansia':
-                        int.tryParse(biayaLansiaController.text.trim()) ??
-                        70000,
-                  };
+                        // Kumpulkan data biaya jahit per kategori
+                        final biayaJahitPerKategori = {
+                          'bayi':
+                              int.tryParse(biayaBayiController.text.trim()) ??
+                              25000,
+                          'balita':
+                              int.tryParse(biayaBalitaController.text.trim()) ??
+                              35000,
+                          'anak':
+                              int.tryParse(biayaAnakController.text.trim()) ??
+                              45000,
+                          'remaja':
+                              int.tryParse(biayaRemajaController.text.trim()) ??
+                              55000,
+                          'dewasa':
+                              int.tryParse(biayaDewasaController.text.trim()) ??
+                              60000,
+                          'lansia':
+                              int.tryParse(biayaLansiaController.text.trim()) ??
+                              70000,
+                        };
 
-                  if (nama.isEmpty || warna.isEmpty || harga <= 0) return;
+                        if (nama.isEmpty || warna.isEmpty || harga <= 0) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                              content: Text(
+                                'Mohon lengkapi data yang diperlukan',
+                              ),
+                              backgroundColor: Colors.red,
+                            ),
+                          );
+                          return;
+                        }
 
-                  if (kain == null) {
-                    // Tambah
-                    await _firestoreService.addKain(
-                      KainModel(
-                        id: '',
-                        nama: nama,
-                        warna: warna,
-                        harga: harga,
-                        deskripsi: deskripsi,
-                        kebutuhanMeter: kebutuhanMeter,
-                        biayaJahitDasar: biayaJahitDasar,
-                        kebutuhanKainPerKategori: kebutuhanKainPerKategori,
-                        biayaJahitPerKategori: biayaJahitPerKategori,
+                        try {
+                          if (kain == null) {
+                            // Tambah
+                            await _firestoreService.addKain(
+                              KainModel(
+                                id: '',
+                                nama: nama,
+                                warna: warna,
+                                harga: harga,
+                                deskripsi: deskripsi,
+                                kebutuhanMeter: kebutuhanMeter,
+                                biayaJahitDasar: biayaJahitDasar,
+                                kebutuhanKainPerKategori:
+                                    kebutuhanKainPerKategori,
+                                biayaJahitPerKategori: biayaJahitPerKategori,
+                              ),
+                            );
+                            if (mounted) {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(
+                                  content: Text('Kain berhasil ditambahkan'),
+                                  backgroundColor: Colors.green,
+                                ),
+                              );
+                            }
+                          } else {
+                            // Edit
+                            await _firestoreService.updateKain(
+                              kain.id,
+                              KainModel(
+                                id: kain.id,
+                                nama: nama,
+                                warna: warna,
+                                harga: harga,
+                                deskripsi: deskripsi,
+                                kebutuhanMeter: kebutuhanMeter,
+                                biayaJahitDasar: biayaJahitDasar,
+                                kebutuhanKainPerKategori:
+                                    kebutuhanKainPerKategori,
+                                biayaJahitPerKategori: biayaJahitPerKategori,
+                              ),
+                            );
+                            if (mounted) {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(
+                                  content: Text('Kain berhasil diperbarui'),
+                                  backgroundColor: Colors.green,
+                                ),
+                              );
+                            }
+                          }
+                          if (mounted) Navigator.pop(context);
+                        } catch (e) {
+                          if (mounted) {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                content: Text('Error: $e'),
+                                backgroundColor: Colors.red,
+                              ),
+                            );
+                          }
+                        }
+                      },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Theme.of(context).primaryColor,
+                        foregroundColor: Colors.white,
                       ),
-                    );
-                  } else {
-                    // Edit
-                    await _firestoreService.updateKain(
-                      kain.id,
-                      KainModel(
-                        id: kain.id,
-                        nama: nama,
-                        warna: warna,
-                        harga: harga,
-                        deskripsi: deskripsi,
-                        kebutuhanMeter: kebutuhanMeter,
-                        biayaJahitDasar: biayaJahitDasar,
-                        kebutuhanKainPerKategori: kebutuhanKainPerKategori,
-                        biayaJahitPerKategori: biayaJahitPerKategori,
-                      ),
-                    );
-                  }
-                  if (mounted) Navigator.pop(context);
-                },
-                child: Text(kain == null ? 'Tambah' : 'Simpan'),
+                      child: Text(kain == null ? 'Tambah' : 'Simpan'),
+                    ),
+                  ],
+                ),
               ),
             ],
-          );
-        },
+          ),
+        ),
       ),
+    );
+  }
+
+  Widget _buildCategoryRow(
+    String label,
+    TextEditingController controller,
+    String helperText,
+  ) {
+    return Row(
+      children: [
+        SizedBox(
+          width: 80,
+          child: Text(
+            label,
+            style: const TextStyle(fontWeight: FontWeight.w500),
+          ),
+        ),
+        const SizedBox(width: 8),
+        Expanded(
+          child: TextField(
+            controller: controller,
+            decoration: InputDecoration(
+              labelText: label,
+              border: const OutlineInputBorder(),
+              helperText: helperText,
+              isDense: true,
+            ),
+            keyboardType: const TextInputType.numberWithOptions(decimal: true),
+          ),
+        ),
+      ],
     );
   }
 
@@ -465,8 +551,28 @@ class _ModelKainAdminScreenState extends State<ModelKainAdminScreen> {
           ),
           ElevatedButton(
             onPressed: () async {
-              await _firestoreService.deleteKain(kain.id);
-              if (mounted) Navigator.pop(context);
+              try {
+                await _firestoreService.deleteKain(kain.id);
+                if (mounted) {
+                  Navigator.pop(context);
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                      content: Text('Kain berhasil dihapus'),
+                      backgroundColor: Colors.green,
+                    ),
+                  );
+                }
+              } catch (e) {
+                if (mounted) {
+                  Navigator.pop(context);
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text('Error menghapus kain: $e'),
+                      backgroundColor: Colors.red,
+                    ),
+                  );
+                }
+              }
             },
             style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
             child: const Text('Hapus'),
@@ -479,7 +585,13 @@ class _ModelKainAdminScreenState extends State<ModelKainAdminScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Model Kain Admin')),
+      backgroundColor: const Color(0xFF8FBC8F),
+      appBar: AppBar(
+        title: const Text('Model Pakaian'),
+        backgroundColor: Colors.white,
+        foregroundColor: Colors.black,
+        elevation: 1,
+      ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
@@ -489,22 +601,20 @@ class _ModelKainAdminScreenState extends State<ModelKainAdminScreen> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 const Text(
-                  'Data Jenis Kain',
-                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                  'Data',
+                  style: TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.white,
+                  ),
                 ),
-                Padding(
-                  padding: const EdgeInsets.only(right: 8.0),
-                  child: ElevatedButton.icon(
-                    onPressed: () => _showKainDialog(),
-                    icon: const Icon(Icons.add),
-                    label: const Text('Tambah Data'),
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.orange,
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 16,
-                        vertical: 10,
-                      ),
-                    ),
+                ElevatedButton.icon(
+                  onPressed: () => _showKainDialog(),
+                  icon: const Icon(Icons.add),
+                  label: const Text('Jata'),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.white,
+                    foregroundColor: const Color(0xFF8FBC8F),
                   ),
                 ),
               ],
@@ -517,249 +627,59 @@ class _ModelKainAdminScreenState extends State<ModelKainAdminScreen> {
                   if (snapshot.connectionState == ConnectionState.waiting) {
                     return const Center(child: CircularProgressIndicator());
                   }
+                  if (snapshot.hasError) {
+                    return Center(child: Text('Error: ${snapshot.error}'));
+                  }
                   final kainList = snapshot.data ?? [];
                   if (kainList.isEmpty) {
-                    return const Center(child: Text('Belum ada data kain.'));
+                    return const Center(
+                      child: Text(
+                        'Belum ada data kain',
+                        style: TextStyle(color: Colors.white),
+                      ),
+                    );
                   }
-                  return LayoutBuilder(
-                    builder: (context, constraints) {
-                      // Jika layar lebar (desktop/tablet), gunakan DataTable
-                      if (constraints.maxWidth > 800) {
-                        return SingleChildScrollView(
-                          scrollDirection: Axis.horizontal,
-                          child: DataTable(
-                            columnSpacing: 24,
-                            headingRowHeight: 40,
-                            dataRowHeight: 48,
-                            columns: const [
-                              DataColumn(
-                                label: Center(
-                                  child: Text(
-                                    'No',
-                                    style: TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                  ),
+                  return ListView.builder(
+                    itemCount: kainList.length,
+                    itemBuilder: (context, index) {
+                      final kain = kainList[index];
+                      return Card(
+                        margin: const EdgeInsets.only(bottom: 8),
+                        child: ListTile(
+                          title: Text(
+                            kain.nama,
+                            style: const TextStyle(fontWeight: FontWeight.bold),
+                          ),
+                          subtitle: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text('Warna: ${kain.warna}'),
+                              Text('Harga: Rp ${kain.harga}'),
+                              Text('Kebutuhan: ${kain.kebutuhanMeter}m'),
+                              Text('Biaya Jahit: Rp ${kain.biayaJahitDasar}'),
+                            ],
+                          ),
+                          trailing: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              IconButton(
+                                onPressed: () => _showKainDialog(kain: kain),
+                                icon: const Icon(
+                                  Icons.edit,
+                                  color: Colors.blue,
                                 ),
                               ),
-                              DataColumn(
-                                label: Center(
-                                  child: Text(
-                                    'Nama Kain',
-                                    style: TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                  ),
-                                ),
-                              ),
-                              DataColumn(
-                                label: Center(
-                                  child: Text(
-                                    'Warna',
-                                    style: TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                  ),
-                                ),
-                              ),
-                              DataColumn(
-                                label: Center(
-                                  child: Text(
-                                    'Harga/meter',
-                                    style: TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                  ),
-                                ),
-                              ),
-                              DataColumn(
-                                label: Center(
-                                  child: Text(
-                                    'Kebutuhan',
-                                    style: TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                  ),
-                                ),
-                              ),
-                              DataColumn(
-                                label: Center(
-                                  child: Text(
-                                    'Biaya Jahit',
-                                    style: TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                  ),
-                                ),
-                              ),
-                              DataColumn(
-                                label: Center(
-                                  child: Text(
-                                    'Aksi',
-                                    style: TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                  ),
+                              IconButton(
+                                onPressed: () => _confirmDelete(kain),
+                                icon: const Icon(
+                                  Icons.delete,
+                                  color: Colors.red,
                                 ),
                               ),
                             ],
-                            rows: List.generate(kainList.length, (index) {
-                              final kain = kainList[index];
-                              return DataRow(
-                                cells: [
-                                  DataCell(Center(child: Text('${index + 1}'))),
-                                  DataCell(Center(child: Text(kain.nama))),
-                                  DataCell(Center(child: Text(kain.warna))),
-                                  DataCell(
-                                    Center(
-                                      child: Text(
-                                        'Rp ${kain.harga.toString()}',
-                                      ),
-                                    ),
-                                  ),
-                                  DataCell(
-                                    Center(
-                                      child: Text(
-                                        '${kain.kebutuhanMeter.toStringAsFixed(1)}m',
-                                      ),
-                                    ),
-                                  ),
-                                  DataCell(
-                                    Center(
-                                      child: Text(
-                                        'Rp ${kain.biayaJahitDasar.toString()}',
-                                      ),
-                                    ),
-                                  ),
-                                  DataCell(
-                                    Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.center,
-                                      children: [
-                                        ElevatedButton(
-                                          onPressed: () =>
-                                              _showKainDialog(kain: kain),
-                                          style: ElevatedButton.styleFrom(
-                                            backgroundColor: Colors.blue,
-                                            minimumSize: const Size(40, 36),
-                                            padding: const EdgeInsets.symmetric(
-                                              horizontal: 8,
-                                            ),
-                                          ),
-                                          child: const Text(
-                                            'Edit',
-                                            style: TextStyle(fontSize: 12),
-                                          ),
-                                        ),
-                                        const SizedBox(width: 8),
-                                        ElevatedButton(
-                                          onPressed: () => _confirmDelete(kain),
-                                          style: ElevatedButton.styleFrom(
-                                            backgroundColor: Colors.red,
-                                            minimumSize: const Size(40, 36),
-                                            padding: const EdgeInsets.symmetric(
-                                              horizontal: 8,
-                                            ),
-                                          ),
-                                          child: const Text(
-                                            'Hapus',
-                                            style: TextStyle(fontSize: 12),
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                ],
-                              );
-                            }),
                           ),
-                        );
-                      } else {
-                        // Jika layar kecil (mobile), gunakan ListView
-                        return ListView.builder(
-                          padding: const EdgeInsets.symmetric(horizontal: 8),
-                          itemCount: kainList.length,
-                          itemBuilder: (context, index) {
-                            final kain = kainList[index];
-                            return Card(
-                              margin: const EdgeInsets.only(bottom: 12),
-                              child: Padding(
-                                padding: const EdgeInsets.all(16),
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceBetween,
-                                      children: [
-                                        Text(
-                                          '${index + 1}. ${kain.nama}',
-                                          style: const TextStyle(
-                                            fontWeight: FontWeight.bold,
-                                            fontSize: 16,
-                                          ),
-                                        ),
-                                        Row(
-                                          children: [
-                                            ElevatedButton(
-                                              onPressed: () =>
-                                                  _showKainDialog(kain: kain),
-                                              style: ElevatedButton.styleFrom(
-                                                backgroundColor: Colors.blue,
-                                                minimumSize: const Size(50, 36),
-                                                padding:
-                                                    const EdgeInsets.symmetric(
-                                                      horizontal: 12,
-                                                    ),
-                                              ),
-                                              child: const Text(
-                                                'Edit',
-                                                style: TextStyle(fontSize: 12),
-                                              ),
-                                            ),
-                                            const SizedBox(width: 8),
-                                            ElevatedButton(
-                                              onPressed: () =>
-                                                  _confirmDelete(kain),
-                                              style: ElevatedButton.styleFrom(
-                                                backgroundColor: Colors.red,
-                                                minimumSize: const Size(50, 36),
-                                                padding:
-                                                    const EdgeInsets.symmetric(
-                                                      horizontal: 12,
-                                                    ),
-                                              ),
-                                              child: const Text(
-                                                'Hapus',
-                                                style: TextStyle(fontSize: 12),
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                      ],
-                                    ),
-                                    const SizedBox(height: 8),
-                                    _buildInfoRow('Warna', kain.warna),
-                                    _buildInfoRow(
-                                      'Harga',
-                                      'Rp ${kain.harga.toString()}/meter',
-                                    ),
-                                    _buildInfoRow(
-                                      'Kebutuhan',
-                                      '${kain.kebutuhanMeter.toStringAsFixed(1)} meter',
-                                    ),
-                                    _buildInfoRow(
-                                      'Biaya Jahit',
-                                      'Rp ${kain.biayaJahitDasar.toString()}',
-                                    ),
-                                    _buildInfoRow('Deskripsi', kain.deskripsi),
-                                  ],
-                                ),
-                              ),
-                            );
-                          },
-                        );
-                      }
+                        ),
+                      );
                     },
                   );
                 },

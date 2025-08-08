@@ -2,6 +2,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart' hide Order;
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'desain_customer_screen.dart';
 import 'konfirmasi_desain_baju_customer_screen.dart';
 import 'package:provider/provider.dart';
@@ -517,12 +518,15 @@ class _MeasurementField extends StatelessWidget {
         TextField(
           controller: controller,
           keyboardType: TextInputType.number,
+          inputFormatters: [
+            FilteringTextInputFormatter.digitsOnly,
+          ],
           style: TextStyle(
             color: isDark ? Colors.white : Colors.black,
             fontFamily: 'SF Pro Text',
           ),
           decoration: InputDecoration(
-            hintText: 'Masukkan ukuran',
+            hintText: 'Masukkan ukuran (hanya angka)',
             hintStyle: TextStyle(
               color: isDark ? Colors.white54 : Colors.grey[400],
               fontFamily: 'SF Pro Text',

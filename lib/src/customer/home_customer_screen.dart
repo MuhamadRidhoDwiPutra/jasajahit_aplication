@@ -11,6 +11,7 @@ import 'package:provider/provider.dart';
 import 'package:jasa_jahit_aplication/src/theme/theme_provider.dart';
 import 'package:jasa_jahit_aplication/src/customer/whatsapp_chat_helper.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:tabler_icons_flutter/tabler_icons_flutter.dart';
 import 'package:jasa_jahit_aplication/Core/provider/notification_provider.dart';
 import 'package:jasa_jahit_aplication/src/page/notification_screen.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -217,11 +218,10 @@ class _HomeCustomerScreenState extends State<HomeCustomerScreen> {
                           borderRadius: BorderRadius.circular(12),
                         ),
                         child: IconButton(
-                          icon: Image.asset(
-                            'assets/images/ikon_WA.png',
-                            width: 24,
-                            height: 24,
+                          icon: Icon(
+                            FontAwesomeIcons.whatsapp,
                             color: const Color(0xFF25D366),
+                            size: 24,
                           ),
                           onPressed: () {
                             WhatsAppChatHelper.openWhatsAppChat(context);
@@ -455,7 +455,7 @@ class _HomeCustomerContent extends StatelessWidget {
           child: Row(
             children: [
               _CategoryCard(
-                icon: FontAwesomeIcons.shirt, // Baju - sudah tepat
+                icon: FontAwesomeIcons.shirt, // Baju - ikon baju yang jelas
                 label: 'Baju',
                 onTap: () {
                   showDialog(
@@ -478,7 +478,7 @@ class _HomeCustomerContent extends StatelessWidget {
               const SizedBox(width: 12),
               _CategoryCard(
                 icon: FontAwesomeIcons
-                    .personWalking, // Celana - ikon orang berjalan lebih sesuai
+                    .personWalking, // Celana - ikon orang berjalan untuk celana
                 label: 'Celana',
                 onTap: () {
                   showDialog(
@@ -500,7 +500,8 @@ class _HomeCustomerContent extends StatelessWidget {
               ),
               const SizedBox(width: 12),
               _CategoryCard(
-                icon: FontAwesomeIcons.personDress, // Rok - sudah tepat
+                icon: FontAwesomeIcons
+                    .personDress, // Rok - ikon wanita dengan gaun untuk rok
                 label: 'Rok',
                 onTap: () {
                   showDialog(
@@ -522,7 +523,8 @@ class _HomeCustomerContent extends StatelessWidget {
               ),
               const SizedBox(width: 12),
               _CategoryCard(
-                icon: FontAwesomeIcons.userTie, // Jas - ikon jas lebih sesuai
+                icon: FontAwesomeIcons
+                    .userTie, // Jas - ikon pria dengan dasi untuk jas
                 label: 'Jas',
                 onTap: () {
                   showDialog(
@@ -561,7 +563,8 @@ class _HomeCustomerContent extends StatelessWidget {
           physics: const NeverScrollableScrollPhysics(),
           gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
             crossAxisCount: 2,
-            childAspectRatio: 0.95,
+            childAspectRatio:
+                0.85, // Kurangi aspect ratio untuk memperbesar gambar
             crossAxisSpacing: 16,
             mainAxisSpacing: 16,
           ),
@@ -577,7 +580,8 @@ class _HomeCustomerContent extends StatelessWidget {
 }
 
 class _CategoryCard extends StatelessWidget {
-  final dynamic icon; // Ubah dari IconData ke dynamic
+  final dynamic
+  icon; // Gunakan dynamic untuk mendukung FontAwesome dan Material Icons
   final String label;
   final VoidCallback onTap;
 
@@ -832,24 +836,24 @@ class _ModelCard extends StatelessWidget {
           ClipRRect(
             borderRadius: const BorderRadius.vertical(top: Radius.circular(16)),
             child: Container(
-              height: 80, // Kurangi dari 100
+              height: 100, // Perbesar dari 80 ke 100
               width: double.infinity,
               color: isDark ? Colors.grey[800] : Colors.grey[100],
               child: Image.asset(
                 product.imagePath,
-                height: 80, // Kurangi dari 100
+                height: 100, // Perbesar dari 80 ke 100
                 width: double.infinity,
                 fit: BoxFit.contain,
                 errorBuilder: (context, error, stackTrace) {
                   return Container(
-                    height: 80, // Kurangi dari 100
+                    height: 100, // Perbesar dari 80 ke 100
                     width: double.infinity,
                     color: isDark ? Colors.grey[700] : Colors.grey[300],
                     child: Center(
                       child: Icon(
                         Icons.image_not_supported,
                         color: isDark ? Colors.white70 : Colors.black54,
-                        size: 24, // Kurangi dari 32
+                        size: 28, // Perbesar dari 24 ke 28
                       ),
                     ),
                   );
@@ -859,14 +863,14 @@ class _ModelCard extends StatelessWidget {
           ),
           Expanded(
             child: Padding(
-              padding: const EdgeInsets.all(4), // Kurangi dari 6
+              padding: const EdgeInsets.all(6), // Perbesar dari 4 ke 6
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
                     product.name,
                     style: TextStyle(
-                      fontSize: 10, // Kurangi dari 11
+                      fontSize: 11, // Perbesar dari 10 ke 11
                       fontWeight: FontWeight.w600,
                       color: isDark ? Colors.white : Colors.black,
                       fontFamily: 'SF Pro Display',
@@ -874,30 +878,30 @@ class _ModelCard extends StatelessWidget {
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                   ),
-                  const SizedBox(height: 1), // Kurangi dari 2
+                  const SizedBox(height: 2), // Perbesar dari 1 ke 2
                   Text(
                     product.description,
                     style: TextStyle(
-                      fontSize: 7, // Kurangi dari 8
+                      fontSize: 8, // Perbesar dari 7 ke 8
                       color: isDark ? Colors.white70 : Colors.black54,
                       fontFamily: 'SF Pro Text',
                     ),
-                    maxLines: 1, // Kurangi dari 2
+                    maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                   ),
                   const Spacer(),
                   Text(
                     'Rp ${product.price.toStringAsFixed(0)}',
                     style: const TextStyle(
-                      fontSize: 9, // Kurangi dari 10
+                      fontSize: 10, // Perbesar dari 9 ke 10
                       fontWeight: FontWeight.w500,
                       color: Color(0xFFDE8500),
                       fontFamily: 'SF Pro Text',
                     ),
                   ),
-                  const SizedBox(height: 2), // Kurangi dari 4
+                  const SizedBox(height: 4), // Perbesar dari 2 ke 4
                   SizedBox(
-                    height: 20, // Kurangi dari 24
+                    height: 24, // Perbesar dari 20 ke 24
                     child: Row(
                       children: [
                         Expanded(
@@ -906,39 +910,31 @@ class _ModelCard extends StatelessWidget {
                               backgroundColor: const Color(0xFFDE8500),
                               foregroundColor: Colors.white,
                               shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(
-                                  3,
-                                ), // Kurangi dari 4
+                                borderRadius: BorderRadius.circular(4),
                               ),
-                              padding: const EdgeInsets.symmetric(
-                                vertical: 1,
-                              ), // Kurangi dari 2
+                              padding: const EdgeInsets.symmetric(vertical: 2),
                             ),
                             onPressed: () => _showProductDetail(context),
                             child: const Text(
                               'Detail',
                               style: TextStyle(
-                                fontSize: 7, // Kurangi dari 8
+                                fontSize: 8, // Perbesar dari 7 ke 8
                                 fontWeight: FontWeight.w600,
                                 fontFamily: 'SF Pro Display',
                               ),
                             ),
                           ),
                         ),
-                        const SizedBox(width: 1), // Kurangi dari 2
+                        const SizedBox(width: 2), // Perbesar dari 1 ke 2
                         Expanded(
                           child: ElevatedButton(
                             style: ElevatedButton.styleFrom(
                               backgroundColor: Colors.green,
                               foregroundColor: Colors.white,
                               shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(
-                                  3,
-                                ), // Kurangi dari 4
+                                borderRadius: BorderRadius.circular(4),
                               ),
-                              padding: const EdgeInsets.symmetric(
-                                vertical: 1,
-                              ), // Kurangi dari 2
+                              padding: const EdgeInsets.symmetric(vertical: 2),
                             ),
                             onPressed: () {
                               Navigator.push(
@@ -956,7 +952,7 @@ class _ModelCard extends StatelessWidget {
                             child: const Text(
                               'Beli',
                               style: TextStyle(
-                                fontSize: 7, // Kurangi dari 8
+                                fontSize: 8, // Perbesar dari 7 ke 8
                                 fontWeight: FontWeight.w600,
                                 fontFamily: 'SF Pro Display',
                               ),
