@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:jasa_jahit_aplication/src/customer/home_customer_screen.dart';
 import 'package:jasa_jahit_aplication/src/admin/home_admin_screen.dart';
@@ -354,8 +355,17 @@ class _NavBarItem extends StatelessWidget {
   }
 }
 
-class _HomeCustomerContent extends StatelessWidget {
+class _HomeCustomerContent extends StatefulWidget {
   const _HomeCustomerContent({super.key});
+
+  @override
+  State<_HomeCustomerContent> createState() => _HomeCustomerContentState();
+}
+
+class _HomeCustomerContentState extends State<_HomeCustomerContent> {
+  String _searchQuery = '';
+  final TextEditingController _searchController = TextEditingController();
+  Timer? _debounceTimer;
 
   // Data produk model terbaru
   List<Product> get _products => [
@@ -395,7 +405,57 @@ class _HomeCustomerContent extends StatelessWidget {
       imagePath: 'assets/images/kemeja_lengan_panjang_hitam.jpg',
       category: 'Kemeja',
     ),
+    Product(
+      id: '5',
+      name: 'Kaos Oblong Coklat',
+      description:
+          'Kaos oblong coklat dengan bahan premium, nyaman dan stylish untuk penggunaan sehari-hari.',
+      price: 85000,
+      imagePath: 'assets/images/kaos_oblong_coklat.jpg',
+      category: 'Kaos',
+    ),
+    Product(
+      id: '6',
+      name: 'Rok Panjang Hitam',
+      description:
+          'Rok panjang hitam dengan potongan modern, cocok untuk acara formal dan semi-formal.',
+      price: 180000,
+      imagePath: 'assets/images/rok_panjang_hitam.jpg',
+      category: 'Rok',
+    ),
   ];
+
+  // Getter untuk produk yang sudah difilter berdasarkan search
+  List<Product> get _filteredProducts {
+    if (_searchQuery.isEmpty) {
+      return _products;
+    }
+    return _products.where((product) {
+      final query = _searchQuery.toLowerCase();
+      return product.name.toLowerCase().contains(query) ||
+             product.description.toLowerCase().contains(query) ||
+             product.category.toLowerCase().contains(query);
+    }).toList();
+  }
+
+  // Fungsi debounce untuk search
+  void _onSearchChanged(String value) {
+    if (_debounceTimer?.isActive ?? false) {
+      _debounceTimer!.cancel();
+    }
+    _debounceTimer = Timer(const Duration(milliseconds: 300), () {
+      setState(() {
+        _searchQuery = value;
+      });
+    });
+  }
+
+  @override
+  void dispose() {
+    _debounceTimer?.cancel();
+    _searchController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -424,16 +484,31 @@ class _HomeCustomerContent extends StatelessWidget {
               const SizedBox(width: 12),
               Expanded(
                 child: TextField(
+                  controller: _searchController,
                   style: TextStyle(color: isDark ? Colors.white : Colors.black),
                   decoration: InputDecoration(
-                    hintText: 'Cari model pakaian...',
+                    hintText: _searchQuery.isEmpty 
+                        ? 'Cari model pakaian... (nama, kategori, deskripsi)'
+                        : 'Mencari "${_searchQuery}"...',
                     hintStyle: TextStyle(
                       color: isDark ? Colors.white70 : Colors.grey[400],
                       fontSize: 14,
                       fontFamily: 'SF Pro Text',
                     ),
                     border: InputBorder.none,
+                    suffixIcon: _searchQuery.isNotEmpty
+                        ? IconButton(
+                            icon: const Icon(Icons.clear, color: Color(0xFFDE8500)),
+                            onPressed: () {
+                              setState(() {
+                                _searchQuery = '';
+                                _searchController.clear();
+                              });
+                            },
+                          )
+                        : null,
                   ),
+                  onChanged: _onSearchChanged,
                 ),
               ),
             ],
@@ -548,32 +623,85 @@ class _HomeCustomerContent extends StatelessWidget {
           ),
         ),
         const SizedBox(height: 24),
-        Text(
-          'Model Terbaru',
-          style: TextStyle(
-            fontSize: 18,
-            fontWeight: FontWeight.w600,
-            color: isDark ? Colors.white : Colors.black,
-            fontFamily: 'SF Pro Display',
-          ),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Text(
+              _searchQuery.isEmpty ? 'Model Terbaru' : 'Hasil Pencarian',
+              style: TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.w600,
+                color: isDark ? Colors.white : Colors.black,
+                fontFamily: 'SF Pro Display',
+              ),
+            ),
+            if (_searchQuery.isNotEmpty)
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                decoration: BoxDecoration(
+                  color: const Color(0xFFDE8500).withOpacity(0.1),
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: Text(
+                  '${_filteredProducts.length} hasil',
+                  style: TextStyle(
+                    fontSize: 12,
+                    fontWeight: FontWeight.w500,
+                    color: const Color(0xFFDE8500),
+                    fontFamily: 'SF Pro Text',
+                  ),
+                ),
+              ),
+          ],
         ),
         const SizedBox(height: 16),
-        GridView.builder(
-          shrinkWrap: true,
-          physics: const NeverScrollableScrollPhysics(),
-          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-            crossAxisCount: 2,
-            childAspectRatio:
-                0.85, // Kurangi aspect ratio untuk memperbesar gambar
-            crossAxisSpacing: 16,
-            mainAxisSpacing: 16,
+        // Tampilkan hasil search atau semua produk
+        if (_filteredProducts.isEmpty && _searchQuery.isNotEmpty)
+          Center(
+            child: Column(
+              children: [
+                Icon(
+                  Icons.search_off,
+                  size: 64,
+                  color: isDark ? Colors.white70 : Colors.grey[400],
+                ),
+                const SizedBox(height: 16),
+                Text(
+                  'Tidak ada model pakaian ditemukan',
+                  style: TextStyle(
+                    fontSize: 16,
+                    color: isDark ? Colors.white70 : Colors.grey[600],
+                    fontFamily: 'SF Pro Text',
+                  ),
+                ),
+                Text(
+                  'Coba kata kunci lain atau hapus pencarian',
+                  style: TextStyle(
+                    fontSize: 14,
+                    color: isDark ? Colors.white54 : Colors.grey[500],
+                    fontFamily: 'SF Pro Text',
+                  ),
+                ),
+              ],
+            ),
+          )
+        else
+          GridView.builder(
+            shrinkWrap: true,
+            physics: const NeverScrollableScrollPhysics(),
+            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: 2,
+              childAspectRatio:
+                  0.85, // Kurangi aspect ratio untuk memperbesar gambar
+              crossAxisSpacing: 16,
+              mainAxisSpacing: 16,
+            ),
+            itemCount: _filteredProducts.length,
+            itemBuilder: (context, index) {
+              final product = _filteredProducts[index];
+              return _ModelCard(product: product);
+            },
           ),
-          itemCount: _products.length,
-          itemBuilder: (context, index) {
-            final product = _products[index];
-            return _ModelCard(product: product);
-          },
-        ),
       ],
     );
   }
