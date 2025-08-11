@@ -489,7 +489,7 @@ class _HomeCustomerContentState extends State<_HomeCustomerContent> {
                   decoration: InputDecoration(
                     hintText: _searchQuery.isEmpty 
                         ? 'Cari model pakaian... (nama, kategori, deskripsi)'
-                        : 'Mencari "${_searchQuery}"...',
+                        : 'Mencari "$_searchQuery"...',
                     hintStyle: TextStyle(
                       color: isDark ? Colors.white70 : Colors.grey[400],
                       fontSize: 14,

@@ -374,22 +374,20 @@ class NotificationProvider extends ChangeNotifier {
     await loadNotificationsFromFirestore(role);
   }
 
-  // Fungsi untuk debug - cek semua notifikasi di Firestore
-  Future<void> debugAllNotifications() async {
+  // Fungsi untuk cek semua notifikasi di Firestore
+  Future<void> checkAllNotifications() async {
     try {
-      print('🔍 DEBUG: Checking all notifications in Firestore...');
+      print('🔍 Checking all notifications in Firestore...');
 
       final snapshot = await FirebaseFirestore.instance
           .collection('notifications')
           .get();
 
-      print(
-        '📊 DEBUG: Total notifications in Firestore: ${snapshot.docs.length}',
-      );
+      print('📊 Total notifications in Firestore: ${snapshot.docs.length}');
 
       for (final doc in snapshot.docs) {
         final data = doc.data();
-        print('📝 DEBUG: Notification ID: ${doc.id}');
+        print('📝 Notification ID: ${doc.id}');
         print('   Title: ${data['title']}');
         print('   Body: ${data['body']}');
         print('   Role: ${data['recipientRole']}');
@@ -398,7 +396,7 @@ class NotificationProvider extends ChangeNotifier {
         print('   ---');
       }
     } catch (e) {
-      print('❌ DEBUG: Error checking all notifications: $e');
+      print('❌ Error checking all notifications: $e');
     }
   }
 

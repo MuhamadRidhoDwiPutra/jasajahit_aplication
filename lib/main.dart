@@ -20,7 +20,7 @@ void main() async {
     NotificationService.firebaseBackgroundHandler,
   );
 
-  // Print FCM token ke debug console
+  // Print FCM token ke console
   FirebaseMessaging.instance.getToken().then((token) {
     print('🔥 FCM Token: $token');
     print('📱 Copy token ini untuk testing notifikasi');
@@ -193,9 +193,6 @@ class _MyHomePageState extends State<MyHomePage> {
           // axis because Columns are vertical (the cross axis would be
           // horizontal).
           //
-          // TRY THIS: Invoke "debug painting" (choose the "Toggle Debug Paint"
-          // action in the IDE, or press "p" in the console), to see the
-          // wireframe for each widget.
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
             const Text('You have pushed the button this many times:'),

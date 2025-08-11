@@ -187,7 +187,7 @@ class _AdminNotificationScreenState extends State<AdminNotificationScreen> {
                           },
                         ),
                       ),
-                      // Tombol debug notifikasi
+                      // Tombol cek notifikasi
                       Container(
                         decoration: BoxDecoration(
                           color: const Color(0xFF9C27B0).withOpacity(0.1),
@@ -195,15 +195,15 @@ class _AdminNotificationScreenState extends State<AdminNotificationScreen> {
                         ),
                         child: IconButton(
                           icon: const Icon(
-                            Icons.bug_report,
+                            Icons.info_outline,
                             color: Color(0xFF9C27B0),
                           ),
                           onPressed: () async {
-                            await notifProvider.debugAllNotifications();
+                            await notifProvider.checkAllNotifications();
                             ScaffoldMessenger.of(context).showSnackBar(
                               const SnackBar(
                                 content: Text(
-                                  'Debug info ditampilkan di console!',
+                                  'Info notifikasi ditampilkan di console!',
                                 ),
                                 backgroundColor: Color(0xFF9C27B0),
                               ),

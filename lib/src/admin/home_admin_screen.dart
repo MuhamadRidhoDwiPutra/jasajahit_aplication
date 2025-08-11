@@ -482,10 +482,8 @@ class _HomeAdminContentState extends State<_HomeAdminContent> {
               selectedMonthIndex,
             );
 
-            // Debug: Print status counts untuk troubleshooting
-            print(
-              'Debug Status Counts for ${_getMonthName(selectedMonthIndex)}:',
-            );
+            // Print status counts untuk troubleshooting
+            print('Status Counts for ${_getMonthName(selectedMonthIndex)}:');
             print('Masuk: ${monthData['masuk']}');
             print('Dikonfirmasi: ${monthData['dikonfirmasi']}');
             print('Dikerjakan: ${monthData['dikerjakan']}');
