@@ -368,9 +368,7 @@ class KonfirmasiDesainBajuCustomerScreen extends StatelessWidget {
                               context,
                               MaterialPageRoute(
                                 builder: (context) =>
-                                    const UkuranBajuCustomerScreen(
-                                      selectedFabric: '',
-                                    ),
+                                    const HomeCustomerScreen(initialIndex: 1),
                               ),
                             );
                           },
@@ -549,8 +547,11 @@ class KonfirmasiDesainBajuCustomerScreen extends StatelessWidget {
                           Navigator.push(
                             context,
                             MaterialPageRoute(
-                              builder: (context) =>
-                                  PembayaranBajuCustomerScreen(order: order),
+                              builder: (context) => PembayaranBajuCustomerScreen(
+                                order: order,
+                                sourcePage:
+                                    'multi_order', // Tambah parameter asal halaman
+                              ),
                             ),
                           );
                         },

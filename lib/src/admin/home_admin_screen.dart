@@ -15,6 +15,7 @@ import 'package:fl_chart/fl_chart.dart';
 import 'package:jasa_jahit_aplication/Core/provider/notification_provider.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:jasa_jahit_aplication/src/page/admin_notification_screen.dart';
+import 'dart:async'; // Added import for StreamSubscription and Timer
 
 class HomeAdminScreen extends StatefulWidget {
   const HomeAdminScreen({super.key});
@@ -58,7 +59,7 @@ class _HomeAdminScreenState extends State<HomeAdminScreen> {
     'Daftar Pesanan',
     'Status Pesanan',
     'Riwayat Transaksi',
-    'Model Pakaian',
+    'Model Kain',
     'Profil Admin',
   ];
 
@@ -324,6 +325,124 @@ class _HomeAdminContent extends StatefulWidget {
 
 class _HomeAdminContentState extends State<_HomeAdminContent> {
   int selectedMonthIndex = DateTime.now().month - 1; // Bulan saat ini (0-11)
+  StreamSubscription?
+  _orderSubscription; // Stream subscription untuk real-time update
+  List<order_model.Order> _currentOrders =
+      []; // State untuk menyimpan orders saat ini
+  DateTime _lastUpdateTime = DateTime.now(); // Timestamp last update
+  final GlobalKey<_HomeAdminContentState> _refreshKey =
+      GlobalKey<_HomeAdminContentState>(); // Key untuk force refresh
+  final StreamController<void> _refreshController =
+      StreamController<void>.broadcast(); // Controller untuk force refresh
+
+  @override
+  void initState() {
+    super.initState();
+    // Setup real-time listener untuk orders
+    _setupOrderListener();
+
+    // Setup listener untuk perubahan status
+    _setupStatusChangeListener();
+  }
+
+  @override
+  void dispose() {
+    _orderSubscription?.cancel();
+    _refreshController.close();
+    super.dispose();
+  }
+
+  // Setup real-time listener untuk orders
+  void _setupOrderListener() {
+    _orderSubscription = FirestoreService().getAllOrders().listen((orders) {
+      // Update state dengan orders baru
+      if (mounted) {
+        // Update state dan force rebuild
+        setState(() {
+          _currentOrders = orders;
+          _lastUpdateTime = DateTime.now();
+        });
+
+        // Debug: Print status counts hanya saat ada perubahan signifikan
+        if (_currentOrders.isNotEmpty) {
+          final monthData = _calculateDataForMonth(orders, selectedMonthIndex);
+          print(
+            '📊 Status Update - ${_getMonthName(selectedMonthIndex)}: Masuk(${monthData['masuk']}) Dikonfirmasi(${monthData['dikonfirmasi']}) Dikerjakan(${monthData['dikerjakan']}) Selesai(${monthData['selesai']}) Dibatalkan(${monthData['dibatalkan']})',
+          );
+
+          // Debug: Print status yang ada untuk memastikan sinkronisasi
+          final statuses = orders.map((order) => order.status).toSet();
+          print('🔍 Current order statuses: ${statuses.join(', ')}');
+        }
+
+        // Force rebuild tambahan untuk memastikan UI update
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          if (mounted) {
+            setState(() {});
+          }
+        });
+
+        // Trigger refresh stream
+        _refreshController.add(null);
+      }
+    });
+  }
+
+  // Setup listener untuk perubahan status
+  void _setupStatusChangeListener() {
+    // Listen untuk perubahan di collection orders
+    FirebaseFirestore.instance.collection('orders').snapshots().listen((
+      snapshot,
+    ) {
+      if (mounted) {
+        // Update timestamp tanpa print yang berlebihan
+        setState(() {
+          _lastUpdateTime = DateTime.now();
+        });
+
+        // Force rebuild untuk memastikan UI update
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          if (mounted) {
+            setState(() {});
+          }
+        });
+
+        // Trigger refresh stream
+        _refreshController.add(null);
+      }
+    });
+  }
+
+  // Fungsi untuk refresh data diagram
+  void _refreshDiagramData() {
+    if (mounted) {
+      setState(() {
+        _lastUpdateTime = DateTime.now();
+      });
+
+      // Force rebuild dengan multiple methods
+      if (_refreshKey.currentState != null) {
+        _refreshKey.currentState!.setState(() {});
+      }
+
+      // Force rebuild dengan post frame callback
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (mounted) {
+          setState(() {});
+        }
+      });
+
+      // Trigger refresh stream
+      _refreshController.add(null);
+
+      // Force rebuild dengan delay untuk memastikan update
+      Future.delayed(const Duration(milliseconds: 300), () {
+        if (mounted) {
+          setState(() {});
+        }
+      });
+    }
+  }
 
   // Fungsi untuk mendapatkan nama bulan
   String _getMonthName(int monthIndex) {
@@ -362,27 +481,42 @@ class _HomeAdminContentState extends State<_HomeAdminContent> {
           orderDate.isBefore(nextMonth);
     }).toList();
 
+    // Debug: Print semua orders untuk bulan ini
+    if (ordersThisMonth.isNotEmpty) {
+      print(
+        '📅 Orders for ${_getMonthName(monthIndex)}: ${ordersThisMonth.length}',
+      );
+      // Print status yang ada untuk debugging
+      final statuses = ordersThisMonth.map((order) => order.status).toSet();
+      print('🔍 Available statuses: ${statuses.join(', ')}');
+    }
+
     // Hitung status pesanan untuk bulan yang dipilih
     final masuk = ordersThisMonth
         .where((order) => order.status == 'Menunggu Konfirmasi')
         .length;
     final dikonfirmasi = ordersThisMonth
-        .where((order) => order.status == 'Dikonfirmasi')
+        .where((order) => order.status == 'Pesanan Dikonfirmasi')
         .length;
     final dikerjakan = ordersThisMonth
         .where((order) => order.status == 'Sedang dikerjakan')
         .length;
     final selesai = ordersThisMonth
-        .where((order) => order.status == 'Selesai')
+        .where((order) => order.status == 'Pesanan telah selesai')
         .length;
     final dibatalkan = ordersThisMonth
-        .where((order) => order.status == 'Dibatalkan')
+        .where((order) => order.status == 'Pesanan Dibatalkan')
         .length;
 
     // Hitung keuntungan dari pesanan yang selesai
     final completedOrdersThisMonth = ordersThisMonth.where((order) {
-      return order.status == 'Selesai';
+      return order.status == 'Pesanan telah selesai';
     }).toList();
+
+    // Debug: Print completed orders hanya jika ada
+    if (completedOrdersThisMonth.isNotEmpty) {
+      print('✅ Completed orders: ${completedOrdersThisMonth.length}');
+    }
 
     final totalRevenue = completedOrdersThisMonth.fold<double>(
       0,
@@ -445,6 +579,20 @@ class _HomeAdminContentState extends State<_HomeAdminContent> {
           order.items.where((item) => item['orderType'] == 'Model').length,
     );
 
+    // Debug: Print profit breakdown hanya jika ada profit
+    if (totalProfit > 0) {
+      print('💰 Profit breakdown for ${_getMonthName(monthIndex)}:');
+      print('  - Total Revenue: Rp ${totalRevenue.toStringAsFixed(0)}');
+      print('  - Total Profit: Rp ${totalProfit.toStringAsFixed(0)}');
+      print('  - Baju: Rp ${bajuProfit.toStringAsFixed(0)} ($bajuSold items)');
+      print(
+        '  - Celana: Rp ${celanaProfit.toStringAsFixed(0)} ($celanaSold items)',
+      );
+      print(
+        '  - Model: Rp ${modelProfit.toStringAsFixed(0)} ($modelSold items)',
+      );
+    }
+
     return {
       'masuk': masuk,
       'dikonfirmasi': dikonfirmasi,
@@ -465,16 +613,49 @@ class _HomeAdminContentState extends State<_HomeAdminContent> {
   @override
   Widget build(BuildContext context) {
     return ListView(
+      key: _refreshKey, // Tambahkan key untuk force refresh
       padding: const EdgeInsets.all(16.0),
       children: [
         // DASHBOARD SUMMARY
         StreamBuilder<List<order_model.Order>>(
           stream: FirestoreService().getAllOrders(),
           builder: (context, snapshot) {
-            if (snapshot.connectionState == ConnectionState.waiting) {
-              return const Center(child: CircularProgressIndicator());
+            if (snapshot.connectionState == ConnectionState.waiting &&
+                _currentOrders.isEmpty) {
+              return const Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    CircularProgressIndicator(
+                      valueColor: AlwaysStoppedAnimation<Color>(
+                        Color(0xFFDE8500),
+                      ),
+                    ),
+                    SizedBox(height: 16),
+                    Text(
+                      'Memuat data pesanan...',
+                      style: TextStyle(fontSize: 16, color: Colors.grey),
+                    ),
+                  ],
+                ),
+              );
             }
-            final orders = snapshot.data ?? [];
+
+            // Gunakan data dari stream atau fallback ke state local
+            final orders = snapshot.data ?? _currentOrders;
+
+            // Update state local jika ada data baru
+            if (snapshot.hasData && snapshot.data != null) {
+              WidgetsBinding.instance.addPostFrameCallback((_) {
+                if (mounted && _currentOrders != snapshot.data) {
+                  setState(() {
+                    _currentOrders = snapshot.data!;
+                    _lastUpdateTime = DateTime.now();
+                  });
+                  print('🔄 Stream data updated, syncing with local state');
+                }
+              });
+            }
 
             // Hitung data untuk bulan yang dipilih
             final monthData = _calculateDataForMonth(
@@ -483,541 +664,747 @@ class _HomeAdminContentState extends State<_HomeAdminContent> {
             );
 
             // Print status counts untuk troubleshooting
-            print('Status Counts for ${_getMonthName(selectedMonthIndex)}:');
-            print('Masuk: ${monthData['masuk']}');
-            print('Dikonfirmasi: ${monthData['dikonfirmasi']}');
-            print('Dikerjakan: ${monthData['dikerjakan']}');
-            print('Selesai: ${monthData['selesai']}');
-            print('Dibatalkan: ${monthData['dibatalkan']}');
-            print('Total Profit: ${monthData['totalProfit']}');
+            if (monthData['masuk'] > 0 ||
+                monthData['dikerjakan'] > 0 ||
+                monthData['selesai'] > 0 ||
+                monthData['dikonfirmasi'] > 0 ||
+                monthData['dibatalkan'] > 0) {
+              print(
+                '📊 Status Counts for ${_getMonthName(selectedMonthIndex)}: Masuk(${monthData['masuk']}) Dikonfirmasi(${monthData['dikonfirmasi']}) Dikerjakan(${monthData['dikerjakan']}) Selesai(${monthData['selesai']}) Dibatalkan(${monthData['dibatalkan']})',
+              );
+            }
 
-            return Column(
-              children: [
-                Card(
-                  color: Theme.of(context).brightness == Brightness.dark
-                      ? const Color(0xFF232323)
-                      : Colors.white,
-                  elevation: 2,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(16),
-                  ),
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(
-                      vertical: 20,
-                      horizontal: 12,
-                    ),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceAround,
-                      children: [
-                        _DashboardItem(
-                          label: 'Masuk',
-                          count: monthData['masuk'],
-                          color: Colors.orange,
-                          icon: Icons.inbox,
+            return StreamBuilder<void>(
+              stream: _refreshController.stream,
+              builder: (context, refreshSnapshot) {
+                // Force rebuild saat ada refresh
+                return Column(
+                  children: [
+                    Card(
+                      color: Theme.of(context).brightness == Brightness.dark
+                          ? const Color(0xFF232323)
+                          : Colors.white,
+                      elevation: 2,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(16),
+                      ),
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(
+                          vertical: 20,
+                          horizontal: 12,
                         ),
-                        _DashboardItem(
-                          label: 'Dikonfirmasi',
-                          count: monthData['dikonfirmasi'],
-                          color: Colors.blue,
-                          icon: Icons.check_circle_outline,
-                        ),
-                        _DashboardItem(
-                          label: 'Dikerjakan',
-                          count: monthData['dikerjakan'],
-                          color: Colors.purple,
-                          icon: Icons.build,
-                        ),
-                        _DashboardItem(
-                          label: 'Selesai',
-                          count: monthData['selesai'],
-                          color: Colors.green,
-                          icon: Icons.done_all,
-                        ),
-                        _DashboardItem(
-                          label: 'Batal',
-                          count: monthData['dibatalkan'],
-                          color: Colors.red,
-                          icon: Icons.cancel,
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-                const SizedBox(height: 24),
-                // BAR CHART - REAL TIME STATUS PESANAN
-                Card(
-                  color: Theme.of(context).brightness == Brightness.dark
-                      ? const Color(0xFF232323)
-                      : Colors.white,
-                  elevation: 2,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(16),
-                  ),
-                  child: Padding(
-                    padding: const EdgeInsets.all(16.0),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceAround,
                           children: [
-                            Text(
-                              'Status Pesanan Real-time',
-                              style: TextStyle(
-                                fontSize: 16,
-                                fontWeight: FontWeight.bold,
-                                color:
-                                    Theme.of(context).brightness ==
-                                        Brightness.dark
-                                    ? Colors.white
-                                    : Colors.black,
-                              ),
+                            _DashboardItem(
+                              label: 'Masuk',
+                              count: monthData['masuk'],
+                              color: Colors.orange,
+                              icon: Icons.inbox,
                             ),
-                            // Selector Bulan untuk Bar Chart
-                            Container(
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: 8,
-                                vertical: 4,
-                              ),
-                              decoration: BoxDecoration(
-                                color: const Color(0xFFDE8500).withOpacity(0.1),
-                                borderRadius: BorderRadius.circular(6),
-                                border: Border.all(
-                                  color: const Color(0xFFDE8500),
-                                ),
-                              ),
-                              child: DropdownButton<int>(
-                                value: selectedMonthIndex,
-                                underline: Container(),
-                                style: TextStyle(
-                                  color: const Color(0xFFDE8500),
-                                  fontWeight: FontWeight.w600,
-                                  fontSize: 12,
-                                ),
-                                items: List.generate(12, (index) {
-                                  return DropdownMenuItem<int>(
-                                    value: index,
-                                    child: Text(_getMonthName(index)),
-                                  );
-                                }),
-                                onChanged: (int? newValue) {
-                                  if (newValue != null) {
-                                    setState(() {
-                                      selectedMonthIndex = newValue;
-                                    });
-                                  }
-                                },
-                              ),
+                            _DashboardItem(
+                              label: 'Dikonfirmasi',
+                              count: monthData['dikonfirmasi'],
+                              color: Colors.blue,
+                              icon: Icons.check_circle_outline,
+                            ),
+                            _DashboardItem(
+                              label: 'Dikerjakan',
+                              count: monthData['dikerjakan'],
+                              color: Colors.purple,
+                              icon: Icons.build,
+                            ),
+                            _DashboardItem(
+                              label: 'Selesai',
+                              count: monthData['selesai'],
+                              color: Colors.green,
+                              icon: Icons.done_all,
+                            ),
+                            _DashboardItem(
+                              label: 'Batal',
+                              count: monthData['dibatalkan'],
+                              color: Colors.red,
+                              icon: Icons.cancel,
                             ),
                           ],
                         ),
-                        const SizedBox(height: 12),
-                        SizedBox(
-                          height: 180,
-                          child: BarChart(
-                            BarChartData(
-                              alignment: BarChartAlignment.spaceAround,
-                              maxY:
-                                  [
-                                    monthData['masuk'],
-                                    monthData['dikonfirmasi'],
-                                    monthData['dikerjakan'],
-                                    monthData['selesai'],
-                                    monthData['dibatalkan'],
-                                  ].reduce((a, b) => a > b ? a : b).toDouble() +
-                                  2,
-                              barTouchData: BarTouchData(
-                                enabled: true,
-                                touchTooltipData: BarTouchTooltipData(
-                                  getTooltipItem:
-                                      (group, groupIndex, rod, rodIndex) {
-                                        const labels = [
-                                          'Masuk',
-                                          'Dikonfirmasi',
-                                          'Dikerjakan',
-                                          'Selesai',
-                                          'Dibatalkan',
-                                        ];
-                                        return BarTooltipItem(
-                                          '${labels[group.x]}: ${rod.toY.toInt()} pesanan',
-                                          const TextStyle(color: Colors.white),
-                                        );
-                                      },
-                                ),
-                              ),
-                              titlesData: FlTitlesData(
-                                leftTitles: AxisTitles(
-                                  sideTitles: SideTitles(
-                                    showTitles: true,
-                                    reservedSize: 28,
-                                    getTitlesWidget: (value, meta) {
-                                      return Text(
-                                        value.toInt().toString(),
-                                        style: TextStyle(
-                                          color:
-                                              Theme.of(context).brightness ==
-                                                  Brightness.dark
-                                              ? Colors.white70
-                                              : Colors.black54,
-                                          fontSize: 12,
-                                        ),
-                                      );
-                                    },
-                                  ),
-                                ),
-                                bottomTitles: AxisTitles(
-                                  sideTitles: SideTitles(
-                                    showTitles: true,
-                                    getTitlesWidget:
-                                        (double value, TitleMeta meta) {
-                                          const labels = [
-                                            'Masuk',
-                                            'Dikonf.',
-                                            'Dikerj.',
-                                            'Selesai',
-                                            'Batal',
-                                          ];
-                                          return Padding(
-                                            padding: const EdgeInsets.only(
-                                              top: 8.0,
-                                            ),
-                                            child: Text(
-                                              labels[value.toInt()],
-                                              style: TextStyle(
-                                                fontSize: 12,
-                                                color:
-                                                    Theme.of(
-                                                          context,
-                                                        ).brightness ==
-                                                        Brightness.dark
-                                                    ? Colors.white70
-                                                    : Colors.black54,
-                                              ),
-                                            ),
-                                          );
-                                        },
-                                    interval: 1,
-                                  ),
-                                ),
-                                rightTitles: AxisTitles(
-                                  sideTitles: SideTitles(showTitles: false),
-                                ),
-                                topTitles: AxisTitles(
-                                  sideTitles: SideTitles(showTitles: false),
-                                ),
-                              ),
-                              borderData: FlBorderData(show: false),
-                              gridData: FlGridData(
-                                show: true,
-                                drawVerticalLine: false,
-                                horizontalInterval: 1,
-                                getDrawingHorizontalLine: (value) {
-                                  return FlLine(
-                                    color:
-                                        Theme.of(context).brightness ==
-                                            Brightness.dark
-                                        ? Colors.white10
-                                        : Colors.grey[300],
-                                    strokeWidth: 1,
-                                  );
-                                },
-                              ),
-                              barGroups: [
-                                BarChartGroupData(
-                                  x: 0,
-                                  barRods: [
-                                    BarChartRodData(
-                                      toY: monthData['masuk'].toDouble(),
-                                      color: Colors.orange,
-                                      width: 20,
-                                      borderRadius: const BorderRadius.only(
-                                        topLeft: Radius.circular(4),
-                                        topRight: Radius.circular(4),
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                                BarChartGroupData(
-                                  x: 1,
-                                  barRods: [
-                                    BarChartRodData(
-                                      toY: monthData['dikonfirmasi'].toDouble(),
-                                      color: Colors.blue,
-                                      width: 20,
-                                      borderRadius: const BorderRadius.only(
-                                        topLeft: Radius.circular(4),
-                                        topRight: Radius.circular(4),
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                                BarChartGroupData(
-                                  x: 2,
-                                  barRods: [
-                                    BarChartRodData(
-                                      toY: monthData['dikerjakan'].toDouble(),
-                                      color: Colors.purple,
-                                      width: 20,
-                                      borderRadius: const BorderRadius.only(
-                                        topLeft: Radius.circular(4),
-                                        topRight: Radius.circular(4),
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                                BarChartGroupData(
-                                  x: 3,
-                                  barRods: [
-                                    BarChartRodData(
-                                      toY: monthData['selesai'].toDouble(),
-                                      color: Colors.green,
-                                      width: 20,
-                                      borderRadius: const BorderRadius.only(
-                                        topLeft: Radius.circular(4),
-                                        topRight: Radius.circular(4),
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                                BarChartGroupData(
-                                  x: 4,
-                                  barRods: [
-                                    BarChartRodData(
-                                      toY: monthData['dibatalkan'].toDouble(),
-                                      color: Colors.red,
-                                      width: 20,
-                                      borderRadius: const BorderRadius.only(
-                                        topLeft: Radius.circular(4),
-                                        topRight: Radius.circular(4),
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
-                      ],
+                      ),
                     ),
-                  ),
-                ),
-                const SizedBox(height: 24),
-                // PIE CHART KEUNTUNGAN BULANAN
-                Card(
-                  color: Theme.of(context).brightness == Brightness.dark
-                      ? const Color(0xFF232323)
-                      : Colors.white,
-                  elevation: 2,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(16),
-                  ),
-                  child: Padding(
-                    padding: const EdgeInsets.all(16.0),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    const SizedBox(height: 24),
+                    // BAR CHART - REAL TIME STATUS PESANAN
+                    Card(
+                      color: Theme.of(context).brightness == Brightness.dark
+                          ? const Color(0xFF232323)
+                          : Colors.white,
+                      elevation: 2,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(16),
+                      ),
+                      child: Padding(
+                        padding: const EdgeInsets.all(16.0),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Text(
-                              'Keuntungan Bulanan',
-                              style: TextStyle(
-                                fontSize: 18,
-                                fontWeight: FontWeight.bold,
-                                color:
-                                    Theme.of(context).brightness ==
-                                        Brightness.dark
-                                    ? Colors.white
-                                    : Colors.black,
-                                fontFamily: 'SF Pro Display',
-                              ),
-                            ),
-                            // Selector Bulan untuk Pie Chart
-                            Container(
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: 12,
-                                vertical: 4,
-                              ),
-                              decoration: BoxDecoration(
-                                color: const Color(0xFFDE8500).withOpacity(0.1),
-                                borderRadius: BorderRadius.circular(8),
-                                border: Border.all(
-                                  color: const Color(0xFFDE8500),
-                                ),
-                              ),
-                              child: DropdownButton<int>(
-                                value: selectedMonthIndex,
-                                underline: Container(),
-                                style: TextStyle(
-                                  color: const Color(0xFFDE8500),
-                                  fontWeight: FontWeight.w600,
-                                  fontSize: 14,
-                                ),
-                                items: List.generate(12, (index) {
-                                  return DropdownMenuItem<int>(
-                                    value: index,
-                                    child: Text(_getMonthName(index)),
-                                  );
-                                }),
-                                onChanged: (int? newValue) {
-                                  if (newValue != null) {
-                                    setState(() {
-                                      selectedMonthIndex = newValue;
-                                    });
-                                  }
-                                },
-                              ),
-                            ),
-                          ],
-                        ),
-                        const SizedBox(height: 8),
-                        Text(
-                          'Total Keuntungan: Rp ${monthData['totalProfit'].toStringAsFixed(0).replaceAllMapped(RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'), (m) => '${m[1]}.')}',
-                          style: TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.w600,
-                            color: Colors.green,
-                            fontFamily: 'SF Pro Text',
-                          ),
-                        ),
-                        const SizedBox(height: 16),
-                        // Pie Chart dan Legend
-                        if (monthData['totalProfit'] > 0) ...[
-                          SizedBox(
-                            height: 200,
-                            child: Row(
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
                                 Expanded(
-                                  flex: 2,
-                                  child: PieChart(
-                                    PieChartData(
-                                      sections: [
-                                        if (monthData['bajuProfit'] > 0)
-                                          PieChartSectionData(
-                                            value: monthData['bajuProfit'],
-                                            title:
-                                                'Baju\n${((monthData['bajuProfit'] / monthData['totalProfit']) * 100).toStringAsFixed(1)}%',
-                                            color: Colors.blue,
-                                            radius: 80,
-                                            titleStyle: const TextStyle(
-                                              fontSize: 12,
-                                              fontWeight: FontWeight.bold,
-                                              color: Colors.white,
-                                            ),
-                                          ),
-                                        if (monthData['celanaProfit'] > 0)
-                                          PieChartSectionData(
-                                            value: monthData['celanaProfit'],
-                                            title:
-                                                'Celana\n${((monthData['celanaProfit'] / monthData['totalProfit']) * 100).toStringAsFixed(1)}%',
-                                            color: Colors.green,
-                                            radius: 80,
-                                            titleStyle: const TextStyle(
-                                              fontSize: 12,
-                                              fontWeight: FontWeight.bold,
-                                              color: Colors.white,
-                                            ),
-                                          ),
-                                        if (monthData['modelProfit'] > 0)
-                                          PieChartSectionData(
-                                            value: monthData['modelProfit'],
-                                            title:
-                                                'Model\n${((monthData['modelProfit'] / monthData['totalProfit']) * 100).toStringAsFixed(1)}%',
-                                            color: Colors.orange,
-                                            radius: 80,
-                                            titleStyle: const TextStyle(
-                                              fontSize: 12,
-                                              fontWeight: FontWeight.bold,
-                                              color: Colors.white,
-                                            ),
-                                          ),
-                                      ],
-                                      centerSpaceRadius: 40,
-                                      sectionsSpace: 2,
-                                    ),
-                                  ),
-                                ),
-                                const SizedBox(width: 16),
-                                Expanded(
-                                  flex: 1,
-                                  child: Column(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      if (monthData['bajuProfit'] > 0)
-                                        _PieChartLegend(
-                                          label: 'Baju',
-                                          value: monthData['bajuProfit'],
-                                          sold: monthData['bajuSold'],
-                                          color: Colors.blue,
-                                        ),
-                                      if (monthData['celanaProfit'] > 0)
-                                        _PieChartLegend(
-                                          label: 'Celana',
-                                          value: monthData['celanaProfit'],
-                                          sold: monthData['celanaSold'],
-                                          color: Colors.green,
-                                        ),
-                                      if (monthData['modelProfit'] > 0)
-                                        _PieChartLegend(
-                                          label: 'Model',
-                                          value: monthData['modelProfit'],
-                                          sold: monthData['modelSold'],
-                                          color: Colors.orange,
-                                        ),
-                                    ],
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ] else ...[
-                          Container(
-                            height: 200,
-                            decoration: BoxDecoration(
-                              color:
-                                  Theme.of(context).brightness ==
-                                      Brightness.dark
-                                  ? Colors.grey[800]
-                                  : Colors.grey[200],
-                              borderRadius: BorderRadius.circular(12),
-                            ),
-                            child: Center(
-                              child: Column(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  Icon(
-                                    Icons.pie_chart_outline,
-                                    size: 48,
-                                    color:
-                                        Theme.of(context).brightness ==
-                                            Brightness.dark
-                                        ? Colors.grey[600]
-                                        : Colors.grey[400],
-                                  ),
-                                  const SizedBox(height: 8),
-                                  Text(
-                                    'Belum ada data keuntungan',
+                                  child: Text(
+                                    'Status Pesanan',
                                     style: TextStyle(
+                                      fontSize: 18,
+                                      fontWeight: FontWeight.bold,
                                       color:
                                           Theme.of(context).brightness ==
                                               Brightness.dark
-                                          ? Colors.grey[600]
-                                          : Colors.grey[400],
-                                      fontSize: 14,
+                                          ? Colors.white
+                                          : Colors.black,
+                                      fontFamily: 'SF Pro Display',
+                                    ),
+                                  ),
+                                ),
+                                const SizedBox(width: 8),
+                                // Tombol Refresh Manual
+                                IconButton(
+                                  onPressed: _refreshDiagramData,
+                                  icon: Icon(
+                                    Icons.refresh,
+                                    color: const Color(0xFFDE8500),
+                                    size: 20,
+                                  ),
+                                  tooltip: 'Refresh Data',
+                                  padding: const EdgeInsets.all(4),
+                                  constraints: const BoxConstraints(
+                                    minWidth: 32,
+                                    minHeight: 32,
+                                  ),
+                                ),
+                                const SizedBox(width: 4),
+                                // Selector Bulan untuk Bar Chart
+                                Container(
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 8,
+                                    vertical: 6,
+                                  ),
+                                  decoration: BoxDecoration(
+                                    color: const Color(0xFFDE8500),
+                                    borderRadius: BorderRadius.circular(6),
+                                  ),
+                                  child: DropdownButton<int>(
+                                    value: selectedMonthIndex,
+                                    dropdownColor: const Color(0xFFDE8500),
+                                    style: const TextStyle(
+                                      color: Colors.white,
+                                      fontWeight: FontWeight.w600,
+                                      fontSize: 12,
+                                    ),
+                                    underline: Container(),
+                                    icon: const Icon(
+                                      Icons.keyboard_arrow_down,
+                                      color: Colors.white,
+                                      size: 16,
+                                    ),
+                                    items: List.generate(12, (index) {
+                                      return DropdownMenuItem(
+                                        value: index,
+                                        child: Text(
+                                          _getMonthName(index),
+                                          style: const TextStyle(fontSize: 12),
+                                        ),
+                                      );
+                                    }),
+                                    onChanged: (value) {
+                                      if (value != null) {
+                                        setState(() {
+                                          selectedMonthIndex = value;
+                                        });
+                                        print(
+                                          '📅 Month changed to: ${_getMonthName(value)}',
+                                        );
+                                        _refreshDiagramData();
+                                      }
+                                    },
+                                  ),
+                                ),
+                              ],
+                            ),
+                            const SizedBox(height: 12),
+                            // Indikator Real-time Update untuk Bar Chart
+                            Row(
+                              children: [
+                                Container(
+                                  width: 8,
+                                  height: 8,
+                                  decoration: const BoxDecoration(
+                                    color: Colors.green,
+                                    shape: BoxShape.circle,
+                                  ),
+                                ),
+                                const SizedBox(width: 8),
+                                Text(
+                                  'Real-time Update',
+                                  style: TextStyle(
+                                    fontSize: 12,
+                                    color: Colors.green,
+                                    fontStyle: FontStyle.italic,
+                                  ),
+                                ),
+                                const Spacer(),
+                                Text(
+                                  'Last updated: ${_lastUpdateTime.hour.toString().padLeft(2, '0')}:${_lastUpdateTime.minute.toString().padLeft(2, '0')}',
+                                  style: TextStyle(
+                                    fontSize: 12,
+                                    color: Colors.grey[600],
+                                    fontStyle: FontStyle.italic,
+                                  ),
+                                ),
+                              ],
+                            ),
+                            const SizedBox(height: 12),
+                            // Debug Info untuk memastikan sinkronisasi
+                            Container(
+                              padding: const EdgeInsets.all(8),
+                              decoration: BoxDecoration(
+                                color: Colors.blue.withOpacity(0.1),
+                                borderRadius: BorderRadius.circular(8),
+                                border: Border.all(
+                                  color: Colors.blue.withOpacity(0.3),
+                                ),
+                              ),
+                              child: Row(
+                                children: [
+                                  Icon(
+                                    Icons.info_outline,
+                                    size: 16,
+                                    color: Colors.blue,
+                                  ),
+                                  const SizedBox(width: 8),
+                                  Expanded(
+                                    child: Text(
+                                      'Data terakhir: ${_currentOrders.length} pesanan | Update: ${_lastUpdateTime.hour.toString().padLeft(2, '0')}:${_lastUpdateTime.minute.toString().padLeft(2, '0')}',
+                                      style: TextStyle(
+                                        fontSize: 12,
+                                        color: Colors.blue,
+                                        fontStyle: FontStyle.italic,
+                                      ),
                                     ),
                                   ),
                                 ],
                               ),
                             ),
-                          ),
-                        ],
-                      ],
+                            const SizedBox(height: 12),
+                            SizedBox(
+                              height: 180,
+                              child: BarChart(
+                                BarChartData(
+                                  alignment: BarChartAlignment.spaceAround,
+                                  maxY:
+                                      [
+                                            monthData['masuk'],
+                                            monthData['dikonfirmasi'],
+                                            monthData['dikerjakan'],
+                                            monthData['selesai'],
+                                            monthData['dibatalkan'],
+                                          ]
+                                          .reduce((a, b) => a > b ? a : b)
+                                          .toDouble() +
+                                      2,
+                                  barTouchData: BarTouchData(
+                                    enabled: true,
+                                    touchTooltipData: BarTouchTooltipData(
+                                      getTooltipItem:
+                                          (group, groupIndex, rod, rodIndex) {
+                                            const labels = [
+                                              'Masuk',
+                                              'Dikonfirmasi',
+                                              'Dikerjakan',
+                                              'Selesai',
+                                              'Dibatalkan',
+                                            ];
+                                            return BarTooltipItem(
+                                              '${labels[group.x]}: ${rod.toY.toInt()} pesanan',
+                                              const TextStyle(
+                                                color: Colors.white,
+                                              ),
+                                            );
+                                          },
+                                    ),
+                                  ),
+                                  titlesData: FlTitlesData(
+                                    leftTitles: AxisTitles(
+                                      sideTitles: SideTitles(
+                                        showTitles: true,
+                                        reservedSize: 28,
+                                        getTitlesWidget: (value, meta) {
+                                          return Text(
+                                            value.toInt().toString(),
+                                            style: TextStyle(
+                                              color:
+                                                  Theme.of(
+                                                        context,
+                                                      ).brightness ==
+                                                      Brightness.dark
+                                                  ? Colors.white70
+                                                  : Colors.black54,
+                                              fontSize: 12,
+                                            ),
+                                          );
+                                        },
+                                      ),
+                                    ),
+                                    bottomTitles: AxisTitles(
+                                      sideTitles: SideTitles(
+                                        showTitles: true,
+                                        getTitlesWidget:
+                                            (double value, TitleMeta meta) {
+                                              const labels = [
+                                                'Masuk',
+                                                'Dikonf.',
+                                                'Dikerj.',
+                                                'Selesai',
+                                                'Batal',
+                                              ];
+                                              return Padding(
+                                                padding: const EdgeInsets.only(
+                                                  top: 8.0,
+                                                ),
+                                                child: Text(
+                                                  labels[value.toInt()],
+                                                  style: TextStyle(
+                                                    fontSize: 12,
+                                                    color:
+                                                        Theme.of(
+                                                              context,
+                                                            ).brightness ==
+                                                            Brightness.dark
+                                                        ? Colors.white70
+                                                        : Colors.black54,
+                                                  ),
+                                                ),
+                                              );
+                                            },
+                                        interval: 1,
+                                      ),
+                                    ),
+                                    rightTitles: AxisTitles(
+                                      sideTitles: SideTitles(showTitles: false),
+                                    ),
+                                    topTitles: AxisTitles(
+                                      sideTitles: SideTitles(showTitles: false),
+                                    ),
+                                  ),
+                                  borderData: FlBorderData(show: false),
+                                  gridData: FlGridData(
+                                    show: true,
+                                    drawVerticalLine: false,
+                                    horizontalInterval: 1,
+                                    getDrawingHorizontalLine: (value) {
+                                      return FlLine(
+                                        color:
+                                            Theme.of(context).brightness ==
+                                                Brightness.dark
+                                            ? Colors.white10
+                                            : Colors.grey[300],
+                                        strokeWidth: 1,
+                                      );
+                                    },
+                                  ),
+                                  barGroups: [
+                                    BarChartGroupData(
+                                      x: 0,
+                                      barRods: [
+                                        BarChartRodData(
+                                          toY: monthData['masuk'].toDouble(),
+                                          color: Colors.orange,
+                                          width: 20,
+                                          borderRadius: const BorderRadius.only(
+                                            topLeft: Radius.circular(4),
+                                            topRight: Radius.circular(4),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                    BarChartGroupData(
+                                      x: 1,
+                                      barRods: [
+                                        BarChartRodData(
+                                          toY: monthData['dikonfirmasi']
+                                              .toDouble(),
+                                          color: Colors.blue,
+                                          width: 20,
+                                          borderRadius: const BorderRadius.only(
+                                            topLeft: Radius.circular(4),
+                                            topRight: Radius.circular(4),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                    BarChartGroupData(
+                                      x: 2,
+                                      barRods: [
+                                        BarChartRodData(
+                                          toY: monthData['dikerjakan']
+                                              .toDouble(),
+                                          color: Colors.purple,
+                                          width: 20,
+                                          borderRadius: const BorderRadius.only(
+                                            topLeft: Radius.circular(4),
+                                            topRight: Radius.circular(4),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                    BarChartGroupData(
+                                      x: 3,
+                                      barRods: [
+                                        BarChartRodData(
+                                          toY: monthData['selesai'].toDouble(),
+                                          color: Colors.green,
+                                          width: 20,
+                                          borderRadius: const BorderRadius.only(
+                                            topLeft: Radius.circular(4),
+                                            topRight: Radius.circular(4),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                    BarChartGroupData(
+                                      x: 4,
+                                      barRods: [
+                                        BarChartRodData(
+                                          toY: monthData['dibatalkan']
+                                              .toDouble(),
+                                          color: Colors.red,
+                                          width: 20,
+                                          borderRadius: const BorderRadius.only(
+                                            topLeft: Radius.circular(4),
+                                            topRight: Radius.circular(4),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
                     ),
-                  ),
-                ),
-              ],
+                    const SizedBox(height: 24),
+                    // PIE CHART KEUNTUNGAN BULANAN
+                    Card(
+                      color: Theme.of(context).brightness == Brightness.dark
+                          ? const Color(0xFF232323)
+                          : Colors.white,
+                      elevation: 2,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(16),
+                      ),
+                      child: Padding(
+                        padding: const EdgeInsets.all(16.0),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Expanded(
+                                  child: Text(
+                                    'Keuntungan Bulanan',
+                                    style: TextStyle(
+                                      fontSize: 18,
+                                      fontWeight: FontWeight.bold,
+                                      color:
+                                          Theme.of(context).brightness ==
+                                              Brightness.dark
+                                          ? Colors.white
+                                          : Colors.black,
+                                      fontFamily: 'SF Pro Display',
+                                    ),
+                                  ),
+                                ),
+                                const SizedBox(width: 8),
+                                // Tombol Refresh Manual untuk Pie Chart
+                                IconButton(
+                                  onPressed: _refreshDiagramData,
+                                  icon: Icon(
+                                    Icons.refresh,
+                                    color: const Color(0xFFDE8500),
+                                    size: 20,
+                                  ),
+                                  tooltip: 'Refresh Keuntungan',
+                                  padding: const EdgeInsets.all(4),
+                                  constraints: const BoxConstraints(
+                                    minWidth: 32,
+                                    minHeight: 32,
+                                  ),
+                                ),
+                                const SizedBox(width: 4),
+                                // Selector Bulan untuk Pie Chart
+                                Container(
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 8,
+                                    vertical: 6,
+                                  ),
+                                  decoration: BoxDecoration(
+                                    color: const Color(0xFFDE8500),
+                                    borderRadius: BorderRadius.circular(6),
+                                  ),
+                                  child: DropdownButton<int>(
+                                    value: selectedMonthIndex,
+                                    dropdownColor: const Color(0xFFDE8500),
+                                    style: const TextStyle(
+                                      color: Colors.white,
+                                      fontWeight: FontWeight.w600,
+                                      fontSize: 12,
+                                    ),
+                                    underline: Container(),
+                                    icon: const Icon(
+                                      Icons.keyboard_arrow_down,
+                                      color: Colors.white,
+                                      size: 16,
+                                    ),
+                                    items: List.generate(12, (index) {
+                                      return DropdownMenuItem(
+                                        value: index,
+                                        child: Text(
+                                          _getMonthName(index),
+                                          style: const TextStyle(fontSize: 12),
+                                        ),
+                                      );
+                                    }),
+                                    onChanged: (value) {
+                                      if (value != null) {
+                                        setState(() {
+                                          selectedMonthIndex = value;
+                                        });
+                                        print(
+                                          '📅 Month changed to: ${_getMonthName(value)}',
+                                        );
+                                        _refreshDiagramData();
+                                      }
+                                    },
+                                  ),
+                                ),
+                              ],
+                            ),
+                            const SizedBox(height: 8),
+                            // Indikator Real-time Update
+                            Row(
+                              children: [
+                                Container(
+                                  width: 8,
+                                  height: 8,
+                                  decoration: const BoxDecoration(
+                                    color: Colors.green,
+                                    shape: BoxShape.circle,
+                                  ),
+                                ),
+                                const SizedBox(width: 8),
+                                Text(
+                                  'Real-time Update',
+                                  style: TextStyle(
+                                    fontSize: 12,
+                                    color: Colors.green,
+                                    fontStyle: FontStyle.italic,
+                                  ),
+                                ),
+                                const Spacer(),
+                                Text(
+                                  'Last updated: ${_lastUpdateTime.hour.toString().padLeft(2, '0')}:${_lastUpdateTime.minute.toString().padLeft(2, '0')}',
+                                  style: TextStyle(
+                                    fontSize: 12,
+                                    color: Colors.grey[600],
+                                    fontStyle: FontStyle.italic,
+                                  ),
+                                ),
+                              ],
+                            ),
+                            const SizedBox(height: 8),
+                            // Debug Info untuk memastikan sinkronisasi
+                            Container(
+                              padding: const EdgeInsets.all(8),
+                              decoration: BoxDecoration(
+                                color: Colors.blue.withOpacity(0.1),
+                                borderRadius: BorderRadius.circular(8),
+                                border: Border.all(
+                                  color: Colors.blue.withOpacity(0.3),
+                                ),
+                              ),
+                              child: Row(
+                                children: [
+                                  Icon(
+                                    Icons.info_outline,
+                                    size: 16,
+                                    color: Colors.blue,
+                                  ),
+                                  const SizedBox(width: 8),
+                                  Expanded(
+                                    child: Text(
+                                      'Data terakhir: ${_currentOrders.length} pesanan | Update: ${_lastUpdateTime.hour.toString().padLeft(2, '0')}:${_lastUpdateTime.minute.toString().padLeft(2, '0')}',
+                                      style: TextStyle(
+                                        fontSize: 12,
+                                        color: Colors.blue,
+                                        fontStyle: FontStyle.italic,
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                            const SizedBox(height: 8),
+                            Text(
+                              'Total Keuntungan: Rp ${monthData['totalProfit'].toStringAsFixed(0).replaceAllMapped(RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'), (m) => '${m[1]}.')}',
+                              style: TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.w600,
+                                color: Colors.green,
+                                fontFamily: 'SF Pro Text',
+                              ),
+                            ),
+                            const SizedBox(height: 16),
+                            // Pie Chart dan Legend
+                            if (monthData['totalProfit'] > 0) ...[
+                              SizedBox(
+                                height: 200,
+                                child: Row(
+                                  children: [
+                                    Expanded(
+                                      flex: 2,
+                                      child: PieChart(
+                                        PieChartData(
+                                          sections: [
+                                            if (monthData['bajuProfit'] > 0)
+                                              PieChartSectionData(
+                                                value: monthData['bajuProfit'],
+                                                title:
+                                                    'Baju\n${((monthData['bajuProfit'] / monthData['totalProfit']) * 100).toStringAsFixed(1)}%',
+                                                color: Colors.blue,
+                                                radius: 80,
+                                                titleStyle: const TextStyle(
+                                                  fontSize: 12,
+                                                  fontWeight: FontWeight.bold,
+                                                  color: Colors.white,
+                                                ),
+                                              ),
+                                            if (monthData['celanaProfit'] > 0)
+                                              PieChartSectionData(
+                                                value:
+                                                    monthData['celanaProfit'],
+                                                title:
+                                                    'Celana\n${((monthData['celanaProfit'] / monthData['totalProfit']) * 100).toStringAsFixed(1)}%',
+                                                color: Colors.green,
+                                                radius: 80,
+                                                titleStyle: const TextStyle(
+                                                  fontSize: 12,
+                                                  fontWeight: FontWeight.bold,
+                                                  color: Colors.white,
+                                                ),
+                                              ),
+                                            if (monthData['modelProfit'] > 0)
+                                              PieChartSectionData(
+                                                value: monthData['modelProfit'],
+                                                title:
+                                                    'Model\n${((monthData['modelProfit'] / monthData['totalProfit']) * 100).toStringAsFixed(1)}%',
+                                                color: Colors.orange,
+                                                radius: 80,
+                                                titleStyle: const TextStyle(
+                                                  fontSize: 12,
+                                                  fontWeight: FontWeight.bold,
+                                                  color: Colors.white,
+                                                ),
+                                              ),
+                                          ],
+                                          centerSpaceRadius: 40,
+                                          sectionsSpace: 2,
+                                        ),
+                                      ),
+                                    ),
+                                    const SizedBox(width: 16),
+                                    Expanded(
+                                      flex: 1,
+                                      child: Column(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.center,
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          if (monthData['bajuProfit'] > 0)
+                                            _PieChartLegend(
+                                              label: 'Baju',
+                                              value: monthData['bajuProfit'],
+                                              sold: monthData['bajuSold'],
+                                              color: Colors.blue,
+                                            ),
+                                          if (monthData['celanaProfit'] > 0)
+                                            _PieChartLegend(
+                                              label: 'Celana',
+                                              value: monthData['celanaProfit'],
+                                              sold: monthData['celanaSold'],
+                                              color: Colors.green,
+                                            ),
+                                          if (monthData['modelProfit'] > 0)
+                                            _PieChartLegend(
+                                              label: 'Model',
+                                              value: monthData['modelProfit'],
+                                              sold: monthData['modelSold'],
+                                              color: Colors.orange,
+                                            ),
+                                        ],
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ] else ...[
+                              Container(
+                                height: 200,
+                                decoration: BoxDecoration(
+                                  color:
+                                      Theme.of(context).brightness ==
+                                          Brightness.dark
+                                      ? Colors.grey[800]
+                                      : Colors.grey[200],
+                                  borderRadius: BorderRadius.circular(12),
+                                ),
+                                child: Center(
+                                  child: Column(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      Icon(
+                                        Icons.pie_chart_outline,
+                                        size: 48,
+                                        color:
+                                            Theme.of(context).brightness ==
+                                                Brightness.dark
+                                            ? Colors.grey[600]
+                                            : Colors.grey[400],
+                                      ),
+                                      const SizedBox(height: 8),
+                                      Text(
+                                        'Belum ada data keuntungan',
+                                        style: TextStyle(
+                                          color:
+                                              Theme.of(context).brightness ==
+                                                  Brightness.dark
+                                              ? Colors.grey[600]
+                                              : Colors.grey[400],
+                                          fontSize: 14,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ],
+                        ),
+                      ),
+                    ),
+                  ],
+                );
+              },
             );
           },
         ),

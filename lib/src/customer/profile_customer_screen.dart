@@ -360,7 +360,7 @@ class _ProfileCustomerScreenState extends State<ProfileCustomerScreen> {
                           );
                         },
                       ),
-                      const SizedBox(height: 8),
+                      const SizedBox(height: 16),
                       _ProfileMenuItem(
                         icon: Icons.info_outline,
                         label: 'Tentang Aplikasi',
@@ -374,9 +374,9 @@ class _ProfileCustomerScreenState extends State<ProfileCustomerScreen> {
                           );
                         },
                       ),
-                      const SizedBox(height: 8),
+                      const SizedBox(height: 16),
                       _ThemeModeContainer(context),
-                      const SizedBox(height: 8),
+                      const SizedBox(height: 16),
                       _ProfileMenuItem(
                         icon: Icons.logout,
                         label: 'Keluar',
@@ -603,7 +603,7 @@ Widget _ThemeModeContainer(BuildContext context) {
       label = 'Otomatis';
   }
   return Container(
-    margin: const EdgeInsets.symmetric(vertical: 16, horizontal: 0),
+    margin: const EdgeInsets.symmetric(vertical: 0, horizontal: 0),
     padding: const EdgeInsets.symmetric(horizontal: 0),
     decoration: BoxDecoration(
       color: isDark ? const Color(0xFF2A2A2A) : Colors.white,

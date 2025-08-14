@@ -29,9 +29,7 @@ class _LoginScreenState extends State<LoginScreen> {
         title: const Text('Reset Password'),
         content: TextField(
           controller: emailController,
-          decoration: const InputDecoration(
-            labelText: 'Masukkan email Anda',
-          ),
+          decoration: const InputDecoration(labelText: 'Masukkan email Anda'),
         ),
         actions: [
           TextButton(
@@ -42,20 +40,24 @@ class _LoginScreenState extends State<LoginScreen> {
             onPressed: () async {
               final email = emailController.text.trim();
               if (email.isEmpty) return;
-              final authProvider =
-                  Provider.of<AuthProvider>(context, listen: false);
+              final authProvider = Provider.of<AuthProvider>(
+                context,
+                listen: false,
+              );
               try {
                 await authProvider.sendPasswordResetEmail(email);
                 Navigator.pop(context);
                 ScaffoldMessenger.of(context).showSnackBar(
                   const SnackBar(
-                      content: Text('Email reset password telah dikirim!')),
+                    content: Text('Email reset password telah dikirim!'),
+                  ),
                 );
               } catch (e) {
                 Navigator.pop(context);
                 ScaffoldMessenger.of(context).showSnackBar(
                   SnackBar(
-                      content: Text('Gagal mengirim email: ${e.toString()}')),
+                    content: Text('Gagal mengirim email: ${e.toString()}'),
+                  ),
                 );
               }
             },
@@ -92,9 +94,9 @@ class _LoginScreenState extends State<LoginScreen> {
         );
       }
     } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Login gagal: ${e.toString()}')),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text('Login gagal: ${e.toString()}')));
     } finally {
       setState(() {
         _isLoading = false;
@@ -131,10 +133,11 @@ class _LoginScreenState extends State<LoginScreen> {
                             ),
                           ],
                         ),
-                        child: const Icon(
-                          Icons.local_laundry_service,
-                          size: 50,
-                          color: Color(0xFF8FBC8F),
+                        child: Image.asset(
+                          'assets/images/logo_apl.png',
+                          width: 80,
+                          height: 80,
+                          fit: BoxFit.contain,
                         ),
                       ),
                       const SizedBox(height: 24),
@@ -149,10 +152,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       const SizedBox(height: 8),
                       const Text(
                         'Silakan login untuk melanjutkan',
-                        style: TextStyle(
-                          fontSize: 16,
-                          color: Colors.white70,
-                        ),
+                        style: TextStyle(fontSize: 16, color: Colors.white70),
                       ),
                     ],
                   ),
@@ -191,8 +191,10 @@ class _LoginScreenState extends State<LoginScreen> {
                         decoration: InputDecoration(
                           labelText: 'Username',
                           labelStyle: const TextStyle(color: Colors.black54),
-                          prefixIcon: const Icon(Icons.person_outline,
-                              color: Colors.black54),
+                          prefixIcon: const Icon(
+                            Icons.person_outline,
+                            color: Colors.black54,
+                          ),
                           border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(12),
                             borderSide: BorderSide.none,
@@ -214,8 +216,10 @@ class _LoginScreenState extends State<LoginScreen> {
                         decoration: InputDecoration(
                           labelText: 'Kata Sandi',
                           labelStyle: const TextStyle(color: Colors.black54),
-                          prefixIcon: const Icon(Icons.lock_outline,
-                              color: Colors.black54),
+                          prefixIcon: const Icon(
+                            Icons.lock_outline,
+                            color: Colors.black54,
+                          ),
                           suffixIcon: IconButton(
                             icon: Icon(
                               _obscurePassword
@@ -285,10 +289,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     children: [
                       const Text(
                         'Belum punya akun?',
-                        style: TextStyle(
-                          color: Colors.white70,
-                          fontSize: 14,
-                        ),
+                        style: TextStyle(color: Colors.white70, fontSize: 14),
                       ),
                       TextButton(
                         onPressed: () {

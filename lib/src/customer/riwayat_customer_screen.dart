@@ -20,6 +20,9 @@ import 'package:jasa_jahit_aplication/src/customer/pembayaran_model_customer_scr
 import 'package:jasa_jahit_aplication/src/model/product_model.dart';
 import 'package:jasa_jahit_aplication/src/customer/cek_detail_pesanan_baju_screen.dart';
 import 'package:jasa_jahit_aplication/src/customer/cek_detail_pesanan_celana_screen.dart';
+import 'package:jasa_jahit_aplication/src/customer/cek_detail_pesanan_model_customer_screen.dart';
+import 'package:jasa_jahit_aplication/src/customer/cek_detail_riwayat_baju_customer_screen.dart';
+import 'package:jasa_jahit_aplication/src/customer/cek_detail_riwayat_celana_customer_screen.dart';
 
 class RiwayatCustomerScreen extends StatefulWidget {
   const RiwayatCustomerScreen({super.key});
@@ -82,6 +85,7 @@ class _RiwayatCustomerScreenState extends State<RiwayatCustomerScreen> {
                       final orders =
                           snapshot.data
                               ?.where((order) {
+                                // Tampilkan semua pesanan di riwayat (seperti sebelumnya)
                                 return true;
                               })
                               .where((order) {
@@ -315,10 +319,42 @@ class _RiwayatCustomerScreenState extends State<RiwayatCustomerScreen> {
                                         ],
                                       ),
                                       const SizedBox(height: 12),
-                                      // Hanya tampilkan tombol jika sudah ada bukti pembayaran
-                                      if (hasPaymentProof) ...[
-                                        Row(
-                                          children: [
+                                      // Tampilkan tombol berdasarkan status pesanan
+                                      Row(
+                                        children: [
+                                          // Tombol Cek Detail selalu tersedia
+                                          Expanded(
+                                            child: ElevatedButton.icon(
+                                              style: ElevatedButton.styleFrom(
+                                                backgroundColor: Colors.blue,
+                                                shape: RoundedRectangleBorder(
+                                                  borderRadius:
+                                                      BorderRadius.circular(8),
+                                                ),
+                                                padding:
+                                                    const EdgeInsets.symmetric(
+                                                      vertical: 12,
+                                                    ),
+                                              ),
+                                              icon: const Icon(
+                                                Icons.visibility,
+                                                color: Colors.white,
+                                              ),
+                                              label: const Text(
+                                                'Cek Detail',
+                                                style: TextStyle(
+                                                  color: Colors.white,
+                                                  fontWeight: FontWeight.bold,
+                                                ),
+                                              ),
+                                              onPressed: () {
+                                                _handleDetail(order, firstItem);
+                                              },
+                                            ),
+                                          ),
+                                          const SizedBox(width: 8),
+                                          // Tombol Pesan Lagi hanya untuk pesanan yang sudah selesai
+                                          if (hasPaymentProof) ...[
                                             Expanded(
                                               child: ElevatedButton.icon(
                                                 style: ElevatedButton.styleFrom(
@@ -356,11 +392,13 @@ class _RiwayatCustomerScreenState extends State<RiwayatCustomerScreen> {
                                                 },
                                               ),
                                             ),
-                                            const SizedBox(width: 8),
+                                          ] else ...[
+                                            // Tombol Lanjutkan Pembayaran untuk pesanan yang belum dibayar
                                             Expanded(
                                               child: ElevatedButton.icon(
                                                 style: ElevatedButton.styleFrom(
-                                                  backgroundColor: Colors.blue,
+                                                  backgroundColor:
+                                                      Colors.orange,
                                                   shape: RoundedRectangleBorder(
                                                     borderRadius:
                                                         BorderRadius.circular(
@@ -373,18 +411,18 @@ class _RiwayatCustomerScreenState extends State<RiwayatCustomerScreen> {
                                                       ),
                                                 ),
                                                 icon: const Icon(
-                                                  Icons.visibility,
+                                                  Icons.payment,
                                                   color: Colors.white,
                                                 ),
                                                 label: const Text(
-                                                  'Detail',
+                                                  'Lanjutkan Pembayaran',
                                                   style: TextStyle(
                                                     color: Colors.white,
                                                     fontWeight: FontWeight.bold,
                                                   ),
                                                 ),
                                                 onPressed: () {
-                                                  _handleDetail(
+                                                  _handleLanjutkanPembayaran(
                                                     order,
                                                     firstItem,
                                                   );
@@ -392,14 +430,16 @@ class _RiwayatCustomerScreenState extends State<RiwayatCustomerScreen> {
                                               ),
                                             ),
                                           ],
-                                        ),
-                                      ] else ...[
-                                        // Tampilkan pesan jika belum ada bukti pembayaran
+                                        ],
+                                      ),
+                                      // Pesan informasi untuk pesanan yang belum dibayar
+                                      if (!hasPaymentProof) ...[
+                                        const SizedBox(height: 12),
                                         Container(
                                           width: double.infinity,
                                           padding: const EdgeInsets.symmetric(
-                                            vertical: 12,
-                                            horizontal: 16,
+                                            vertical: 8,
+                                            horizontal: 12,
                                           ),
                                           decoration: BoxDecoration(
                                             color: Colors.orange.withOpacity(
@@ -419,7 +459,7 @@ class _RiwayatCustomerScreenState extends State<RiwayatCustomerScreen> {
                                               Icon(
                                                 Icons.info_outline,
                                                 color: Colors.orange,
-                                                size: 20,
+                                                size: 16,
                                               ),
                                               const SizedBox(width: 8),
                                               Expanded(
@@ -427,7 +467,7 @@ class _RiwayatCustomerScreenState extends State<RiwayatCustomerScreen> {
                                                   'Selesaikan pembayaran untuk dapat memesan lagi',
                                                   style: TextStyle(
                                                     color: Colors.orange,
-                                                    fontSize: 12,
+                                                    fontSize: 11,
                                                     fontFamily: 'SF Pro Text',
                                                   ),
                                                 ),
@@ -461,7 +501,7 @@ class _RiwayatCustomerScreenState extends State<RiwayatCustomerScreen> {
     Map<dynamic, dynamic> firstItem,
     String userId,
   ) async {
-    print('DEBUG: Button Pesan Lagi ditekan');
+    print('Button Pesan Lagi ditekan');
     try {
       // Tentukan tipe pesanan untuk navigasi yang tepat
       final orderType = firstItem['orderType'] ?? '';
@@ -480,10 +520,10 @@ class _RiwayatCustomerScreenState extends State<RiwayatCustomerScreen> {
       final estimatedSize = order.estimatedSize ?? 'M';
       final isCustomSize = order.isCustomSize ?? false;
 
-      print('DEBUG: orderType = $orderType');
-      print('DEBUG: productModel = $productModel');
-      print('DEBUG: price = $price');
-      print('DEBUG: firstItem = $firstItem');
+      print('orderType = $orderType');
+      print('productModel = $productModel');
+      print('price = $price');
+      print('firstItem = $firstItem');
 
       // Validasi data
       if (orderType.isEmpty) {
@@ -524,27 +564,32 @@ class _RiwayatCustomerScreenState extends State<RiwayatCustomerScreen> {
         selectedKain: fabric,
       );
 
-      print('DEBUG: Order baru dibuat: ${newOrder.id}');
+      print('Order baru dibuat: ${newOrder.id}');
 
       // Simpan order terlebih dahulu
       await FirestoreService().saveOrder(newOrder);
 
-      print('DEBUG: Order berhasil disimpan');
+      print('Order berhasil disimpan');
 
       // Navigasi ke screen pembayaran berdasarkan tipe pesanan
       if (orderType == 'Baju') {
         Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (context) => PembayaranBajuCustomerScreen(order: newOrder),
+            builder: (context) => PembayaranBajuCustomerScreen(
+              order: newOrder,
+              sourcePage: 'riwayat', // Tambah parameter asal halaman
+            ),
           ),
         );
       } else if (orderType == 'Celana') {
         Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (context) =>
-                PembayaranCelanaCustomerScreen(order: newOrder),
+            builder: (context) => PembayaranCelanaCustomerScreen(
+              order: newOrder,
+              sourcePage: 'riwayat', // Tambah parameter asal halaman
+            ),
           ),
         );
       } else {
@@ -563,6 +608,7 @@ class _RiwayatCustomerScreenState extends State<RiwayatCustomerScreen> {
               ),
               selectedSize: firstItem['size'] ?? 'L',
               firestoreService: FirestoreService(),
+              sourcePage: 'riwayat', // Tambah parameter asal halaman
             ),
           ),
         );
@@ -579,7 +625,7 @@ class _RiwayatCustomerScreenState extends State<RiwayatCustomerScreen> {
         );
       }
     } catch (e) {
-      print('DEBUG: Error dalam Pesan Lagi: $e');
+      print('Error dalam Pesan Lagi: $e');
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
@@ -594,52 +640,75 @@ class _RiwayatCustomerScreenState extends State<RiwayatCustomerScreen> {
   void _handleDetail(order_model.Order order, Map<dynamic, dynamic> firstItem) {
     // Navigasi ke detail pesanan berdasarkan tipe
     final orderType = firstItem['orderType'] ?? '';
-    final price =
-        order.estimatedPrice?.toDouble() ??
-        order.totalPrice ??
-        firstItem['price'] ??
-        0;
 
     if (orderType == 'Baju') {
       Navigator.push(
         context,
         MaterialPageRoute(
-          builder: (context) => CekDetailPesananBajuScreen(order: order),
+          builder: (context) =>
+              CekDetailRiwayatBajuCustomerScreen(order: order),
         ),
       );
     } else if (orderType == 'Celana') {
       Navigator.push(
         context,
         MaterialPageRoute(
-          builder: (context) => CekDetailPesananCelanaScreen(order: order),
+          builder: (context) =>
+              CekDetailRiwayatCelanaCustomerScreen(order: order),
         ),
       );
     } else {
-      // Untuk model, tampilkan dialog detail
-      showDialog(
-        context: context,
-        builder: (context) => AlertDialog(
-          title: Text('Detail Pesanan Model'),
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text('Model: ${firstItem['model'] ?? '-'}'),
-              Text('Kategori: ${firstItem['category'] ?? '-'}'),
-              Text('Size: ${firstItem['size'] ?? '-'}'),
-              Text('Harga: Rp ${_formatCurrency(price)}'),
-              if (order.paymentProofUrl != null) ...[
-                const SizedBox(height: 8),
-                Text('Status: Pembayaran Selesai'),
-              ],
-            ],
+      // Untuk model, gunakan screen detail yang baru dan lebih baik
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => CekDetailPesananModelCustomerScreen(
+            order: order,
+            firstItem: firstItem,
           ),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.pop(context),
-              child: const Text('Tutup'),
+        ),
+      );
+    }
+  }
+
+  void _handleLanjutkanPembayaran(
+    order_model.Order order,
+    Map<dynamic, dynamic> firstItem,
+  ) {
+    // Navigasi ke screen pembayaran berdasarkan tipe pesanan
+    final orderType = firstItem['orderType'] ?? '';
+
+    if (orderType == 'Baju') {
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => PembayaranBajuCustomerScreen(order: order),
+        ),
+      );
+    } else if (orderType == 'Celana') {
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => PembayaranCelanaCustomerScreen(order: order),
+        ),
+      );
+    } else {
+      // Untuk model, gunakan screen model
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => PembayaranModelCustomerScreen(
+            product: Product(
+              id: 'reorder_${DateTime.now().millisecondsSinceEpoch}',
+              name: firstItem['model'] ?? 'Model',
+              description: 'Pesanan ulang dari riwayat',
+              price: firstItem['price'] ?? 0,
+              imagePath: 'assets/images/default_product.jpg',
+              category: orderType,
             ),
-          ],
+            selectedSize: firstItem['size'] ?? 'L',
+            firestoreService: FirestoreService(),
+          ),
         ),
       );
     }

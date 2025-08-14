@@ -14,18 +14,21 @@ import 'berhasil_pesan_model_customer_screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:jasa_jahit_aplication/Core/provider/auth_provider.dart'
     as app_auth;
+import 'home_customer_screen.dart';
 
 class PembayaranModelCustomerScreen extends StatefulWidget {
   final Product product;
   final String selectedSize;
-  final FirestoreService _firestoreService;
+  final FirestoreService firestoreService;
+  final String? sourcePage; // Tambah parameter untuk tracking asal halaman
 
   const PembayaranModelCustomerScreen({
     super.key,
     required this.product,
     required this.selectedSize,
-    required FirestoreService firestoreService,
-  }) : _firestoreService = firestoreService;
+    required this.firestoreService,
+    this.sourcePage, // Parameter opsional
+  });
 
   @override
   State<PembayaranModelCustomerScreen> createState() =>
@@ -150,7 +153,45 @@ class _PembayaranModelCustomerScreenState
             Icons.arrow_back,
             color: isDark ? Colors.white : Colors.black,
           ),
-          onPressed: () => Navigator.pop(context),
+          onPressed: () {
+            // Navigasi cerdas berdasarkan asal halaman
+            switch (widget.sourcePage) {
+              case 'riwayat':
+                // Dari "Pesan Lagi" di riwayat, kembali ke riwayat
+                Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) =>
+                        const HomeCustomerScreen(initialIndex: 3),
+                  ),
+                );
+                break;
+              case 'home':
+                // Dari pembelian di home, kembali ke home
+                Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) =>
+                        const HomeCustomerScreen(initialIndex: 0),
+                  ),
+                );
+                break;
+              case 'multi_order':
+                // Dari multi order, kembali ke halaman input ukuran (tab Pesan)
+                Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) =>
+                        const HomeCustomerScreen(initialIndex: 1),
+                  ),
+                );
+                break;
+              default:
+                // Default: kembali ke halaman sebelumnya
+                Navigator.pop(context);
+                break;
+            }
+          },
         ),
         title: Text(
           'Pembayaran Model',
@@ -198,7 +239,7 @@ class _PembayaranModelCustomerScreenState
                   Row(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      // Gambar produk
+                      // Icon belanja
                       Container(
                         width: 70,
                         height: 70,
@@ -206,28 +247,11 @@ class _PembayaranModelCustomerScreenState
                           color: isDark ? Colors.grey[700] : Colors.grey[400],
                           borderRadius: BorderRadius.circular(8),
                         ),
-                        child: ClipRRect(
-                          borderRadius: BorderRadius.circular(8),
-                          child: Container(
-                            color: isDark ? Colors.grey[800] : Colors.grey[100],
-                            child: Image.asset(
-                              widget.product.imagePath,
-                              fit: BoxFit.contain,
-                              errorBuilder: (context, error, stackTrace) {
-                                return Center(
-                                  child: Text(
-                                    'Gambar',
-                                    textAlign: TextAlign.center,
-                                    style: TextStyle(
-                                      fontSize: 13,
-                                      color: isDark
-                                          ? Colors.white70
-                                          : Colors.black54,
-                                    ),
-                                  ),
-                                );
-                              },
-                            ),
+                        child: Center(
+                          child: Icon(
+                            Icons.shopping_bag,
+                            size: 32,
+                            color: isDark ? Colors.white70 : Colors.black54,
                           ),
                         ),
                       ),
@@ -533,36 +557,31 @@ class _PembayaranModelCustomerScreenState
                     );
 
                     // Simpan order terlebih dahulu
-                    final orderDoc = await widget._firestoreService.saveOrder(
+                    final orderDoc = await widget.firestoreService.saveOrder(
                       order,
                     );
 
+                    print('🔍 DEBUG PembayaranModelCustomerScreen:');
+                    print('   - orderDoc.id: ${orderDoc.id}');
+                    print('   - order.id (sebelum): ${order.id}');
+
                     // Upload bukti pembayaran
-                    final paymentProofUrl = await widget._firestoreService
+                    final paymentProofUrl = await widget.firestoreService
                         .uploadPaymentProof(_selectedFile!, orderDoc.id);
 
                     // Update order dengan URL bukti pembayaran
-                    await widget._firestoreService.updateOrderWithPaymentProof(
+                    await widget.firestoreService.updateOrderWithPaymentProof(
                       orderDoc.id,
                       paymentProofUrl,
                       _fileName ?? 'bukti_pembayaran.jpg',
                     );
 
                     // Kirim notifikasi ke admin
-                    await NotificationService.sendModelPurchaseNotification(
-                      customerName: customerData['name'] ?? 'Customer',
-                      productName: widget.product.name,
-                      orderId: orderDoc.id,
-                      price: widget.product.price,
-                    );
-
-                    // Tambahkan notifikasi ke Firestore untuk admin
                     await FirebaseFirestore.instance
                         .collection('notifications')
                         .add({
                           'title': 'Pesanan Baru',
-                          'body':
-                              '${customerData['name'] ?? 'Customer'} telah membuat pesanan ${widget.product.name} seharga Rp ${widget.product.price.toStringAsFixed(0)}',
+                          'body': 'Ada pesanan baru yang memerlukan konfirmasi',
                           'orderId': orderDoc.id,
                           'customerId':
                               FirebaseAuth.instance.currentUser?.uid ??
@@ -578,11 +597,34 @@ class _PembayaranModelCustomerScreenState
                     // Tutup loading dialog
                     Navigator.pop(context);
 
+                    // Buat order baru dengan ID yang sudah didapatkan dari Firebase
+                    final updatedOrder = order_model.Order(
+                      id: orderDoc.id,
+                      userId: order.userId,
+                      userName: order.userName,
+                      customerName: order.customerName,
+                      customerAddress: order.customerAddress,
+                      items: order.items,
+                      status: order.status,
+                      orderDate: order.orderDate,
+                      totalPrice: order.totalPrice,
+                      paymentProofUrl: paymentProofUrl,
+                      paymentProofFileName: _fileName ?? 'bukti_pembayaran.jpg',
+                      estimatedPrice: order.estimatedPrice,
+                      estimatedSize: order.estimatedSize,
+                      isCustomSize: order.isCustomSize,
+                      selectedKain: order.selectedKain,
+                    );
+
+                    print('   - updatedOrder.id: ${updatedOrder.id}');
+                    print('   - updatedOrder.userId: ${updatedOrder.userId}');
+
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (context) =>
-                            BerhasilPesanModelCustomerScreen(order: order),
+                        builder: (context) => BerhasilPesanModelCustomerScreen(
+                          order: updatedOrder,
+                        ),
                       ),
                     );
                   } catch (e) {

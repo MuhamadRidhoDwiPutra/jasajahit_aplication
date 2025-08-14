@@ -56,6 +56,264 @@ class _RiwayatTransaksiAdminScreenState
     }
   }
 
+  // Fungsi pencarian yang lebih canggih
+  List<QueryDocumentSnapshot> _filterOrders(
+    List<QueryDocumentSnapshot> docs,
+    String query,
+  ) {
+    if (query.isEmpty) return docs;
+
+    return docs.where((doc) {
+      final data = doc.data() as Map<String, dynamic>;
+      final searchTerm = query.toLowerCase();
+
+      final userName = (data['userName'] as String? ?? '').toLowerCase();
+      final customerName = (data['customerName'] as String? ?? '')
+          .toLowerCase();
+      final email = (data['email'] as String? ?? '').toLowerCase();
+      final orderId = doc.id.toLowerCase();
+      final status = (data['status'] as String? ?? '').toLowerCase();
+
+      return userName.contains(searchTerm) ||
+          customerName.contains(searchTerm) ||
+          email.contains(searchTerm) ||
+          orderId.contains(searchTerm) ||
+          status.contains(searchTerm);
+    }).toList();
+  }
+
+  Widget _buildResultsList(
+    List<QueryDocumentSnapshot> filteredDocs,
+    bool isDark,
+  ) {
+    if (filteredDocs.isEmpty) {
+      return Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(
+              searchQuery.isNotEmpty ? Icons.search_off : Icons.history,
+              size: 64,
+              color: isDark ? Colors.grey[600] : Colors.grey[400],
+            ),
+            const SizedBox(height: 16),
+            Text(
+              searchQuery.isNotEmpty
+                  ? 'Tidak ada transaksi ditemukan'
+                  : 'Belum ada transaksi',
+              style: TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.w600,
+                color: isDark ? Colors.white : Colors.black,
+              ),
+            ),
+            if (searchQuery.isNotEmpty) ...[
+              const SizedBox(height: 8),
+              Text(
+                'Coba ubah kata kunci pencarian',
+                style: TextStyle(
+                  fontSize: 14,
+                  color: isDark ? Colors.white70 : Colors.grey[600],
+                ),
+                textAlign: TextAlign.center,
+              ),
+            ],
+          ],
+        ),
+      );
+    }
+
+    return ListView.builder(
+      padding: const EdgeInsets.all(16),
+      itemCount: filteredDocs.length,
+      itemBuilder: (context, index) {
+        final order = filteredDocs[index];
+        final orderData = order.data() as Map<String, dynamic>;
+
+        return FutureBuilder<Map<String, String>>(
+          future: _getCustomerData(orderData['userId'] ?? ''),
+          builder: (context, customerSnapshot) {
+            final customerData =
+                customerSnapshot.data ??
+                {
+                  'name':
+                      orderData['customerName'] ??
+                      orderData['userName'] ??
+                      'Tanpa Nama',
+                  'username': orderData['userName'] ?? 'Tanpa Username',
+                  'address':
+                      orderData['customerAddress'] ?? 'Alamat belum diisi',
+                };
+
+            return Card(
+              color: isDark ? const Color(0xFF2A2A2A) : Colors.white,
+              elevation: 3,
+              margin: const EdgeInsets.only(bottom: 16),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(16),
+              ),
+              child: Padding(
+                padding: const EdgeInsets.all(16),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Flexible(
+                          child: Text(
+                            'Kode: ${order.id}',
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 16,
+                              color: isDark ? Colors.white : Colors.black,
+                            ),
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ),
+                        Container(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 12,
+                            vertical: 6,
+                          ),
+                          decoration: BoxDecoration(
+                            color: const Color(0xFFDE8500).withOpacity(0.1),
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          child: Text(
+                            orderData['status'] ?? 'N/A',
+                            style: const TextStyle(
+                              color: Color(0xFFDE8500),
+                              fontWeight: FontWeight.w500,
+                              fontSize: 12,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                    Divider(
+                      color: isDark ? Colors.white24 : Colors.black12,
+                      height: 24,
+                    ),
+                    Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Container(
+                          width: 80,
+                          height: 80,
+                          decoration: BoxDecoration(
+                            color: const Color(0xFF8FBC8F).withOpacity(0.1),
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          child: Center(
+                            child: Icon(
+                              Icons.shopping_bag,
+                              size: 40,
+                              color: const Color(0xFF8FBC8F),
+                            ),
+                          ),
+                        ),
+                        const SizedBox(width: 16),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                'Nama Pelanggan',
+                                style: TextStyle(
+                                  color: isDark
+                                      ? Colors.white70
+                                      : Colors.grey[600],
+                                  fontSize: 12,
+                                ),
+                              ),
+                              Text(
+                                customerData['name'] ?? 'Tanpa Nama',
+                                style: TextStyle(
+                                  fontWeight: FontWeight.w500,
+                                  color: isDark ? Colors.white : Colors.black,
+                                ),
+                              ),
+                              const SizedBox(height: 8),
+                              Text(
+                                'Username',
+                                style: TextStyle(
+                                  color: isDark
+                                      ? Colors.white70
+                                      : Colors.grey[600],
+                                  fontSize: 12,
+                                ),
+                              ),
+                              Text(
+                                customerData['username'] ?? 'Tanpa Username',
+                                style: TextStyle(
+                                  fontWeight: FontWeight.w500,
+                                  color: isDark ? Colors.white : Colors.black,
+                                ),
+                              ),
+                              const SizedBox(height: 8),
+                              Text(
+                                'Alamat',
+                                style: TextStyle(
+                                  color: isDark
+                                      ? Colors.white70
+                                      : Colors.grey[600],
+                                  fontSize: 12,
+                                ),
+                              ),
+                              Text(
+                                customerData['address'] ?? 'Alamat belum diisi',
+                                style: TextStyle(
+                                  fontWeight: FontWeight.w500,
+                                  color: isDark ? Colors.white : Colors.black,
+                                ),
+                              ),
+                              const SizedBox(height: 8),
+                              Text(
+                                'Tanggal Pesan',
+                                style: TextStyle(
+                                  color: isDark
+                                      ? Colors.white70
+                                      : Colors.grey[600],
+                                  fontSize: 12,
+                                ),
+                              ),
+                              Text(
+                                _formatOrderDate(orderData['orderDate']),
+                                style: TextStyle(
+                                  fontWeight: FontWeight.w500,
+                                  color: isDark ? Colors.white : Colors.black,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 16),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: [
+                        Text(
+                          'Total: Rp ${(orderData['estimatedPrice'] ?? orderData['totalPrice'] ?? orderData['price'] ?? 0).toStringAsFixed(0)}',
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 16,
+                            color: isDark ? Colors.white : Colors.black,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+            );
+          },
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
@@ -63,18 +321,7 @@ class _RiwayatTransaksiAdminScreenState
       backgroundColor: isDark
           ? const Color(0xFF1A1A1A)
           : const Color(0xFF8FBC8F),
-      appBar: AppBar(
-        backgroundColor: isDark ? const Color(0xFF2A2A2A) : Colors.white,
-        elevation: 1,
-        title: Text(
-          'Riwayat Transaksi',
-          style: TextStyle(
-            fontWeight: FontWeight.bold,
-            color: isDark ? Colors.white : Colors.black,
-          ),
-        ),
-        iconTheme: const IconThemeData(color: Color(0xFFDE8500)),
-      ),
+      appBar: AppBar(iconTheme: const IconThemeData(color: Color(0xFFDE8500))),
       body: Column(
         children: [
           Padding(
@@ -82,36 +329,36 @@ class _RiwayatTransaksiAdminScreenState
               horizontal: 16.0,
               vertical: 8.0,
             ),
-            child: Row(
+            child: Column(
               children: [
-                Expanded(
-                  child: TextField(
-                    style: TextStyle(
-                      color: isDark ? Colors.white : Colors.black,
+                // Search bar tanpa filter
+                TextField(
+                  style: TextStyle(color: isDark ? Colors.white : Colors.black),
+                  decoration: InputDecoration(
+                    hintText: 'Cari berdasarkan kode, nama, atau username...',
+                    hintStyle: TextStyle(
+                      color: isDark ? Colors.white70 : Colors.grey[400],
                     ),
-                    decoration: InputDecoration(
-                      hintText: 'Cari berdasarkan kode atau nama...',
-                      hintStyle: TextStyle(
-                        color: isDark ? Colors.white70 : Colors.grey[400],
-                      ),
-                      fillColor: isDark
-                          ? const Color(0xFF3A3A3A)
-                          : Colors.white,
-                      filled: true,
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(8),
-                        borderSide: BorderSide.none,
-                      ),
-                      contentPadding: const EdgeInsets.symmetric(
-                        horizontal: 12,
-                      ),
+                    fillColor: isDark ? const Color(0xFF3A3A3A) : Colors.white,
+                    filled: true,
+                    prefixIcon: Icon(
+                      Icons.search,
+                      color: isDark ? Colors.white70 : Colors.grey[600],
                     ),
-                    onChanged: (value) {
-                      setState(() {
-                        searchQuery = value.toLowerCase();
-                      });
-                    },
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(8),
+                      borderSide: BorderSide.none,
+                    ),
+                    contentPadding: const EdgeInsets.symmetric(
+                      horizontal: 12,
+                      vertical: 12,
+                    ),
                   ),
+                  onChanged: (value) {
+                    setState(() {
+                      searchQuery = value.toLowerCase();
+                    });
+                  },
                 ),
               ],
             ),
@@ -129,241 +376,95 @@ class _RiwayatTransaksiAdminScreenState
                   return const Center(child: CircularProgressIndicator());
                 }
 
-                var filteredDocs = snapshot.data!.docs.where((doc) {
-                  final data = doc.data() as Map<String, dynamic>;
-                  final userName = (data['userName'] as String? ?? '')
-                      .toLowerCase();
-                  final orderId = doc.id.toLowerCase();
-                  return userName.contains(searchQuery) ||
-                      orderId.contains(searchQuery);
-                }).toList();
+                // Filter data menggunakan fungsi pencarian yang baru
+                var filteredDocs = _filterOrders(
+                  snapshot.data!.docs,
+                  searchQuery,
+                );
 
-                if (filteredDocs.isEmpty) {
-                  return const Center(
-                    child: Text('Tidak ada transaksi ditemukan.'),
-                  );
-                }
-
-                return ListView.builder(
-                  padding: const EdgeInsets.all(16),
-                  itemCount: filteredDocs.length,
-                  itemBuilder: (context, index) {
-                    final order = filteredDocs[index];
-                    final orderData = order.data() as Map<String, dynamic>;
-
-                    return FutureBuilder<Map<String, String>>(
-                      future: _getCustomerData(orderData['userId'] ?? ''),
-                      builder: (context, customerSnapshot) {
-                        final customerData =
-                            customerSnapshot.data ??
-                            {
-                              'name':
-                                  orderData['customerName'] ??
-                                  orderData['userName'] ??
-                                  'Tanpa Nama',
-                              'username':
-                                  orderData['userName'] ?? 'Tanpa Username',
-                              'address':
-                                  orderData['customerAddress'] ??
-                                  'Alamat belum diisi',
-                            };
-
-                        return Card(
+                // Search info dan statistics
+                if (searchQuery.isNotEmpty) {
+                  return Column(
+                    children: [
+                      // Search info bar
+                      Container(
+                        margin: const EdgeInsets.symmetric(
+                          horizontal: 16,
+                          vertical: 8,
+                        ),
+                        padding: const EdgeInsets.all(12),
+                        decoration: BoxDecoration(
                           color: isDark
                               ? const Color(0xFF2A2A2A)
                               : Colors.white,
-                          elevation: 3,
-                          margin: const EdgeInsets.only(bottom: 16),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(16),
+                          borderRadius: BorderRadius.circular(8),
+                          border: Border.all(
+                            color: isDark ? Colors.white24 : Colors.grey[300]!,
                           ),
-                          child: Padding(
-                            padding: const EdgeInsets.all(16),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    Flexible(
-                                      child: Text(
-                                        'Kode: ${order.id}',
-                                        style: TextStyle(
-                                          fontWeight: FontWeight.bold,
-                                          fontSize: 16,
-                                          color: isDark
-                                              ? Colors.white
-                                              : Colors.black,
-                                        ),
-                                        overflow: TextOverflow.ellipsis,
-                                      ),
-                                    ),
-                                    Container(
-                                      padding: const EdgeInsets.symmetric(
-                                        horizontal: 12,
-                                        vertical: 6,
-                                      ),
-                                      decoration: BoxDecoration(
-                                        color: const Color(
-                                          0xFFDE8500,
-                                        ).withOpacity(0.1),
-                                        borderRadius: BorderRadius.circular(8),
-                                      ),
-                                      child: Text(
-                                        orderData['status'] ?? 'N/A',
-                                        style: const TextStyle(
-                                          color: Color(0xFFDE8500),
-                                          fontWeight: FontWeight.w500,
-                                          fontSize: 12,
-                                        ),
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                                Divider(
-                                  color: isDark
-                                      ? Colors.white24
-                                      : Colors.black12,
-                                  height: 24,
-                                ),
-                                Row(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Container(
-                                      width: 80,
-                                      height: 80,
-                                      decoration: BoxDecoration(
-                                        color: const Color(
-                                          0xFF8FBC8F,
-                                        ).withOpacity(0.1),
-                                        borderRadius: BorderRadius.circular(12),
-                                      ),
-                                      child: Center(
-                                        child: Text(
-                                          orderData['items']?[0]?['orderType'] ??
-                                              'Baju',
-                                          style: const TextStyle(
-                                            color: Color(0xFF8FBC8F),
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                    const SizedBox(width: 16),
-                                    Expanded(
-                                      child: Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
-                                          Text(
-                                            'Nama Pelanggan',
-                                            style: TextStyle(
-                                              color: isDark
-                                                  ? Colors.white70
-                                                  : Colors.grey[600],
-                                              fontSize: 12,
-                                            ),
-                                          ),
-                                          Text(
-                                            customerData['name'] ??
-                                                'Tanpa Nama',
-                                            style: TextStyle(
-                                              fontWeight: FontWeight.w500,
-                                              color: isDark
-                                                  ? Colors.white
-                                                  : Colors.black,
-                                            ),
-                                          ),
-                                          const SizedBox(height: 8),
-                                          Text(
-                                            'Username',
-                                            style: TextStyle(
-                                              color: isDark
-                                                  ? Colors.white70
-                                                  : Colors.grey[600],
-                                              fontSize: 12,
-                                            ),
-                                          ),
-                                          Text(
-                                            customerData['username'] ??
-                                                'Tanpa Username',
-                                            style: TextStyle(
-                                              fontWeight: FontWeight.w500,
-                                              color: isDark
-                                                  ? Colors.white
-                                                  : Colors.black,
-                                            ),
-                                          ),
-                                          const SizedBox(height: 8),
-                                          Text(
-                                            'Alamat',
-                                            style: TextStyle(
-                                              color: isDark
-                                                  ? Colors.white70
-                                                  : Colors.grey[600],
-                                              fontSize: 12,
-                                            ),
-                                          ),
-                                          Text(
-                                            customerData['address'] ??
-                                                'Alamat belum diisi',
-                                            style: TextStyle(
-                                              fontWeight: FontWeight.w500,
-                                              color: isDark
-                                                  ? Colors.white
-                                                  : Colors.black,
-                                            ),
-                                          ),
-                                          const SizedBox(height: 8),
-                                          Text(
-                                            'Tanggal Pesan',
-                                            style: TextStyle(
-                                              color: isDark
-                                                  ? Colors.white70
-                                                  : Colors.grey[600],
-                                              fontSize: 12,
-                                            ),
-                                          ),
-                                          Text(
-                                            _formatOrderDate(
-                                              orderData['orderDate'],
-                                            ),
-                                            style: TextStyle(
-                                              fontWeight: FontWeight.w500,
-                                              color: isDark
-                                                  ? Colors.white
-                                                  : Colors.black,
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                                const SizedBox(height: 16),
-                                Row(
-                                  mainAxisAlignment: MainAxisAlignment.end,
-                                  children: [
-                                    Text(
-                                      'Total: Rp ${(orderData['estimatedPrice'] ?? orderData['totalPrice'] ?? orderData['price'] ?? 0).toStringAsFixed(0)}',
-                                      style: TextStyle(
-                                        fontWeight: FontWeight.bold,
-                                        fontSize: 16,
-                                        color: isDark
-                                            ? Colors.white
-                                            : Colors.black,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ],
+                        ),
+                        child: Row(
+                          children: [
+                            Icon(
+                              Icons.search,
+                              size: 16,
+                              color: const Color(0xFFDE8500),
                             ),
-                          ),
-                        );
-                      },
-                    );
-                  },
-                );
+                            const SizedBox(width: 8),
+                            Expanded(
+                              child: Text(
+                                'Mencari: "$searchQuery"',
+                                style: TextStyle(
+                                  fontSize: 12,
+                                  color: isDark
+                                      ? Colors.white70
+                                      : Colors.grey[600],
+                                ),
+                              ),
+                            ),
+                            Container(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 8,
+                                vertical: 4,
+                              ),
+                              decoration: BoxDecoration(
+                                color: const Color(0xFFDE8500).withOpacity(0.1),
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                              child: Text(
+                                '${filteredDocs.length} hasil',
+                                style: TextStyle(
+                                  fontSize: 12,
+                                  color: const Color(0xFFDE8500),
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
+                            ),
+                            const SizedBox(width: 8),
+                            TextButton(
+                              onPressed: () {
+                                setState(() {
+                                  searchQuery = '';
+                                });
+                              },
+                              child: Text(
+                                'Clear',
+                                style: TextStyle(
+                                  color: const Color(0xFFDE8500),
+                                  fontSize: 12,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      // Results list
+                      Expanded(child: _buildResultsList(filteredDocs, isDark)),
+                    ],
+                  );
+                }
+
+                // Jika tidak ada search query, tampilkan semua data
+                return _buildResultsList(filteredDocs, isDark);
               },
             ),
           ),

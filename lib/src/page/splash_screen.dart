@@ -13,6 +13,7 @@ class _SplashScreenState extends State<SplashScreen>
     with SingleTickerProviderStateMixin {
   late AnimationController _controller;
   late Animation<double> _animation;
+  late Animation<double> _scaleAnimation;
 
   @override
   void initState() {
@@ -22,10 +23,12 @@ class _SplashScreenState extends State<SplashScreen>
       vsync: this,
     );
 
-    _animation = CurvedAnimation(
-      parent: _controller,
-      curve: Curves.easeInOut,
-    );
+    _animation = CurvedAnimation(parent: _controller, curve: Curves.easeInOut);
+
+    _scaleAnimation = Tween<double>(
+      begin: 0.8,
+      end: 1.0,
+    ).animate(CurvedAnimation(parent: _controller, curve: Curves.elasticOut));
 
     _controller.forward();
 
@@ -59,35 +62,38 @@ class _SplashScreenState extends State<SplashScreen>
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            // Logo or App Name
+            // Logo TSUMI TAILOR dari PNG
             FadeTransition(
               opacity: _animation,
-              child: Text(
-                'Jasa Jahit',
-                style: TextStyle(
-                  fontSize: 42,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.white,
-                  shadows: [
-                    Shadow(
-                      blurRadius: 10.0,
-                      color: Colors.black.withOpacity(0.3),
-                      offset: const Offset(3.0, 3.0),
+              child: ScaleTransition(
+                scale: _scaleAnimation,
+                child: Column(
+                  children: [
+                    // Logo PNG tanpa background putih
+                    SizedBox(
+                      width: 280,
+                      height: 280,
+                      child: Image.asset(
+                        'assets/images/tsumi_tailor_logo_splash.png',
+                        fit: BoxFit.contain,
+                        filterQuality: FilterQuality.high,
+                        colorBlendMode: BlendMode.multiply,
+                      ),
                     ),
                   ],
                 ),
               ),
             ),
-            const SizedBox(height: 30),
+            const SizedBox(height: 40),
             // Loading Indicator
-            ScaleTransition(
-              scale: _animation,
+            FadeTransition(
+              opacity: _animation,
               child: SizedBox(
-                width: 60,
-                height: 60,
+                width: 50,
+                height: 50,
                 child: const CircularProgressIndicator(
                   valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
-                  strokeWidth: 5,
+                  strokeWidth: 4,
                 ),
               ),
             ),

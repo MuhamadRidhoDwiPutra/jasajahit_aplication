@@ -433,8 +433,8 @@ class _HomeCustomerContentState extends State<_HomeCustomerContent> {
     return _products.where((product) {
       final query = _searchQuery.toLowerCase();
       return product.name.toLowerCase().contains(query) ||
-             product.description.toLowerCase().contains(query) ||
-             product.category.toLowerCase().contains(query);
+          product.description.toLowerCase().contains(query) ||
+          product.category.toLowerCase().contains(query);
     }).toList();
   }
 
@@ -487,7 +487,7 @@ class _HomeCustomerContentState extends State<_HomeCustomerContent> {
                   controller: _searchController,
                   style: TextStyle(color: isDark ? Colors.white : Colors.black),
                   decoration: InputDecoration(
-                    hintText: _searchQuery.isEmpty 
+                    hintText: _searchQuery.isEmpty
                         ? 'Cari model pakaian... (nama, kategori, deskripsi)'
                         : 'Mencari "$_searchQuery"...',
                     hintStyle: TextStyle(
@@ -498,7 +498,10 @@ class _HomeCustomerContentState extends State<_HomeCustomerContent> {
                     border: InputBorder.none,
                     suffixIcon: _searchQuery.isNotEmpty
                         ? IconButton(
-                            icon: const Icon(Icons.clear, color: Color(0xFFDE8500)),
+                            icon: const Icon(
+                              Icons.clear,
+                              color: Color(0xFFDE8500),
+                            ),
                             onPressed: () {
                               setState(() {
                                 _searchQuery = '';
@@ -524,13 +527,14 @@ class _HomeCustomerContentState extends State<_HomeCustomerContent> {
             fontFamily: 'SF Pro Display',
           ),
         ),
-        const SizedBox(height: 16),
+        const SizedBox(height: 20),
         SingleChildScrollView(
           scrollDirection: Axis.horizontal,
           child: Row(
             children: [
               _CategoryCard(
-                icon: FontAwesomeIcons.shirt, // Baju - ikon baju yang jelas
+                icon: null,
+                imagePath: 'assets/images/logo_baju.png',
                 label: 'Baju',
                 onTap: () {
                   showDialog(
@@ -552,8 +556,8 @@ class _HomeCustomerContentState extends State<_HomeCustomerContent> {
               ),
               const SizedBox(width: 12),
               _CategoryCard(
-                icon: FontAwesomeIcons
-                    .personWalking, // Celana - ikon orang berjalan untuk celana
+                icon: null,
+                imagePath: 'assets/images/logo_celana.png',
                 label: 'Celana',
                 onTap: () {
                   showDialog(
@@ -573,10 +577,10 @@ class _HomeCustomerContentState extends State<_HomeCustomerContent> {
                   );
                 },
               ),
-              const SizedBox(width: 12),
+              const SizedBox(width: 15),
               _CategoryCard(
-                icon: FontAwesomeIcons
-                    .personDress, // Rok - ikon wanita dengan gaun untuk rok
+                icon: null,
+                imagePath: 'assets/images/logo_ok.png',
                 label: 'Rok',
                 onTap: () {
                   showDialog(
@@ -598,8 +602,8 @@ class _HomeCustomerContentState extends State<_HomeCustomerContent> {
               ),
               const SizedBox(width: 12),
               _CategoryCard(
-                icon: FontAwesomeIcons
-                    .userTie, // Jas - ikon pria dengan dasi untuk jas
+                icon: null,
+                imagePath: 'assets/images/logo_jaz.png',
                 label: 'Jas',
                 onTap: () {
                   showDialog(
@@ -637,7 +641,10 @@ class _HomeCustomerContentState extends State<_HomeCustomerContent> {
             ),
             if (_searchQuery.isNotEmpty)
               Container(
-                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 12,
+                  vertical: 6,
+                ),
                 decoration: BoxDecoration(
                   color: const Color(0xFFDE8500).withOpacity(0.1),
                   borderRadius: BorderRadius.circular(12),
@@ -709,14 +716,16 @@ class _HomeCustomerContentState extends State<_HomeCustomerContent> {
 
 class _CategoryCard extends StatelessWidget {
   final dynamic
-  icon; // Gunakan dynamic untuk mendukung FontAwesome dan Material Icons
+  icon; // Gunakan dynamic untuk mendukung FontAwesome, Material Icons, dan Image
   final String label;
   final VoidCallback onTap;
+  final String? imagePath; // Tambahkan path untuk gambar
 
   const _CategoryCard({
     required this.icon,
     required this.label,
     required this.onTap,
+    this.imagePath,
     super.key,
   });
 
@@ -726,8 +735,8 @@ class _CategoryCard extends StatelessWidget {
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        width: 80,
-        padding: const EdgeInsets.symmetric(vertical: 12),
+        width: 100,
+        padding: const EdgeInsets.symmetric(vertical: 16),
         decoration: BoxDecoration(
           color: isDark ? const Color(0xFF2A2A2A) : Colors.white,
           borderRadius: BorderRadius.circular(16),
@@ -745,12 +754,19 @@ class _CategoryCard extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           children: [
             Container(
-              padding: const EdgeInsets.all(12),
+              padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
                 color: const Color(0xFFDE8500).withOpacity(0.1),
                 shape: BoxShape.circle,
               ),
-              child: Icon(icon, color: const Color(0xFFDE8500), size: 24),
+              child: imagePath != null
+                  ? Image.asset(
+                      imagePath!,
+                      width: 40,
+                      height: 40,
+                      fit: BoxFit.contain,
+                    )
+                  : Icon(icon, color: const Color(0xFFDE8500), size: 40),
             ),
             const SizedBox(height: 8),
             Text(
@@ -914,6 +930,8 @@ class _ModelCard extends StatelessWidget {
                                           product: product,
                                           selectedSize: 'L',
                                           firestoreService: FirestoreService(),
+                                          sourcePage:
+                                              'home', // Tambah parameter asal halaman
                                         ),
                                   ),
                                 );
@@ -1073,6 +1091,8 @@ class _ModelCard extends StatelessWidget {
                                         product: product,
                                         selectedSize: 'L',
                                         firestoreService: FirestoreService(),
+                                        sourcePage:
+                                            'home', // Tambah parameter asal halaman
                                       ),
                                 ),
                               );

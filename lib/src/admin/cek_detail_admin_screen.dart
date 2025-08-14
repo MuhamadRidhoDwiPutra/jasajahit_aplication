@@ -110,7 +110,8 @@ class CekDetailAdminScreen extends StatelessWidget {
                     ),
                     _DetailRow(
                       label: 'Total Harga',
-                      value: 'Rp ${order.estimatedPrice?.toStringAsFixed(0) ?? order.totalPrice?.toStringAsFixed(0) ?? order.price.toStringAsFixed(0)}',
+                      value:
+                          'Rp ${order.estimatedPrice?.toStringAsFixed(0) ?? order.totalPrice?.toStringAsFixed(0) ?? order.price.toStringAsFixed(0)}',
                       isDark: isDark,
                     ),
                     _DetailRow(

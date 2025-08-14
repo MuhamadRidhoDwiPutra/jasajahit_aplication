@@ -18,8 +18,13 @@ import 'package:jasa_jahit_aplication/Core/provider/auth_provider.dart'
 class PembayaranCelanaCustomerScreen extends StatefulWidget {
   final order_model.Order order;
   final FirestoreService _firestoreService = FirestoreService();
+  final String? sourcePage; // Tambah parameter untuk tracking asal halaman
 
-  PembayaranCelanaCustomerScreen({super.key, required this.order});
+  PembayaranCelanaCustomerScreen({
+    super.key,
+    required this.order,
+    this.sourcePage, // Parameter opsional
+  });
 
   @override
   State<PembayaranCelanaCustomerScreen> createState() =>
@@ -128,6 +133,15 @@ class _PembayaranCelanaCustomerScreenState
     }
   }
 
+  // Method untuk menghitung total harga dari semua item
+  double _calculateTotalPrice() {
+    double total = 0;
+    for (var item in widget.order.items) {
+      total += (item['price'] ?? 0).toDouble();
+    }
+    return total;
+  }
+
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
@@ -145,7 +159,45 @@ class _PembayaranCelanaCustomerScreenState
             Icons.arrow_back,
             color: isDark ? Colors.white : Colors.black,
           ),
-          onPressed: () => Navigator.pop(context),
+          onPressed: () {
+            // Navigasi cerdas berdasarkan asal halaman
+            switch (widget.sourcePage) {
+              case 'riwayat':
+                // Dari "Pesan Lagi" di riwayat, kembali ke riwayat
+                Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) =>
+                        const HomeCustomerScreen(initialIndex: 3),
+                  ),
+                );
+                break;
+              case 'home':
+                // Dari pembelian di home, kembali ke home
+                Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) =>
+                        const HomeCustomerScreen(initialIndex: 0),
+                  ),
+                );
+                break;
+              case 'multi_order':
+                // Dari multi order, kembali ke halaman input ukuran celana
+                Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) =>
+                        const HomeCustomerScreen(initialIndex: 1),
+                  ),
+                );
+                break;
+              default:
+                // Default: kembali ke halaman sebelumnya
+                Navigator.pop(context);
+                break;
+            }
+          },
         ),
         title: Text(
           'Daftar Pesanan',
@@ -194,7 +246,7 @@ class _PembayaranCelanaCustomerScreenState
                   Row(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      // Gambar pakaian
+                      // Icon belanja
                       Container(
                         width: 70,
                         height: 70,
@@ -203,13 +255,10 @@ class _PembayaranCelanaCustomerScreenState
                           borderRadius: BorderRadius.circular(8),
                         ),
                         child: Center(
-                          child: Text(
-                            'Gambar pakaian',
-                            textAlign: TextAlign.center,
-                            style: TextStyle(
-                              fontSize: 13,
-                              color: isDark ? Colors.white70 : Colors.black54,
-                            ),
+                          child: Icon(
+                            Icons.shopping_bag,
+                            size: 32,
+                            color: isDark ? Colors.white70 : Colors.black54,
                           ),
                         ),
                       ),
@@ -232,7 +281,7 @@ class _PembayaranCelanaCustomerScreenState
                               ),
                             ),
                             Text(
-                              'Total Harga:\nRp. ${widget.order.estimatedPrice?.toStringAsFixed(0) ?? widget.order.price.toStringAsFixed(0)}',
+                              'Total Harga:\nRp. ${_calculateTotalPrice().toStringAsFixed(0)}',
                               style: TextStyle(
                                 color: isDark ? Colors.white : Colors.black,
                               ),
@@ -468,6 +517,10 @@ class _PembayaranCelanaCustomerScreenState
                       widget.order,
                     );
 
+                    print('🔍 DEBUG PembayaranCelanaCustomerScreen:');
+                    print('   - orderDoc.id: ${orderDoc.id}');
+                    print('   - widget.order.id (sebelum): ${widget.order.id}');
+
                     // Upload bukti pembayaran
                     final paymentProofUrl = await widget._firestoreService
                         .uploadPaymentProof(_selectedFile!, orderDoc.id);
@@ -509,11 +562,33 @@ class _PembayaranCelanaCustomerScreenState
                     // Tutup loading dialog
                     Navigator.pop(context);
 
+                    // Buat order baru dengan ID yang sudah didapatkan dari Firebase
+                    final updatedOrder = order_model.Order(
+                      id: orderDoc.id,
+                      userId: widget.order.userId,
+                      userName: widget.order.userName,
+                      customerName: widget.order.customerName,
+                      customerAddress: widget.order.customerAddress,
+                      items: widget.order.items,
+                      status: widget.order.status,
+                      orderDate: widget.order.orderDate,
+                      totalPrice: widget.order.totalPrice,
+                      paymentProofUrl: paymentProofUrl,
+                      paymentProofFileName: _fileName ?? 'bukti_pembayaran.jpg',
+                      estimatedPrice: widget.order.estimatedPrice,
+                      estimatedSize: widget.order.estimatedSize,
+                      isCustomSize: widget.order.isCustomSize,
+                      selectedKain: widget.order.selectedKain,
+                    );
+
+                    print('   - updatedOrder.id: ${updatedOrder.id}');
+                    print('   - updatedOrder.userId: ${updatedOrder.userId}');
+
                     Navigator.push(
                       context,
                       MaterialPageRoute(
                         builder: (context) => BerhasilPesanCelanaCustomerScreen(
-                          order: widget.order,
+                          order: updatedOrder,
                         ),
                       ),
                     );

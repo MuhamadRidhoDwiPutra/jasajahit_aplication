@@ -587,106 +587,80 @@ class _ModelKainAdminScreenState extends State<ModelKainAdminScreen> {
     return Scaffold(
       backgroundColor: const Color(0xFF8FBC8F),
       appBar: AppBar(
-        title: const Text('Model Pakaian'),
+        title: const Text('Tambah kain'),
         backgroundColor: Colors.white,
         foregroundColor: Colors.black,
         elevation: 1,
+        actions: [
+          IconButton(
+            onPressed: () => _showKainDialog(),
+            icon: const Icon(Icons.add),
+            tooltip: 'Tambah Kain',
+            style: IconButton.styleFrom(
+              backgroundColor: const Color(0xFF8FBC8F),
+              foregroundColor: Colors.white,
+            ),
+          ),
+          const SizedBox(width: 8),
+        ],
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                const Text(
-                  'Data',
-                  style: TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.white,
-                  ),
-                ),
-                ElevatedButton.icon(
-                  onPressed: () => _showKainDialog(),
-                  icon: const Icon(Icons.add),
-                  label: const Text('Jata'),
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.white,
-                    foregroundColor: const Color(0xFF8FBC8F),
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 16),
-            Expanded(
-              child: StreamBuilder<List<KainModel>>(
-                stream: _firestoreService.getKainList(),
-                builder: (context, snapshot) {
-                  if (snapshot.connectionState == ConnectionState.waiting) {
-                    return const Center(child: CircularProgressIndicator());
-                  }
-                  if (snapshot.hasError) {
-                    return Center(child: Text('Error: ${snapshot.error}'));
-                  }
-                  final kainList = snapshot.data ?? [];
-                  if (kainList.isEmpty) {
-                    return const Center(
-                      child: Text(
-                        'Belum ada data kain',
-                        style: TextStyle(color: Colors.white),
-                      ),
-                    );
-                  }
-                  return ListView.builder(
-                    itemCount: kainList.length,
-                    itemBuilder: (context, index) {
-                      final kain = kainList[index];
-                      return Card(
-                        margin: const EdgeInsets.only(bottom: 8),
-                        child: ListTile(
-                          title: Text(
-                            kain.nama,
-                            style: const TextStyle(fontWeight: FontWeight.bold),
-                          ),
-                          subtitle: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text('Warna: ${kain.warna}'),
-                              Text('Harga: Rp ${kain.harga}'),
-                              Text('Kebutuhan: ${kain.kebutuhanMeter}m'),
-                              Text('Biaya Jahit: Rp ${kain.biayaJahitDasar}'),
-                            ],
-                          ),
-                          trailing: Row(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              IconButton(
-                                onPressed: () => _showKainDialog(kain: kain),
-                                icon: const Icon(
-                                  Icons.edit,
-                                  color: Colors.blue,
-                                ),
-                              ),
-                              IconButton(
-                                onPressed: () => _confirmDelete(kain),
-                                icon: const Icon(
-                                  Icons.delete,
-                                  color: Colors.red,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      );
-                    },
-                  );
-                },
+      body: StreamBuilder<List<KainModel>>(
+        stream: _firestoreService.getKainList(),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const Center(child: CircularProgressIndicator());
+          }
+          if (snapshot.hasError) {
+            return Center(child: Text('Error: ${snapshot.error}'));
+          }
+          final kainList = snapshot.data ?? [];
+          if (kainList.isEmpty) {
+            return const Center(
+              child: Text(
+                'Belum ada data kain',
+                style: TextStyle(color: Colors.white),
               ),
-            ),
-          ],
-        ),
+            );
+          }
+          return ListView.builder(
+            padding: const EdgeInsets.all(16.0),
+            itemCount: kainList.length,
+            itemBuilder: (context, index) {
+              final kain = kainList[index];
+              return Card(
+                margin: const EdgeInsets.only(bottom: 8),
+                child: ListTile(
+                  title: Text(
+                    kain.nama,
+                    style: const TextStyle(fontWeight: FontWeight.bold),
+                  ),
+                  subtitle: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text('Warna: ${kain.warna}'),
+                      Text('Harga: Rp ${kain.harga}'),
+                      Text('Kebutuhan: ${kain.kebutuhanMeter}m'),
+                      Text('Biaya Jahit: Rp ${kain.biayaJahitDasar}'),
+                    ],
+                  ),
+                  trailing: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      IconButton(
+                        onPressed: () => _showKainDialog(kain: kain),
+                        icon: const Icon(Icons.edit, color: Colors.blue),
+                      ),
+                      IconButton(
+                        onPressed: () => _confirmDelete(kain),
+                        icon: const Icon(Icons.delete, color: Colors.red),
+                      ),
+                    ],
+                  ),
+                ),
+              );
+            },
+          );
+        },
       ),
     );
   }

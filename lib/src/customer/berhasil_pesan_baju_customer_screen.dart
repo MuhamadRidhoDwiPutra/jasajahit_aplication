@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:jasa_jahit_aplication/src/model/order_model.dart';
 import 'home_customer_screen.dart';
 import 'package:provider/provider.dart';
@@ -15,12 +16,12 @@ class BerhasilPesanBajuCustomerScreen extends StatelessWidget {
     // Kirim notifikasi ke admin saat pesanan berhasil
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       print('🔄 Customer order completed, sending notification to admin...');
-      
+
       final notificationProvider = Provider.of<NotificationProvider>(
         context,
         listen: false,
       );
-      
+
       try {
         await notificationProvider.sendOrderNotificationToAdmin(
           orderId: order.id ?? 'N/A',
@@ -32,11 +33,13 @@ class BerhasilPesanBajuCustomerScreen extends StatelessWidget {
         // Show success message
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
-            content: Text('Pesanan berhasil! Notifikasi telah dikirim ke admin.'),
+            content: Text(
+              'Pesanan berhasil! Notifikasi telah dikirim ke admin.',
+            ),
             backgroundColor: Colors.green,
           ),
         );
-        
+
         print('✅ Notification sent successfully');
       } catch (e) {
         print('❌ Error sending notification: $e');
@@ -54,6 +57,14 @@ class BerhasilPesanBajuCustomerScreen extends StatelessWidget {
     final kodePesanan = order.id ?? 'N/A';
     final tanggalPesanan = order.orderDate.toDate();
     final estimasiHarga = order.estimatedPrice ?? 0;
+
+    // Debug print untuk memastikan data yang diterima
+    print('🔍 DEBUG BerhasilPesanBajuCustomerScreen:');
+    print('   - order.id: ${order.id}');
+    print('   - order.userId: ${order.userId}');
+    print('   - order.orderDate: ${order.orderDate}');
+    print('   - order.estimatedPrice: ${order.estimatedPrice}');
+    print('   - kodePesanan: $kodePesanan');
 
     return Scaffold(
       backgroundColor: isDark
@@ -83,27 +94,6 @@ class BerhasilPesanBajuCustomerScreen extends StatelessWidget {
                   ),
                   child: Row(
                     children: [
-                      Container(
-                        decoration: BoxDecoration(
-                          color: const Color(0xFFDE8500).withOpacity(0.1),
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                        child: IconButton(
-                          icon: const Icon(
-                            Icons.arrow_back_ios_new,
-                            color: Color(0xFFDE8500),
-                          ),
-                          onPressed: () {
-                            Navigator.pushReplacement(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) =>
-                                    const HomeCustomerScreen(),
-                              ),
-                            );
-                          },
-                        ),
-                      ),
                       Expanded(
                         child: Text(
                           'Pesanan Berhasil',
@@ -116,7 +106,6 @@ class BerhasilPesanBajuCustomerScreen extends StatelessWidget {
                           textAlign: TextAlign.center,
                         ),
                       ),
-                      const SizedBox(width: 48),
                     ],
                   ),
                 ),
@@ -179,8 +168,11 @@ class BerhasilPesanBajuCustomerScreen extends StatelessWidget {
                             const SizedBox(height: 24),
                             _DetailItem(
                               label: 'Kode Pesanan',
-                              value: kodePesanan,
+                              value: kodePesanan.isNotEmpty
+                                  ? kodePesanan
+                                  : 'Sedang diproses...',
                               icon: Icons.receipt_long,
+                              isCopyable: true,
                             ),
                             Divider(
                               height: 24,
@@ -265,11 +257,13 @@ class _DetailItem extends StatelessWidget {
   final String label;
   final String value;
   final IconData icon;
+  final bool isCopyable;
 
   const _DetailItem({
     required this.label,
     required this.value,
     required this.icon,
+    this.isCopyable = false,
   });
 
   @override
@@ -301,14 +295,39 @@ class _DetailItem extends StatelessWidget {
                 ),
               ),
               const SizedBox(height: 4),
-              Text(
-                value,
-                style: TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.w600,
-                  color: isDark ? Colors.white : Colors.black,
-                  fontFamily: 'SF Pro Display',
-                ),
+              Row(
+                children: [
+                  Expanded(
+                    child: Text(
+                      value,
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w600,
+                        color: isDark ? Colors.white : Colors.black,
+                        fontFamily: 'SF Pro Display',
+                      ),
+                    ),
+                  ),
+                  if (isCopyable)
+                    IconButton(
+                      onPressed: () {
+                        Clipboard.setData(ClipboardData(text: value));
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content: Text('Kode pesanan berhasil disalin!'),
+                            backgroundColor: Colors.green,
+                            duration: const Duration(seconds: 2),
+                          ),
+                        );
+                      },
+                      icon: Icon(
+                        Icons.copy,
+                        color: const Color(0xFFDE8500),
+                        size: 20,
+                      ),
+                      tooltip: 'Salin kode pesanan',
+                    ),
+                ],
               ),
             ],
           ),

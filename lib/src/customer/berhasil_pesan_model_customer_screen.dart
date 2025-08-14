@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:jasa_jahit_aplication/src/model/order_model.dart';
 import 'package:jasa_jahit_aplication/src/theme/dynamic_theme.dart';
 import 'package:jasa_jahit_aplication/src/theme/theme_switcher.dart';
@@ -11,9 +12,29 @@ class BerhasilPesanModelCustomerScreen extends StatelessWidget {
 
   const BerhasilPesanModelCustomerScreen({super.key, required this.order});
 
+  // Method untuk menghitung total harga dari semua item
+  double _calculateTotalPrice() {
+    double total = 0;
+    for (var item in order.items) {
+      total += (item['price'] ?? 0).toDouble();
+    }
+    return total;
+  }
+
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
+    // Ambil data dari order
+    final kodePesanan = order.id ?? 'N/A';
+
+    // Debug print untuk memastikan data yang diterima
+    print('🔍 DEBUG BerhasilPesanModelCustomerScreen:');
+    print('   - order.id: ${order.id}');
+    print('   - order.userId: ${order.userId}');
+    print('   - order.orderDate: ${order.orderDate}');
+    print('   - order.estimatedPrice: ${order.estimatedPrice}');
+    print('   - kodePesanan: $kodePesanan');
+
     return Scaffold(
       backgroundColor: isDark
           ? const Color(0xFF1A1A1A)
@@ -96,55 +117,117 @@ class BerhasilPesanModelCustomerScreen extends StatelessWidget {
                     ...order.items.map(
                       (item) => Padding(
                         padding: const EdgeInsets.only(bottom: 8),
-                        child: Row(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Expanded(
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    'Model: ${item['model'] ?? '-'}',
-                                    style: TextStyle(
-                                      fontWeight: FontWeight.w600,
-                                      color: isDark
-                                          ? Colors.white
-                                          : Colors.black,
-                                      fontSize: 14,
-                                    ),
-                                  ),
-                                  const SizedBox(height: 4),
-                                  Text(
-                                    'Ukuran: ${item['size'] ?? '-'}',
-                                    style: TextStyle(
-                                      fontWeight: FontWeight.w600,
-                                      color: const Color(0xFFDE8500),
-                                      fontSize: 12,
-                                    ),
-                                  ),
-                                  const SizedBox(height: 4),
-                                  Text(
-                                    'Deskripsi: ${item['description'] ?? '-'}',
-                                    style: TextStyle(
-                                      color: isDark
-                                          ? Colors.white70
-                                          : Colors.black54,
-                                      fontSize: 12,
-                                    ),
-                                  ),
-                                ],
+                            Text(
+                              'Model: ${item['model'] ?? '-'}',
+                              style: TextStyle(
+                                fontWeight: FontWeight.w600,
+                                color: isDark ? Colors.white : Colors.black,
+                                fontSize: 14,
                               ),
                             ),
+                            const SizedBox(height: 4),
                             Text(
-                              'Rp ${(item['price'] ?? 0).toStringAsFixed(0)}',
+                              'Ukuran: ${item['size'] ?? '-'}',
                               style: TextStyle(
-                                fontWeight: FontWeight.bold,
+                                fontWeight: FontWeight.w600,
                                 color: const Color(0xFFDE8500),
-                                fontSize: 14,
+                                fontSize: 12,
+                              ),
+                            ),
+                            const SizedBox(height: 4),
+                            Text(
+                              'Deskripsi: ${item['description'] ?? '-'}',
+                              style: TextStyle(
+                                color: isDark ? Colors.white70 : Colors.black54,
+                                fontSize: 12,
                               ),
                             ),
                           ],
                         ),
                       ),
+                    ),
+                    const Divider(height: 24),
+                    // Kode Pesanan dengan tombol salin
+                    Row(
+                      children: [
+                        Container(
+                          width: 40,
+                          height: 40,
+                          decoration: BoxDecoration(
+                            color: const Color(0xFFDE8500).withOpacity(0.1),
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          child: Icon(
+                            Icons.receipt_long,
+                            color: const Color(0xFFDE8500),
+                            size: 24,
+                          ),
+                        ),
+                        const SizedBox(width: 16),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                'Kode Pesanan',
+                                style: TextStyle(
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w500,
+                                  color: isDark ? Colors.white70 : Colors.grey,
+                                  fontFamily: 'SF Pro Text',
+                                ),
+                              ),
+                              const SizedBox(height: 4),
+                              Row(
+                                children: [
+                                  Expanded(
+                                    child: Text(
+                                      kodePesanan.isNotEmpty
+                                          ? kodePesanan
+                                          : 'Sedang diproses...',
+                                      style: TextStyle(
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.w600,
+                                        color: isDark
+                                            ? Colors.white
+                                            : Colors.black,
+                                        fontFamily: 'SF Pro Display',
+                                      ),
+                                    ),
+                                  ),
+                                  IconButton(
+                                    onPressed: () {
+                                      Clipboard.setData(
+                                        ClipboardData(text: order.id ?? 'N/A'),
+                                      );
+                                      ScaffoldMessenger.of(
+                                        context,
+                                      ).showSnackBar(
+                                        SnackBar(
+                                          content: Text(
+                                            'Kode pesanan berhasil disalin!',
+                                          ),
+                                          backgroundColor: Colors.green,
+                                          duration: const Duration(seconds: 2),
+                                        ),
+                                      );
+                                    },
+                                    icon: Icon(
+                                      Icons.copy,
+                                      color: const Color(0xFFDE8500),
+                                      size: 20,
+                                    ),
+                                    tooltip: 'Salin kode pesanan',
+                                  ),
+                                ],
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
                     ),
                     const Divider(height: 24),
                     Row(
@@ -159,7 +242,7 @@ class BerhasilPesanModelCustomerScreen extends StatelessWidget {
                           ),
                         ),
                         Text(
-                          'Rp ${order.totalPrice?.toStringAsFixed(0) ?? '0'}',
+                          'Rp ${_calculateTotalPrice().toStringAsFixed(0)}',
                           style: TextStyle(
                             fontWeight: FontWeight.bold,
                             color: const Color(0xFFDE8500),
