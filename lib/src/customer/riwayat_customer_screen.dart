@@ -50,9 +50,25 @@ class _RiwayatCustomerScreenState extends State<RiwayatCustomerScreen> {
                 Padding(
                   padding: const EdgeInsets.all(16.0),
                   child: TextField(
+                    controller: TextEditingController(text: _searchQuery),
                     decoration: InputDecoration(
-                      hintText: 'Cari pesanan... (nama, model, jenis)',
+                      hintText: 'Cari pesanan... (kode, nama, model, jenis)',
                       prefixIcon: const Icon(Icons.search),
+                      suffixIcon: _searchQuery.isNotEmpty
+                          ? IconButton(
+                              icon: Icon(
+                                Icons.clear,
+                                color: isDark
+                                    ? Colors.white54
+                                    : Colors.grey[600],
+                              ),
+                              onPressed: () {
+                                setState(() {
+                                  _searchQuery = '';
+                                });
+                              },
+                            )
+                          : null,
                       filled: true,
                       fillColor: isDark
                           ? const Color(0xFF2A2A2A)
@@ -102,9 +118,11 @@ class _RiwayatCustomerScreenState extends State<RiwayatCustomerScreen> {
                                             '')
                                         .toString();
                                 final userName = order.userName.toString();
-                                return orderType.toLowerCase().contains(
-                                      query,
-                                    ) ||
+                                final orderId = order.id ?? '';
+
+                                // Pencarian berdasarkan: kode pesanan, tipe pesanan, model produk, dan nama user
+                                return orderId.toLowerCase().contains(query) ||
+                                    orderType.toLowerCase().contains(query) ||
                                     productModel.toLowerCase().contains(
                                       query,
                                     ) ||
@@ -113,14 +131,70 @@ class _RiwayatCustomerScreenState extends State<RiwayatCustomerScreen> {
                               .toList() ??
                           [];
                       if (orders.isEmpty) {
-                        return Center(
-                          child: Text(
-                            'Belum ada riwayat pesanan',
-                            style: TextStyle(
-                              color: isDark ? Colors.white70 : Colors.black54,
+                        if (_searchQuery.isNotEmpty) {
+                          // Jika ada query pencarian tapi tidak ada hasil
+                          return Center(
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Icon(
+                                  Icons.search_off,
+                                  size: 64,
+                                  color: isDark
+                                      ? Colors.white54
+                                      : Colors.grey[400],
+                                ),
+                                const SizedBox(height: 16),
+                                Text(
+                                  'Tidak ada hasil pencarian',
+                                  style: TextStyle(
+                                    fontSize: 18,
+                                    fontWeight: FontWeight.w600,
+                                    color: isDark
+                                        ? Colors.white70
+                                        : Colors.black54,
+                                  ),
+                                ),
+                                const SizedBox(height: 8),
+                                Text(
+                                  'Coba kata kunci lain atau hapus pencarian',
+                                  style: TextStyle(
+                                    fontSize: 14,
+                                    color: isDark
+                                        ? Colors.white54
+                                        : Colors.grey[600],
+                                  ),
+                                  textAlign: TextAlign.center,
+                                ),
+                                const SizedBox(height: 16),
+                                TextButton(
+                                  onPressed: () {
+                                    setState(() {
+                                      _searchQuery = '';
+                                    });
+                                  },
+                                  child: Text(
+                                    'Hapus Pencarian',
+                                    style: TextStyle(
+                                      color: const Color(0xFFDE8500),
+                                      fontWeight: FontWeight.w600,
+                                    ),
+                                  ),
+                                ),
+                              ],
                             ),
-                          ),
-                        );
+                          );
+                        } else {
+                          // Jika tidak ada query pencarian dan tidak ada pesanan
+                          return Center(
+                            child: Text(
+                              'Belum ada riwayat pesanan',
+                              style: TextStyle(
+                                color: isDark ? Colors.white70 : Colors.black54,
+                              ),
+                            ),
+                          );
+                        }
                       }
                       return ListView.builder(
                         padding: const EdgeInsets.all(16),
@@ -682,14 +756,20 @@ class _RiwayatCustomerScreenState extends State<RiwayatCustomerScreen> {
       Navigator.push(
         context,
         MaterialPageRoute(
-          builder: (context) => PembayaranBajuCustomerScreen(order: order),
+          builder: (context) => PembayaranBajuCustomerScreen(
+            order: order,
+            sourcePage: 'riwayat', // Tambah parameter asal halaman
+          ),
         ),
       );
     } else if (orderType == 'Celana') {
       Navigator.push(
         context,
         MaterialPageRoute(
-          builder: (context) => PembayaranCelanaCustomerScreen(order: order),
+          builder: (context) => PembayaranCelanaCustomerScreen(
+            order: order,
+            sourcePage: 'riwayat', // Tambah parameter asal halaman
+          ),
         ),
       );
     } else {
@@ -708,6 +788,7 @@ class _RiwayatCustomerScreenState extends State<RiwayatCustomerScreen> {
             ),
             selectedSize: firstItem['size'] ?? 'L',
             firestoreService: FirestoreService(),
+            sourcePage: 'riwayat', // Tambah parameter asal halaman
           ),
         ),
       );

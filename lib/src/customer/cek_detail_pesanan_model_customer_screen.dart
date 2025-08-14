@@ -49,6 +49,20 @@ class CekDetailPesananModelCustomerScreen extends StatelessWidget {
           ),
         ),
         iconTheme: const IconThemeData(color: Color(0xFFDE8500)),
+        leading: IconButton(
+          icon: Icon(
+            Icons.arrow_back,
+            color: isDark ? Colors.white : Colors.black,
+          ),
+          onPressed: () {
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(
+                builder: (context) => const HomeCustomerScreen(initialIndex: 3),
+              ),
+            );
+          },
+        ),
       ),
       body: SingleChildScrollView(
         child: Center(
@@ -360,10 +374,16 @@ class CekDetailPesananModelCustomerScreen extends StatelessWidget {
                         ),
                       ),
                       onPressed: () {
-                        Navigator.pop(context);
+                        Navigator.pushReplacement(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) =>
+                                const HomeCustomerScreen(initialIndex: 3),
+                          ),
+                        );
                       },
                       child: const Text(
-                        'Kembali',
+                        'Kembali ke Riwayat',
                         style: TextStyle(
                           color: Colors.white,
                           fontWeight: FontWeight.bold,

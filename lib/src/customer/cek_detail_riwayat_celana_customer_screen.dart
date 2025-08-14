@@ -5,6 +5,7 @@ import 'package:jasa_jahit_aplication/src/theme/dynamic_theme.dart';
 import 'package:jasa_jahit_aplication/src/theme/theme_switcher.dart';
 import 'package:provider/provider.dart';
 import 'package:jasa_jahit_aplication/src/theme/theme_provider.dart';
+import 'package:jasa_jahit_aplication/src/customer/home_customer_screen.dart';
 import 'riwayat_customer_screen.dart';
 
 class CekDetailRiwayatCelanaCustomerScreen extends StatelessWidget {
@@ -58,7 +59,7 @@ class CekDetailRiwayatCelanaCustomerScreen extends StatelessWidget {
             Navigator.pushReplacement(
               context,
               MaterialPageRoute(
-                builder: (context) => const RiwayatCustomerScreen(),
+                builder: (context) => const HomeCustomerScreen(initialIndex: 3),
               ),
             );
           },
@@ -422,7 +423,8 @@ class CekDetailRiwayatCelanaCustomerScreen extends StatelessWidget {
                         Navigator.pushReplacement(
                           context,
                           MaterialPageRoute(
-                            builder: (context) => const RiwayatCustomerScreen(),
+                            builder: (context) =>
+                                const HomeCustomerScreen(initialIndex: 3),
                           ),
                         );
                       },
