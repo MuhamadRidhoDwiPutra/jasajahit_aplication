@@ -94,9 +94,14 @@ class AuthProvider extends ChangeNotifier {
 
   Future<void> sendPasswordResetEmail(String email) async {
     try {
+      print('🔄 Mencoba mengirim email reset password ke: $email');
       await _fireAuth.sendPasswordResetEmail(email: email);
+      print('✅ Email reset password berhasil dikirim ke: $email');
     } catch (e) {
+      print('❌ Error saat mengirim email reset password: $e');
       if (e is FirebaseAuthException) {
+        print('🚨 Firebase Auth Error Code: ${e.code}');
+        print('🚨 Firebase Auth Error Message: ${e.message}');
         throw Exception(e.message ?? 'Gagal mengirim email reset password');
       } else {
         throw Exception('Terjadi kesalahan: $e');
