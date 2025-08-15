@@ -200,7 +200,7 @@ class ProfileAdminScreen extends StatelessWidget {
   Widget _ThemeModeContainer(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final themeProvider = Provider.of<ThemeProvider>(context);
-    final mode = themeProvider.themeMode;
+    final mode = themeProvider.adminThemeMode; // Gunakan adminThemeMode
     IconData icon;
     String label;
     switch (mode) {
@@ -250,7 +250,7 @@ class ProfileAdminScreen extends StatelessWidget {
             builder: (context) => _ThemeModePicker(selected: mode),
           );
           if (selected != null) {
-            themeProvider.setTheme(selected);
+            themeProvider.setAdminTheme(selected); // Gunakan setAdminTheme
           }
         },
       ),

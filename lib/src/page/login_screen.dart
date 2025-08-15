@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:jasa_jahit_aplication/src/admin/home_admin_screen.dart';
-import 'register_screen.dart';
 import 'package:jasa_jahit_aplication/src/customer/home_customer_screen.dart';
 import 'package:provider/provider.dart';
 import 'package:jasa_jahit_aplication/Core/provider/auth_provider.dart';
+import 'package:jasa_jahit_aplication/src/theme/theme_provider.dart';
+import 'register_screen.dart';
 // abaikan: import yang tidak digunakan
 
 class LoginScreen extends StatefulWidget {
@@ -77,17 +78,23 @@ class _LoginScreenState extends State<LoginScreen> {
     });
 
     final authProvider = Provider.of<AuthProvider>(context, listen: false);
+    final themeProvider = Provider.of<ThemeProvider>(context, listen: false);
+
     authProvider.enteredEmail = email;
     authProvider.enteredPassword = password;
     authProvider.islogin = true;
     try {
       await authProvider.submit();
       if (email == 'admin@domain.com') {
+        // Set admin theme mode
+        themeProvider.setCurrentUserType('admin');
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(builder: (context) => HomeAdminScreen()),
         );
       } else {
+        // Set customer theme mode (always light)
+        themeProvider.setCurrentUserType('customer');
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(builder: (context) => HomeCustomerScreen()),

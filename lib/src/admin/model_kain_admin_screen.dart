@@ -123,11 +123,14 @@ class _ModelKainAdminScreenState extends State<ModelKainAdminScreen> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       // Informasi Dasar
-                      const Text(
+                      Text(
                         'Informasi Dasar',
                         style: TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.bold,
+                          color: Theme.of(context).brightness == Brightness.dark
+                              ? Colors.white
+                              : Colors.black,
                         ),
                       ),
                       const SizedBox(height: 12),
@@ -172,11 +175,14 @@ class _ModelKainAdminScreenState extends State<ModelKainAdminScreen> {
                       const SizedBox(height: 16),
 
                       // Kebutuhan dan Biaya Dasar
-                      const Text(
+                      Text(
                         'Kebutuhan dan Biaya Dasar',
                         style: TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.bold,
+                          color: Theme.of(context).brightness == Brightness.dark
+                              ? Colors.white
+                              : Colors.black,
                         ),
                       ),
                       const SizedBox(height: 12),
@@ -214,11 +220,14 @@ class _ModelKainAdminScreenState extends State<ModelKainAdminScreen> {
                       const SizedBox(height: 16),
 
                       // Kebutuhan Kain per Kategori
-                      const Text(
+                      Text(
                         'Kebutuhan Kain per Kategori (meter)',
                         style: TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.bold,
+                          color: Theme.of(context).brightness == Brightness.dark
+                              ? Colors.white
+                              : Colors.black,
                         ),
                       ),
                       const SizedBox(height: 12),
@@ -260,11 +269,14 @@ class _ModelKainAdminScreenState extends State<ModelKainAdminScreen> {
                       const SizedBox(height: 16),
 
                       // Biaya Jahit per Kategori
-                      const Text(
+                      Text(
                         'Biaya Jahit per Kategori (Rp)',
                         style: TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.bold,
+                          color: Theme.of(context).brightness == Brightness.dark
+                              ? Colors.white
+                              : Colors.black,
                         ),
                       ),
                       const SizedBox(height: 12),
@@ -311,7 +323,9 @@ class _ModelKainAdminScreenState extends State<ModelKainAdminScreen> {
               Container(
                 padding: const EdgeInsets.all(16),
                 decoration: BoxDecoration(
-                  color: Colors.grey[100],
+                  color: Theme.of(context).brightness == Brightness.dark
+                      ? const Color(0xFF2A2A2A)
+                      : Colors.grey[100],
                   borderRadius: const BorderRadius.only(
                     bottomLeft: Radius.circular(8),
                     bottomRight: Radius.circular(8),
@@ -322,7 +336,14 @@ class _ModelKainAdminScreenState extends State<ModelKainAdminScreen> {
                   children: [
                     TextButton(
                       onPressed: () => Navigator.pop(context),
-                      child: const Text('Batal'),
+                      child: Text(
+                        'Batal',
+                        style: TextStyle(
+                          color: Theme.of(context).brightness == Brightness.dark
+                              ? Colors.white
+                              : Colors.black,
+                        ),
+                      ),
                     ),
                     const SizedBox(width: 8),
                     ElevatedButton(
@@ -493,13 +514,17 @@ class _ModelKainAdminScreenState extends State<ModelKainAdminScreen> {
     TextEditingController controller,
     String helperText,
   ) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Row(
       children: [
         SizedBox(
           width: 80,
           child: Text(
             label,
-            style: const TextStyle(fontWeight: FontWeight.w500),
+            style: TextStyle(
+              fontWeight: FontWeight.w500,
+              color: isDark ? Colors.white : Colors.black,
+            ),
           ),
         ),
         const SizedBox(width: 8),
@@ -520,6 +545,7 @@ class _ModelKainAdminScreenState extends State<ModelKainAdminScreen> {
   }
 
   Widget _buildInfoRow(String label, String value) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Padding(
       padding: const EdgeInsets.only(bottom: 4),
       child: Row(
@@ -529,25 +555,48 @@ class _ModelKainAdminScreenState extends State<ModelKainAdminScreen> {
             width: 80,
             child: Text(
               '$label:',
-              style: const TextStyle(fontWeight: FontWeight.w500, fontSize: 14),
+              style: TextStyle(
+                fontWeight: FontWeight.w500,
+                fontSize: 14,
+                color: isDark ? Colors.white : Colors.black,
+              ),
             ),
           ),
-          Expanded(child: Text(value, style: const TextStyle(fontSize: 14))),
+          Expanded(
+            child: Text(
+              value,
+              style: TextStyle(
+                fontSize: 14,
+                color: isDark ? Colors.white : Colors.black,
+              ),
+            ),
+          ),
         ],
       ),
     );
   }
 
   void _confirmDelete(KainModel kain) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Hapus Kain'),
-        content: Text('Yakin ingin menghapus kain "${kain.nama}"?'),
+        backgroundColor: isDark ? const Color(0xFF2A2A2A) : Colors.white,
+        title: Text(
+          'Hapus Kain',
+          style: TextStyle(color: isDark ? Colors.white : Colors.black),
+        ),
+        content: Text(
+          'Yakin ingin menghapus kain "${kain.nama}"?',
+          style: TextStyle(color: isDark ? Colors.white : Colors.black),
+        ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: const Text('Batal'),
+            child: Text(
+              'Batal',
+              style: TextStyle(color: isDark ? Colors.white : Colors.black),
+            ),
           ),
           ElevatedButton(
             onPressed: () async {
@@ -584,12 +633,18 @@ class _ModelKainAdminScreenState extends State<ModelKainAdminScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Scaffold(
-      backgroundColor: const Color(0xFF8FBC8F),
+      backgroundColor: isDark
+          ? const Color(0xFF1A1A1A)
+          : const Color(0xFF8FBC8F),
       appBar: AppBar(
-        title: const Text('Tambah kain'),
-        backgroundColor: Colors.white,
-        foregroundColor: Colors.black,
+        title: Text(
+          'Model Kain',
+          style: TextStyle(color: isDark ? Colors.white : Colors.black),
+        ),
+        backgroundColor: isDark ? const Color(0xFF2A2A2A) : Colors.white,
+        foregroundColor: isDark ? Colors.white : Colors.black,
         elevation: 1,
         actions: [
           IconButton(
@@ -611,14 +666,19 @@ class _ModelKainAdminScreenState extends State<ModelKainAdminScreen> {
             return const Center(child: CircularProgressIndicator());
           }
           if (snapshot.hasError) {
-            return Center(child: Text('Error: ${snapshot.error}'));
+            return Center(
+              child: Text(
+                'Error: ${snapshot.error}',
+                style: TextStyle(color: isDark ? Colors.white : Colors.black),
+              ),
+            );
           }
           final kainList = snapshot.data ?? [];
           if (kainList.isEmpty) {
-            return const Center(
+            return Center(
               child: Text(
                 'Belum ada data kain',
-                style: TextStyle(color: Colors.white),
+                style: TextStyle(color: isDark ? Colors.white : Colors.black),
               ),
             );
           }
@@ -629,18 +689,42 @@ class _ModelKainAdminScreenState extends State<ModelKainAdminScreen> {
               final kain = kainList[index];
               return Card(
                 margin: const EdgeInsets.only(bottom: 8),
+                color: isDark ? const Color(0xFF2A2A2A) : Colors.white,
                 child: ListTile(
                   title: Text(
                     kain.nama,
-                    style: const TextStyle(fontWeight: FontWeight.bold),
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      color: isDark ? Colors.white : Colors.black,
+                    ),
                   ),
                   subtitle: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text('Warna: ${kain.warna}'),
-                      Text('Harga: Rp ${kain.harga}'),
-                      Text('Kebutuhan: ${kain.kebutuhanMeter}m'),
-                      Text('Biaya Jahit: Rp ${kain.biayaJahitDasar}'),
+                      Text(
+                        'Warna: ${kain.warna}',
+                        style: TextStyle(
+                          color: isDark ? Colors.white70 : Colors.black87,
+                        ),
+                      ),
+                      Text(
+                        'Harga: Rp ${kain.harga}',
+                        style: TextStyle(
+                          color: isDark ? Colors.white70 : Colors.black87,
+                        ),
+                      ),
+                      Text(
+                        'Kebutuhan: ${kain.kebutuhanMeter}m',
+                        style: TextStyle(
+                          color: isDark ? Colors.white70 : Colors.black87,
+                        ),
+                      ),
+                      Text(
+                        'Biaya Jahit: Rp ${kain.biayaJahitDasar}',
+                        style: TextStyle(
+                          color: isDark ? Colors.white70 : Colors.black87,
+                        ),
+                      ),
                     ],
                   ),
                   trailing: Row(

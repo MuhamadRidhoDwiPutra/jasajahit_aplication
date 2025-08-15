@@ -586,7 +586,7 @@ class _BottomNavIcon extends StatelessWidget {
 Widget _ThemeModeContainer(BuildContext context) {
   final isDark = Theme.of(context).brightness == Brightness.dark;
   final themeProvider = Provider.of<ThemeProvider>(context);
-  final mode = themeProvider.themeMode;
+  final mode = themeProvider.customerThemeMode; // Gunakan customerThemeMode
   IconData icon;
   String label;
   switch (mode) {
@@ -636,7 +636,7 @@ Widget _ThemeModeContainer(BuildContext context) {
           builder: (context) => _ThemeModePicker(selected: mode),
         );
         if (selected != null) {
-          themeProvider.setTheme(selected);
+          themeProvider.setCustomerTheme(selected); // Gunakan setCustomerTheme
         }
       },
     ),
