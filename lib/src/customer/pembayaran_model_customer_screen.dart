@@ -271,9 +271,9 @@ class _PembayaranModelCustomerScreenState
                             const SizedBox(height: 4),
                             Text(
                               'Ukuran: $_selectedSize',
-                              style: TextStyle(
+                              style: const TextStyle(
                                 fontWeight: FontWeight.bold,
-                                color: const Color(0xFFDE8500),
+                                color: Color(0xFFDE8500),
                                 fontSize: 12,
                               ),
                             ),
@@ -288,9 +288,9 @@ class _PembayaranModelCustomerScreenState
                             const SizedBox(height: 4),
                             Text(
                               'Harga: Rp ${widget.product.price.toStringAsFixed(0)}',
-                              style: TextStyle(
+                              style: const TextStyle(
                                 fontWeight: FontWeight.bold,
-                                color: const Color(0xFFDE8500),
+                                color: Color(0xFFDE8500),
                                 fontSize: 14,
                               ),
                             ),
@@ -361,7 +361,7 @@ class _PembayaranModelCustomerScreenState
                       },
                       child: Text(
                         size,
-                        style: TextStyle(
+                        style: const TextStyle(
                           fontWeight: FontWeight.bold,
                           fontSize: 16,
                         ),

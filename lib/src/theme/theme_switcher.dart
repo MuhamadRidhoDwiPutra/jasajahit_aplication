@@ -22,30 +22,30 @@ class ThemeSwitcher extends StatelessWidget {
         themeProvider.setTheme(selectedMode);
       },
       itemBuilder: (context) => [
-        PopupMenuItem(
+        const PopupMenuItem(
           value: ThemeMode.light,
           child: Row(
-            children: const [
+            children: [
               Icon(Icons.wb_sunny_outlined),
               SizedBox(width: 8),
               Text('Terang'),
             ],
           ),
         ),
-        PopupMenuItem(
+        const PopupMenuItem(
           value: ThemeMode.dark,
           child: Row(
-            children: const [
+            children: [
               Icon(Icons.nightlight_round),
               SizedBox(width: 8),
               Text('Gelap'),
             ],
           ),
         ),
-        PopupMenuItem(
+        const PopupMenuItem(
           value: ThemeMode.system,
           child: Row(
-            children: const [
+            children: [
               Icon(Icons.brightness_auto),
               SizedBox(width: 8),
               Text('Otomatis'),

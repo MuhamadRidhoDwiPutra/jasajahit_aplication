@@ -338,7 +338,7 @@ class _PembayaranCelanaCustomerScreenState
                             ),
                           );
                         },
-                        child: Text(
+                        child: const Text(
                           'Cek detail',
                           style: TextStyle(
                             color: Colors.blue,

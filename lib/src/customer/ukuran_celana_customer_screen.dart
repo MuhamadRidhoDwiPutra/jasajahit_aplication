@@ -549,7 +549,7 @@ class _UkuranCelanaCustomerScreenState
 
                           // Langsung lanjut ke konfirmasi dengan kain yang sudah dipilih
                           final items = widget.items ?? [];
-                          final modelName = 'Model Celana';
+                          const modelName = 'Model Celana';
 
                           items.add({
                             'orderType': 'Celana',

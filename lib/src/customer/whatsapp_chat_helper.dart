@@ -32,22 +32,22 @@ class WhatsAppChatHelper {
       builder: (BuildContext context) {
         return AlertDialog(
           title: const Text('WhatsApp Tidak Tersedia'),
-          content: Column(
+          content: const Column(
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const Text(
+              Text(
                 'WhatsApp tidak terinstal di perangkat ini atau tidak dapat dibuka.',
               ),
-              const SizedBox(height: 16),
-              const Text(
+              SizedBox(height: 16),
+              Text(
                 'Opsi yang tersedia:',
                 style: TextStyle(fontWeight: FontWeight.bold),
               ),
-              const SizedBox(height: 8),
-              const Text('1. Install WhatsApp dari Play Store'),
-              const Text('2. Buka WhatsApp Web di browser'),
-              const Text('3. Hubungi admin via SMS/Telepon'),
+              SizedBox(height: 8),
+              Text('1. Install WhatsApp dari Play Store'),
+              Text('2. Buka WhatsApp Web di browser'),
+              Text('3. Hubungi admin via SMS/Telepon'),
             ],
           ),
           actions: [

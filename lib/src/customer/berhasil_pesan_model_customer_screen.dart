@@ -131,9 +131,9 @@ class BerhasilPesanModelCustomerScreen extends StatelessWidget {
                             const SizedBox(height: 4),
                             Text(
                               'Ukuran: ${item['size'] ?? '-'}',
-                              style: TextStyle(
+                              style: const TextStyle(
                                 fontWeight: FontWeight.w600,
-                                color: const Color(0xFFDE8500),
+                                color: Color(0xFFDE8500),
                                 fontSize: 12,
                               ),
                             ),
@@ -160,9 +160,9 @@ class BerhasilPesanModelCustomerScreen extends StatelessWidget {
                             color: const Color(0xFFDE8500).withOpacity(0.1),
                             borderRadius: BorderRadius.circular(8),
                           ),
-                          child: Icon(
+                          child: const Icon(
                             Icons.receipt_long,
-                            color: const Color(0xFFDE8500),
+                            color: Color(0xFFDE8500),
                             size: 24,
                           ),
                         ),
@@ -206,18 +206,18 @@ class BerhasilPesanModelCustomerScreen extends StatelessWidget {
                                       ScaffoldMessenger.of(
                                         context,
                                       ).showSnackBar(
-                                        SnackBar(
+                                        const SnackBar(
                                           content: Text(
                                             'Kode pesanan berhasil disalin!',
                                           ),
                                           backgroundColor: Colors.green,
-                                          duration: const Duration(seconds: 2),
+                                          duration: Duration(seconds: 2),
                                         ),
                                       );
                                     },
-                                    icon: Icon(
+                                    icon: const Icon(
                                       Icons.copy,
-                                      color: const Color(0xFFDE8500),
+                                      color: Color(0xFFDE8500),
                                       size: 20,
                                     ),
                                     tooltip: 'Salin kode pesanan',
@@ -243,9 +243,9 @@ class BerhasilPesanModelCustomerScreen extends StatelessWidget {
                         ),
                         Text(
                           'Rp ${_calculateTotalPrice().toStringAsFixed(0)}',
-                          style: TextStyle(
+                          style: const TextStyle(
                             fontWeight: FontWeight.bold,
-                            color: const Color(0xFFDE8500),
+                            color: Color(0xFFDE8500),
                             fontSize: 18,
                           ),
                         ),

@@ -117,7 +117,7 @@ class _StatusPesananAdminScreenState extends State<StatusPesananAdminScreen> {
         await notificationProvider.loadNotificationsFromFirestore('admin');
 
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
+          const SnackBar(
             content: Text(
               'Status berhasil diubah dan notifikasi dikirim ke customer',
             ),
@@ -342,11 +342,11 @@ class _StatusPesananAdminScreenState extends State<StatusPesananAdminScreen> {
                                             12,
                                           ),
                                         ),
-                                        child: Center(
+                                        child: const Center(
                                           child: Icon(
                                             Icons.shopping_bag,
                                             size: 40,
-                                            color: const Color(0xFF8FBC8F),
+                                            color: Color(0xFF8FBC8F),
                                           ),
                                         ),
                                       ),

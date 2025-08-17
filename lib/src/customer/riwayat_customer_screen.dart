@@ -96,7 +96,7 @@ class _RiwayatCustomerScreenState extends State<RiwayatCustomerScreen> {
                         return const Center(child: CircularProgressIndicator());
                       }
                       if (snapshot.hasError) {
-                        return Center(child: Text('Terjadi kesalahan'));
+                        return const Center(child: Text('Terjadi kesalahan'));
                       }
                       final orders =
                           snapshot.data
@@ -173,10 +173,10 @@ class _RiwayatCustomerScreenState extends State<RiwayatCustomerScreen> {
                                       _searchQuery = '';
                                     });
                                   },
-                                  child: Text(
+                                  child: const Text(
                                     'Hapus Pencarian',
                                     style: TextStyle(
-                                      color: const Color(0xFFDE8500),
+                                      color: Color(0xFFDE8500),
                                       fontWeight: FontWeight.w600,
                                     ),
                                   ),
@@ -528,14 +528,14 @@ class _RiwayatCustomerScreenState extends State<RiwayatCustomerScreen> {
                                               ),
                                             ),
                                           ),
-                                          child: Row(
+                                          child: const Row(
                                             children: [
                                               Icon(
                                                 Icons.info_outline,
                                                 color: Colors.orange,
                                                 size: 16,
                                               ),
-                                              const SizedBox(width: 8),
+                                              SizedBox(width: 8),
                                               Expanded(
                                                 child: Text(
                                                   'Selesaikan pembayaran untuk dapat memesan lagi',

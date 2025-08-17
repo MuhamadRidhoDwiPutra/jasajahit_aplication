@@ -205,11 +205,11 @@ class _RiwayatTransaksiAdminScreenState
                             color: const Color(0xFF8FBC8F).withOpacity(0.1),
                             borderRadius: BorderRadius.circular(12),
                           ),
-                          child: Center(
+                          child: const Center(
                             child: Icon(
                               Icons.shopping_bag,
                               size: 40,
-                              color: const Color(0xFF8FBC8F),
+                              color: Color(0xFF8FBC8F),
                             ),
                           ),
                         ),
@@ -404,10 +404,10 @@ class _RiwayatTransaksiAdminScreenState
                         ),
                         child: Row(
                           children: [
-                            Icon(
+                            const Icon(
                               Icons.search,
                               size: 16,
-                              color: const Color(0xFFDE8500),
+                              color: Color(0xFFDE8500),
                             ),
                             const SizedBox(width: 8),
                             Expanded(
@@ -432,9 +432,9 @@ class _RiwayatTransaksiAdminScreenState
                               ),
                               child: Text(
                                 '${filteredDocs.length} hasil',
-                                style: TextStyle(
+                                style: const TextStyle(
                                   fontSize: 12,
-                                  color: const Color(0xFFDE8500),
+                                  color: Color(0xFFDE8500),
                                   fontWeight: FontWeight.w600,
                                 ),
                               ),
@@ -446,10 +446,10 @@ class _RiwayatTransaksiAdminScreenState
                                   searchQuery = '';
                                 });
                               },
-                              child: Text(
+                              child: const Text(
                                 'Clear',
                                 style: TextStyle(
-                                  color: const Color(0xFFDE8500),
+                                  color: Color(0xFFDE8500),
                                   fontSize: 12,
                                 ),
                               ),

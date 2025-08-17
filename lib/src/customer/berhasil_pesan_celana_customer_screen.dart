@@ -314,16 +314,16 @@ class _DetailItem extends StatelessWidget {
                       onPressed: () {
                         Clipboard.setData(ClipboardData(text: value));
                         ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(
+                          const SnackBar(
                             content: Text('Kode pesanan berhasil disalin!'),
                             backgroundColor: Colors.green,
-                            duration: const Duration(seconds: 2),
+                            duration: Duration(seconds: 2),
                           ),
                         );
                       },
-                      icon: Icon(
+                      icon: const Icon(
                         Icons.copy,
-                        color: const Color(0xFFDE8500),
+                        color: Color(0xFFDE8500),
                         size: 20,
                       ),
                       tooltip: 'Salin kode pesanan',

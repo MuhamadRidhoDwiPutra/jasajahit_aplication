@@ -58,7 +58,7 @@ class MyApp extends StatelessWidget {
     final themeProvider = Provider.of<ThemeProvider>(context);
 
     return MaterialApp(
-      title: 'Jasa Jahit App',
+      title: 'Tsumi Tailor',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
@@ -79,13 +79,13 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(
           seedColor: Colors.deepPurple,
           brightness: Brightness.dark,
-          background: Color(0xFF111111),
-          surface: Color(0xFF222222),
+          background: const Color(0xFF111111),
+          surface: const Color(0xFF222222),
           onBackground: Colors.white,
           onSurface: Colors.white,
         ),
         useMaterial3: true,
-        scaffoldBackgroundColor: Color(0xFF111111),
+        scaffoldBackgroundColor: const Color(0xFF111111),
         appBarTheme: const AppBarTheme(
           backgroundColor: Color(0xFF111111),
           iconTheme: IconThemeData(color: Color(0xFFDE8500)),
@@ -95,7 +95,7 @@ class MyApp extends StatelessWidget {
             fontSize: 20,
           ),
         ),
-        textTheme: TextTheme(
+        textTheme: const TextTheme(
           bodyLarge: TextStyle(color: Colors.white),
           bodyMedium: TextStyle(color: Colors.white),
           bodySmall: TextStyle(color: Colors.white),

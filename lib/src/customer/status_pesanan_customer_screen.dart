@@ -56,7 +56,7 @@ class StatusPesananCustomerScreen extends StatelessWidget {
                       child: Text(
                         'Terjadi kesalahan:\n${snapshot.error}',
                         textAlign: TextAlign.center,
-                        style: TextStyle(color: Colors.red),
+                        style: const TextStyle(color: Colors.red),
                       ),
                     );
                   }

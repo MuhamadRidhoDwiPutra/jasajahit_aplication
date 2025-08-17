@@ -426,7 +426,7 @@ class NotificationProvider extends ChangeNotifier {
 
   // Fungsi untuk menambahkan notifikasi test (hanya untuk admin)
   void addTestNotification() {
-    final testMessage = RemoteMessage(
+    const testMessage = RemoteMessage(
       notification: RemoteNotification(
         title: 'Test Notifikasi',
         body: 'Ini adalah notifikasi test dari aplikasi',

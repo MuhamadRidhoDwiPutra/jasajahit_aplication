@@ -111,9 +111,9 @@ class CekDetailRiwayatBajuCustomerScreen extends StatelessWidget {
                             ),
                           );
                         },
-                        icon: Icon(
+                        icon: const Icon(
                           Icons.copy,
-                          color: const Color(0xFFDE8500),
+                          color: Color(0xFFDE8500),
                           size: 20,
                         ),
                         tooltip: 'Salin kode pesanan',
@@ -212,8 +212,8 @@ class CekDetailRiwayatBajuCustomerScreen extends StatelessWidget {
                                 Container(
                                   width: 24,
                                   height: 24,
-                                  decoration: BoxDecoration(
-                                    color: const Color(0xFFDE8500),
+                                  decoration: const BoxDecoration(
+                                    color: Color(0xFFDE8500),
                                     shape: BoxShape.circle,
                                   ),
                                   child: Center(
@@ -277,10 +277,10 @@ class CekDetailRiwayatBajuCustomerScreen extends StatelessWidget {
                         ),
                         Text(
                           'Rp ${_calculateTotalPrice().toStringAsFixed(0)}',
-                          style: TextStyle(
+                          style: const TextStyle(
                             fontWeight: FontWeight.bold,
                             fontSize: 18,
-                            color: const Color(0xFFDE8500),
+                            color: Color(0xFFDE8500),
                           ),
                         ),
                       ],

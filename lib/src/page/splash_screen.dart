@@ -88,10 +88,10 @@ class _SplashScreenState extends State<SplashScreen>
             // Loading Indicator
             FadeTransition(
               opacity: _animation,
-              child: SizedBox(
+              child: const SizedBox(
                 width: 50,
                 height: 50,
-                child: const CircularProgressIndicator(
+                child: CircularProgressIndicator(
                   valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
                   strokeWidth: 4,
                 ),

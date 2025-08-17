@@ -231,14 +231,14 @@ class _LoginScreenState extends State<LoginScreen> {
         themeProvider.setCurrentUserType('admin');
         Navigator.pushReplacement(
           context,
-          MaterialPageRoute(builder: (context) => HomeAdminScreen()),
+          MaterialPageRoute(builder: (context) => const HomeAdminScreen()),
         );
       } else {
         // Set customer theme mode (always light)
         themeProvider.setCurrentUserType('customer');
         Navigator.pushReplacement(
           context,
-          MaterialPageRoute(builder: (context) => HomeCustomerScreen()),
+          MaterialPageRoute(builder: (context) => const HomeCustomerScreen()),
         );
       }
     } catch (e) {

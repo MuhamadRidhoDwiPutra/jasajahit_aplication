@@ -288,7 +288,7 @@ class _NotificationScreenState extends State<NotificationScreen> {
                     borderRadius: BorderRadius.circular(12),
                     border: Border.all(color: Colors.red.withOpacity(0.3)),
                   ),
-                  child: Text(
+                  child: const Text(
                     'Baru',
                     style: TextStyle(
                       fontSize: 10,

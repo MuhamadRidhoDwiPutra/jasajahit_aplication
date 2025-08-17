@@ -41,7 +41,7 @@ class NotificationService {
         Text(message.notification?.title ?? 'Notifikasi'),
         subtitle: Text(message.notification?.body ?? ''),
         background: Colors.green,
-        duration: Duration(seconds: 3),
+        duration: const Duration(seconds: 3),
       );
       // Simpan notifikasi ke provider
       final provider = Provider.of<NotificationProvider>(

@@ -339,7 +339,7 @@ class _PembayaranBajuCustomerScreenState
                             ),
                           );
                         },
-                        child: Text(
+                        child: const Text(
                           'Cek detail',
                           style: TextStyle(
                             color: Colors.blue,

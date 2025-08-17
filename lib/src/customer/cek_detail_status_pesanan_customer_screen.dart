@@ -172,8 +172,8 @@ class CekDetailStatusPesananCustomerScreen extends StatelessWidget {
                                 Container(
                                   width: 24,
                                   height: 24,
-                                  decoration: BoxDecoration(
-                                    color: const Color(0xFFDE8500),
+                                  decoration: const BoxDecoration(
+                                    color: Color(0xFFDE8500),
                                     shape: BoxShape.circle,
                                   ),
                                   child: Center(
@@ -239,10 +239,10 @@ class CekDetailStatusPesananCustomerScreen extends StatelessWidget {
                         ),
                         Text(
                           'Rp ${_calculateTotalPrice().toStringAsFixed(0)}',
-                          style: TextStyle(
+                          style: const TextStyle(
                             fontWeight: FontWeight.bold,
                             fontSize: 18,
-                            color: const Color(0xFFDE8500),
+                            color: Color(0xFFDE8500),
                           ),
                         ),
                       ],
@@ -306,8 +306,8 @@ class CekDetailStatusPesananCustomerScreen extends StatelessWidget {
                                 Container(
                                   width: 20,
                                   height: 20,
-                                  decoration: BoxDecoration(
-                                    color: const Color(0xFFDE8500),
+                                  decoration: const BoxDecoration(
+                                    color: Color(0xFFDE8500),
                                     shape: BoxShape.circle,
                                   ),
                                   child: Center(

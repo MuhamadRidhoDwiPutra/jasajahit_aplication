@@ -446,7 +446,7 @@ class _UkuranBajuCustomerScreenState extends State<UkuranBajuCustomerScreen> {
 
                           // Langsung lanjut ke konfirmasi dengan kain yang sudah dipilih
                           final items = widget.items ?? [];
-                          final modelName = 'Model Baju';
+                          const modelName = 'Model Baju';
                           
                           items.add({
                             'orderType': 'Baju',

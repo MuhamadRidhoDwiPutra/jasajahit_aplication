@@ -62,11 +62,11 @@ class _HomeCustomerScreenState extends State<HomeCustomerScreen> {
   }
 
   final List<Widget> _customerScreens = [
-    _HomeCustomerContent(),
-    DesainCustomerScreen(),
-    StatusPesananCustomerScreen(),
-    RiwayatCustomerScreen(),
-    ProfileCustomerScreen(),
+    const _HomeCustomerContent(),
+    const DesainCustomerScreen(),
+    const StatusPesananCustomerScreen(),
+    const RiwayatCustomerScreen(),
+    const ProfileCustomerScreen(),
   ];
 
   final List<String> _appBarTitles = const [
@@ -219,9 +219,9 @@ class _HomeCustomerScreenState extends State<HomeCustomerScreen> {
                           borderRadius: BorderRadius.circular(12),
                         ),
                         child: IconButton(
-                          icon: Icon(
+                          icon: const Icon(
                             FontAwesomeIcons.whatsapp,
-                            color: const Color(0xFF25D366),
+                            color: Color(0xFF25D366),
                             size: 24,
                           ),
                           onPressed: () {
@@ -651,10 +651,10 @@ class _HomeCustomerContentState extends State<_HomeCustomerContent> {
                 ),
                 child: Text(
                   '${_filteredProducts.length} hasil',
-                  style: TextStyle(
+                  style: const TextStyle(
                     fontSize: 12,
                     fontWeight: FontWeight.w500,
-                    color: const Color(0xFFDE8500),
+                    color: Color(0xFFDE8500),
                     fontFamily: 'SF Pro Text',
                   ),
                 ),

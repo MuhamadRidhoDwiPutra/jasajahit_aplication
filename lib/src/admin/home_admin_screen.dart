@@ -48,11 +48,11 @@ class _HomeAdminScreenState extends State<HomeAdminScreen> {
   }
 
   final List<Widget> _adminScreens = [
-    _HomeAdminContent(),
-    StatusPesananAdminScreen(),
-    RiwayatTransaksiAdminScreen(),
-    ModelKainAdminScreen(),
-    ProfileAdminScreen(),
+    const _HomeAdminContent(),
+    const StatusPesananAdminScreen(),
+    const RiwayatTransaksiAdminScreen(),
+    const ModelKainAdminScreen(),
+    const ProfileAdminScreen(),
   ];
 
   final List<String> _appBarTitles = const [
@@ -767,9 +767,9 @@ class _HomeAdminContentState extends State<_HomeAdminContent> {
                                 // Tombol Refresh Manual
                                 IconButton(
                                   onPressed: _refreshDiagramData,
-                                  icon: Icon(
+                                  icon: const Icon(
                                     Icons.refresh,
-                                    color: const Color(0xFFDE8500),
+                                    color: Color(0xFFDE8500),
                                     size: 20,
                                   ),
                                   tooltip: 'Refresh Data',
@@ -841,7 +841,7 @@ class _HomeAdminContentState extends State<_HomeAdminContent> {
                                   ),
                                 ),
                                 const SizedBox(width: 8),
-                                Text(
+                                const Text(
                                   'Real-time Update',
                                   style: TextStyle(
                                     fontSize: 12,
@@ -873,7 +873,7 @@ class _HomeAdminContentState extends State<_HomeAdminContent> {
                               ),
                               child: Row(
                                 children: [
-                                  Icon(
+                                  const Icon(
                                     Icons.info_outline,
                                     size: 16,
                                     color: Colors.blue,
@@ -882,7 +882,7 @@ class _HomeAdminContentState extends State<_HomeAdminContent> {
                                   Expanded(
                                     child: Text(
                                       'Data terakhir: ${_currentOrders.length} pesanan | Update: ${_lastUpdateTime.hour.toString().padLeft(2, '0')}:${_lastUpdateTime.minute.toString().padLeft(2, '0')}',
-                                      style: TextStyle(
+                                      style: const TextStyle(
                                         fontSize: 12,
                                         color: Colors.blue,
                                         fontStyle: FontStyle.italic,
@@ -986,10 +986,10 @@ class _HomeAdminContentState extends State<_HomeAdminContent> {
                                         interval: 1,
                                       ),
                                     ),
-                                    rightTitles: AxisTitles(
+                                    rightTitles: const AxisTitles(
                                       sideTitles: SideTitles(showTitles: false),
                                     ),
-                                    topTitles: AxisTitles(
+                                    topTitles: const AxisTitles(
                                       sideTitles: SideTitles(showTitles: false),
                                     ),
                                   ),
@@ -1128,9 +1128,9 @@ class _HomeAdminContentState extends State<_HomeAdminContent> {
                                 // Tombol Refresh Manual untuk Pie Chart
                                 IconButton(
                                   onPressed: _refreshDiagramData,
-                                  icon: Icon(
+                                  icon: const Icon(
                                     Icons.refresh,
-                                    color: const Color(0xFFDE8500),
+                                    color: Color(0xFFDE8500),
                                     size: 20,
                                   ),
                                   tooltip: 'Refresh Keuntungan',
@@ -1202,7 +1202,7 @@ class _HomeAdminContentState extends State<_HomeAdminContent> {
                                   ),
                                 ),
                                 const SizedBox(width: 8),
-                                Text(
+                                const Text(
                                   'Real-time Update',
                                   style: TextStyle(
                                     fontSize: 12,
@@ -1234,7 +1234,7 @@ class _HomeAdminContentState extends State<_HomeAdminContent> {
                               ),
                               child: Row(
                                 children: [
-                                  Icon(
+                                  const Icon(
                                     Icons.info_outline,
                                     size: 16,
                                     color: Colors.blue,
@@ -1243,7 +1243,7 @@ class _HomeAdminContentState extends State<_HomeAdminContent> {
                                   Expanded(
                                     child: Text(
                                       'Data terakhir: ${_currentOrders.length} pesanan | Update: ${_lastUpdateTime.hour.toString().padLeft(2, '0')}:${_lastUpdateTime.minute.toString().padLeft(2, '0')}',
-                                      style: TextStyle(
+                                      style: const TextStyle(
                                         fontSize: 12,
                                         color: Colors.blue,
                                         fontStyle: FontStyle.italic,
@@ -1256,7 +1256,7 @@ class _HomeAdminContentState extends State<_HomeAdminContent> {
                             const SizedBox(height: 8),
                             Text(
                               'Total Keuntungan: Rp ${monthData['totalProfit'].toStringAsFixed(0).replaceAllMapped(RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'), (m) => '${m[1]}.')}',
-                              style: TextStyle(
+                              style: const TextStyle(
                                 fontSize: 16,
                                 fontWeight: FontWeight.w600,
                                 color: Colors.green,

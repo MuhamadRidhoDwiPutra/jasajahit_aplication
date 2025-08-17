@@ -70,9 +70,9 @@ class _FCMTokenScreenState extends State<FCMTokenScreen> {
                   children: [
                     Row(
                       children: [
-                        Icon(
+                        const Icon(
                           Icons.info_outline,
-                          color: const Color(0xFFDE8500),
+                          color: Color(0xFFDE8500),
                           size: 24,
                         ),
                         const SizedBox(width: 8),
