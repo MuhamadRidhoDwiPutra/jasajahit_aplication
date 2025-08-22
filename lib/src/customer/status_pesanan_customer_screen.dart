@@ -165,13 +165,25 @@ class StatusPesananCustomerScreen extends StatelessWidget {
                                       ), // Kurangi dari 12
                                     ),
                                     child: Center(
-                                      child: Text(
-                                        orderType,
-                                        style: const TextStyle(
-                                          color: Color(0xFF8FBC8F),
-                                          fontSize:
-                                              10, // Tambahkan ukuran font yang lebih kecil
-                                        ),
+                                      child: Column(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.center,
+                                        children: [
+                                          const Icon(
+                                            Icons.checkroom,
+                                            color: Color(0xFF8FBC8F),
+                                            size: 20,
+                                          ),
+                                          const SizedBox(height: 2),
+                                          Text(
+                                            orderType,
+                                            style: const TextStyle(
+                                              color: Color(0xFF8FBC8F),
+                                              fontSize: 8,
+                                              fontWeight: FontWeight.w500,
+                                            ),
+                                          ),
+                                        ],
                                       ),
                                     ),
                                   ),

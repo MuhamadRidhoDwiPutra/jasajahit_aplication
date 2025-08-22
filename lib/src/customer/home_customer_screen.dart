@@ -20,6 +20,10 @@ import 'package:jasa_jahit_aplication/src/model/product_model.dart';
 import 'pembayaran_model_customer_screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:jasa_jahit_aplication/src/services/firestore_service.dart';
+import 'kategori_baju_screen.dart';
+import 'kategori_celana_screen.dart';
+import 'kategori_rok_screen.dart';
+import 'kategori_jas_screen.dart';
 
 class HomeCustomerScreen extends StatefulWidget {
   final int initialIndex;
@@ -369,6 +373,7 @@ class _HomeCustomerContentState extends State<_HomeCustomerContent> {
 
   // Data produk model terbaru
   List<Product> get _products => [
+    // Celana
     Product(
       id: '1',
       name: 'Celana Kain Panjang',
@@ -380,7 +385,112 @@ class _HomeCustomerContentState extends State<_HomeCustomerContent> {
     ),
     Product(
       id: '2',
-      name: 'Jas Hitam',
+      name: 'Celana Jeans Slim Fit',
+      description:
+          'Celana jeans slim fit dengan warna biru yang elegan, cocok untuk tampilan casual yang stylish.',
+      price: 120000,
+      imagePath: 'assets/images/celana_jeans_slim_fit.jpg',
+      category: 'Celana',
+    ),
+    Product(
+      id: '3',
+      name: 'Celana Chino Coklat',
+      description:
+          'Celana chino coklat dengan bahan yang ringan dan nyaman, cocok untuk acara semi-formal.',
+      price: 110000,
+      imagePath: 'assets/images/celana_chino_coklat.jpg',
+      category: 'Celana',
+    ),
+    Product(
+      id: '4',
+      name: 'Celana Training Hitam',
+      description:
+          'Celana training hitam untuk aktivitas olahraga, dengan bahan yang nyaman dan fleksibel.',
+      price: 85000,
+      imagePath: 'assets/images/celana_training_hitam.jpg',
+      category: 'Celana',
+    ),
+
+    // Baju
+    Product(
+      id: '5',
+      name: 'Kaos Oblong Hitam',
+      description:
+          'Kaos oblong hitam dengan bahan katun yang lembut dan nyaman, cocok untuk penggunaan sehari-hari.',
+      price: 80000,
+      imagePath: 'assets/images/kaos_oblong_hitam.jpg',
+      category: 'Baju',
+    ),
+    Product(
+      id: '6',
+      name: 'Kaos Oblong Coklat',
+      description:
+          'Kaos oblong coklat dengan bahan premium, nyaman dan stylish untuk penggunaan sehari-hari.',
+      price: 85000,
+      imagePath: 'assets/images/kaos_oblong_coklat.jpg',
+      category: 'Baju',
+    ),
+    Product(
+      id: '7',
+      name: 'Kemeja Lengan Panjang Hitam',
+      description:
+          'Kemeja lengan panjang hitam dengan desain klasik, cocok untuk acara formal dan semi-formal.',
+      price: 120000,
+      imagePath: 'assets/images/kemeja_lengan_panjang_hitam.jpg',
+      category: 'Baju',
+    ),
+    Product(
+      id: '8',
+      name: 'Polo Shirt Biru',
+      description:
+          'Polo shirt biru dengan kerah yang rapi dan nyaman, cocok untuk acara casual yang elegan.',
+      price: 95000,
+      imagePath: 'assets/images/polo_shirt_biru.jpg',
+      category: 'Baju',
+    ),
+
+    // Rok
+    Product(
+      id: '9',
+      name: 'Rok Panjang Hitam',
+      description:
+          'Rok panjang hitam dengan potongan modern, cocok untuk acara formal dan semi-formal.',
+      price: 180000,
+      imagePath: 'assets/images/rok_panjang_hitam.jpg',
+      category: 'Rok',
+    ),
+    Product(
+      id: '10',
+      name: 'Rok Mini Polos',
+      description:
+          'Rok mini dengan desain simpel dan modern, cocok untuk tampilan casual yang stylish.',
+      price: 75000,
+      imagePath: 'assets/images/rok_mini_polos.jpg',
+      category: 'Rok',
+    ),
+    Product(
+      id: '11',
+      name: 'Rok A-Line Coklat',
+      description:
+          'Rok A-line dengan potongan yang flattering, cocok untuk berbagai bentuk tubuh.',
+      price: 85000,
+      imagePath: 'assets/images/rok_A-line_coklat.jpg',
+      category: 'Rok',
+    ),
+    Product(
+      id: '12',
+      name: 'Rok Pencil Hitam',
+      description:
+          'Rok pencil hitam untuk tampilan formal dan profesional, cocok untuk acara kantor.',
+      price: 100000,
+      imagePath: 'assets/images/rok_pencil_hitam.jpg',
+      category: 'Rok',
+    ),
+
+    // Jas
+    Product(
+      id: '13',
+      name: 'Jas Hitam Elegan',
       description:
           'Jas hitam elegan dengan potongan modern, cocok untuk acara formal dan profesional.',
       price: 250000,
@@ -388,40 +498,31 @@ class _HomeCustomerContentState extends State<_HomeCustomerContent> {
       category: 'Jas',
     ),
     Product(
-      id: '3',
-      name: 'Kaos Oblong Hitam',
+      id: '14',
+      name: 'Jas Navy Blue',
       description:
-          'Kaos oblong hitam dengan bahan katun yang lembut dan nyaman, cocok untuk penggunaan sehari-hari.',
-      price: 80000,
-      imagePath: 'assets/images/kaos_oblong_hitam.jpg',
-      category: 'Kaos',
+          'Jas navy blue dengan desain klasik dan elegan, cocok untuk acara formal yang stylish.',
+      price: 280000,
+      imagePath: 'assets/images/jaz_navy_blue.jpg',
+      category: 'Jas',
     ),
     Product(
-      id: '4',
-      name: 'Kemeja Lengan Panjang Hitam',
+      id: '15',
+      name: 'Jas Abu-abu Modern',
       description:
-          'Kemeja lengan panjang hitam dengan desain klasik, cocok untuk acara formal dan semi-formal.',
-      price: 120000,
-      imagePath: 'assets/images/kemeja_lengan_panjang_hitam.jpg',
-      category: 'Kemeja',
+          'Jas abu-abu dengan potongan modern dan stylish, cocok untuk acara formal yang kontemporer.',
+      price: 260000,
+      imagePath: 'assets/images/jaz_abu-abu_modern.jpg',
+      category: 'Jas',
     ),
     Product(
-      id: '5',
-      name: 'Kaos Oblong Coklat',
+      id: '16',
+      name: 'Jas Coklat Vintage',
       description:
-          'Kaos oblong coklat dengan bahan premium, nyaman dan stylish untuk penggunaan sehari-hari.',
-      price: 85000,
-      imagePath: 'assets/images/kaos_oblong_coklat.jpg',
-      category: 'Kaos',
-    ),
-    Product(
-      id: '6',
-      name: 'Rok Panjang Hitam',
-      description:
-          'Rok panjang hitam dengan potongan modern, cocok untuk acara formal dan semi-formal.',
-      price: 180000,
-      imagePath: 'assets/images/rok_panjang_hitam.jpg',
-      category: 'Rok',
+          'Jas coklat dengan gaya vintage yang unik dan menarik, cocok untuk acara formal yang berbeda.',
+      price: 240000,
+      imagePath: 'assets/images/jaz_coklat_vintage.jpg',
+      category: 'Jas',
     ),
   ];
 
@@ -480,12 +581,16 @@ class _HomeCustomerContentState extends State<_HomeCustomerContent> {
           ),
           child: Row(
             children: [
-              const Icon(Icons.search, color: Color(0xFFDE8500)),
+              const Icon(Icons.search, color: Color(0xFFDE8500), size: 20),
               const SizedBox(width: 12),
               Expanded(
                 child: TextField(
                   controller: _searchController,
-                  style: TextStyle(color: isDark ? Colors.white : Colors.black),
+                  style: TextStyle(
+                    color: isDark ? Colors.white : Colors.black,
+                    fontSize: 14,
+                    fontFamily: 'SF Pro Text',
+                  ),
                   decoration: InputDecoration(
                     hintText: _searchQuery.isEmpty
                         ? 'Cari model pakaian... (nama, kategori, deskripsi)'
@@ -501,6 +606,7 @@ class _HomeCustomerContentState extends State<_HomeCustomerContent> {
                             icon: const Icon(
                               Icons.clear,
                               color: Color(0xFFDE8500),
+                              size: 20,
                             ),
                             onPressed: () {
                               setState(() {
@@ -524,7 +630,7 @@ class _HomeCustomerContentState extends State<_HomeCustomerContent> {
             fontSize: 18,
             fontWeight: FontWeight.w600,
             color: isDark ? Colors.white : Colors.black,
-            fontFamily: 'SF Pro Display',
+            fontFamily: 'SF Pro Text',
           ),
         ),
         const SizedBox(height: 20),
@@ -537,19 +643,10 @@ class _HomeCustomerContentState extends State<_HomeCustomerContent> {
                 imagePath: 'assets/images/logo_baju.png',
                 label: 'Baju',
                 onTap: () {
-                  showDialog(
-                    context: context,
-                    builder: (context) => AlertDialog(
-                      title: const Text('Baju'),
-                      content: const Text(
-                        'Baju adalah pakaian atasan yang digunakan sehari-hari atau untuk acara tertentu.',
-                      ),
-                      actions: [
-                        TextButton(
-                          onPressed: () => Navigator.pop(context),
-                          child: const Text('Tutup'),
-                        ),
-                      ],
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => const KategoriBajuScreen(),
                     ),
                   );
                 },
@@ -560,42 +657,24 @@ class _HomeCustomerContentState extends State<_HomeCustomerContent> {
                 imagePath: 'assets/images/logo_celana.png',
                 label: 'Celana',
                 onTap: () {
-                  showDialog(
-                    context: context,
-                    builder: (context) => AlertDialog(
-                      title: const Text('Celana'),
-                      content: const Text(
-                        'Celana adalah pakaian bawahan yang menutupi bagian pinggang hingga kaki.',
-                      ),
-                      actions: [
-                        TextButton(
-                          onPressed: () => Navigator.pop(context),
-                          child: const Text('Tutup'),
-                        ),
-                      ],
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => const KategoriCelanaScreen(),
                     ),
                   );
                 },
               ),
-              const SizedBox(width: 15),
+              const SizedBox(width: 12),
               _CategoryCard(
                 icon: null,
                 imagePath: 'assets/images/logo_ok.png',
                 label: 'Rok',
                 onTap: () {
-                  showDialog(
-                    context: context,
-                    builder: (context) => AlertDialog(
-                      title: const Text('Rok'),
-                      content: const Text(
-                        'Rok adalah pakaian bawahan yang menutupi bagian pinggang hingga lutut atau kaki, biasanya digunakan oleh wanita.',
-                      ),
-                      actions: [
-                        TextButton(
-                          onPressed: () => Navigator.pop(context),
-                          child: const Text('Tutup'),
-                        ),
-                      ],
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => const KategoriRokScreen(),
                     ),
                   );
                 },
@@ -606,19 +685,10 @@ class _HomeCustomerContentState extends State<_HomeCustomerContent> {
                 imagePath: 'assets/images/logo_jaz.png',
                 label: 'Jas',
                 onTap: () {
-                  showDialog(
-                    context: context,
-                    builder: (context) => AlertDialog(
-                      title: const Text('Jas'),
-                      content: const Text(
-                        'Jas adalah pakaian formal bagian atas yang biasanya digunakan untuk acara resmi.',
-                      ),
-                      actions: [
-                        TextButton(
-                          onPressed: () => Navigator.pop(context),
-                          child: const Text('Tutup'),
-                        ),
-                      ],
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => const KategoriJasScreen(),
                     ),
                   );
                 },
@@ -636,7 +706,7 @@ class _HomeCustomerContentState extends State<_HomeCustomerContent> {
                 fontSize: 18,
                 fontWeight: FontWeight.w600,
                 color: isDark ? Colors.white : Colors.black,
-                fontFamily: 'SF Pro Display',
+                fontFamily: 'SF Pro Text',
               ),
             ),
             if (_searchQuery.isNotEmpty)
@@ -677,10 +747,12 @@ class _HomeCustomerContentState extends State<_HomeCustomerContent> {
                   'Tidak ada model pakaian ditemukan',
                   style: TextStyle(
                     fontSize: 16,
+                    fontWeight: FontWeight.w600,
                     color: isDark ? Colors.white70 : Colors.grey[600],
                     fontFamily: 'SF Pro Text',
                   ),
                 ),
+                const SizedBox(height: 8),
                 Text(
                   'Coba kata kunci lain atau hapus pencarian',
                   style: TextStyle(
@@ -698,8 +770,7 @@ class _HomeCustomerContentState extends State<_HomeCustomerContent> {
             physics: const NeverScrollableScrollPhysics(),
             gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
               crossAxisCount: 2,
-              childAspectRatio:
-                  0.85, // Kurangi aspect ratio untuk memperbesar gambar
+              childAspectRatio: 0.85,
               crossAxisSpacing: 16,
               mainAxisSpacing: 16,
             ),
@@ -756,7 +827,7 @@ class _CategoryCard extends StatelessWidget {
             Container(
               padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
-                color: const Color(0xFFDE8500).withOpacity(0.1),
+                color: const Color(0xFFDE8500).withOpacity(0.12),
                 shape: BoxShape.circle,
               ),
               child: imagePath != null
@@ -1009,26 +1080,26 @@ class _ModelCard extends StatelessWidget {
           ),
           Expanded(
             child: Padding(
-              padding: const EdgeInsets.all(6), // Perbesar dari 4 ke 6
+              padding: const EdgeInsets.all(6),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
                     product.name,
                     style: TextStyle(
-                      fontSize: 11, // Perbesar dari 10 ke 11
+                      fontSize: 11,
                       fontWeight: FontWeight.w600,
                       color: isDark ? Colors.white : Colors.black,
-                      fontFamily: 'SF Pro Display',
+                      fontFamily: 'SF Pro Text',
                     ),
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                   ),
-                  const SizedBox(height: 2), // Perbesar dari 1 ke 2
+                  const SizedBox(height: 4),
                   Text(
                     product.description,
                     style: TextStyle(
-                      fontSize: 8, // Perbesar dari 7 ke 8
+                      fontSize: 8,
                       color: isDark ? Colors.white70 : Colors.black54,
                       fontFamily: 'SF Pro Text',
                     ),
@@ -1039,15 +1110,15 @@ class _ModelCard extends StatelessWidget {
                   Text(
                     'Rp ${product.price.toStringAsFixed(0)}',
                     style: const TextStyle(
-                      fontSize: 10, // Perbesar dari 9 ke 10
+                      fontSize: 10,
                       fontWeight: FontWeight.w500,
                       color: Color(0xFFDE8500),
                       fontFamily: 'SF Pro Text',
                     ),
                   ),
-                  const SizedBox(height: 4), // Perbesar dari 2 ke 4
+                  const SizedBox(height: 4),
                   SizedBox(
-                    height: 24, // Perbesar dari 20 ke 24
+                    height: 24,
                     child: Row(
                       children: [
                         Expanded(
@@ -1064,14 +1135,14 @@ class _ModelCard extends StatelessWidget {
                             child: const Text(
                               'Detail',
                               style: TextStyle(
-                                fontSize: 8, // Perbesar dari 7 ke 8
+                                fontSize: 8,
                                 fontWeight: FontWeight.w600,
-                                fontFamily: 'SF Pro Display',
+                                fontFamily: 'SF Pro Text',
                               ),
                             ),
                           ),
                         ),
-                        const SizedBox(width: 2), // Perbesar dari 1 ke 2
+                        const SizedBox(width: 2),
                         Expanded(
                           child: ElevatedButton(
                             style: ElevatedButton.styleFrom(
@@ -1100,9 +1171,9 @@ class _ModelCard extends StatelessWidget {
                             child: const Text(
                               'Beli',
                               style: TextStyle(
-                                fontSize: 8, // Perbesar dari 7 ke 8
+                                fontSize: 8,
                                 fontWeight: FontWeight.w600,
-                                fontFamily: 'SF Pro Display',
+                                fontFamily: 'SF Pro Text',
                               ),
                             ),
                           ),

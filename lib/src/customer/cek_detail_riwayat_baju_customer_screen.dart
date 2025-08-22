@@ -120,40 +120,43 @@ class CekDetailRiwayatBajuCustomerScreen extends StatelessWidget {
                       ),
                     ],
                   ),
-                  const Divider(height: 24),
-                  Text(
-                    'Model',
-                    style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 16,
-                      color: isDark ? Colors.white : Colors.black,
+                  // Tampilkan Model dan Jenis Kain hanya untuk single order
+                  if (order.items.length == 1) ...[
+                    const Divider(height: 24),
+                    Text(
+                      'Model',
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 16,
+                        color: isDark ? Colors.white : Colors.black,
+                      ),
                     ),
-                  ),
-                  const SizedBox(height: 4),
-                  Text(
-                    model,
-                    style: TextStyle(
-                      fontSize: 16,
-                      color: isDark ? Colors.white70 : Colors.black87,
+                    const SizedBox(height: 4),
+                    Text(
+                      model,
+                      style: TextStyle(
+                        fontSize: 16,
+                        color: isDark ? Colors.white70 : Colors.black87,
+                      ),
                     ),
-                  ),
-                  const Divider(height: 24),
-                  Text(
-                    'Jenis Kain',
-                    style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 16,
-                      color: isDark ? Colors.white : Colors.black,
+                    const Divider(height: 24),
+                    Text(
+                      'Jenis Kain',
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 16,
+                        color: isDark ? Colors.white : Colors.black,
+                      ),
                     ),
-                  ),
-                  const SizedBox(height: 4),
-                  Text(
-                    fabric,
-                    style: TextStyle(
-                      fontSize: 16,
-                      color: isDark ? Colors.white70 : Colors.black87,
+                    const SizedBox(height: 4),
+                    Text(
+                      fabric,
+                      style: TextStyle(
+                        fontSize: 16,
+                        color: isDark ? Colors.white70 : Colors.black87,
+                      ),
                     ),
-                  ),
+                  ],
                   const Divider(height: 24),
                   Text(
                     'Jumlah Produk',
@@ -258,6 +261,14 @@ class CekDetailRiwayatBajuCustomerScreen extends StatelessWidget {
                               value: 'Rp ${itemPrice.toStringAsFixed(0)}',
                               isDark: isDark,
                             ),
+                            // Tambahkan ukuran untuk setiap item
+                            if (item['measurements'] != null) ...[
+                              _DetailRow(
+                                label: 'Ukuran',
+                                value: _formatUkuranBaju(item['measurements']),
+                                isDark: isDark,
+                              ),
+                            ],
                           ],
                         ),
                       );
@@ -437,6 +448,33 @@ class CekDetailRiwayatBajuCustomerScreen extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  String _formatUkuranBaju(Map<String, dynamic> measurements) {
+    final List<String> ukuranParts = [];
+    
+    if (measurements['lingkarDada'] != null && 
+        measurements['lingkarDada'].toString().isNotEmpty) {
+      ukuranParts.add('Dada: ${measurements['lingkarDada']} cm');
+    }
+    if (measurements['lebarBahu'] != null && 
+        measurements['lebarBahu'].toString().isNotEmpty) {
+      ukuranParts.add('Bahu: ${measurements['lebarBahu']} cm');
+    }
+    if (measurements['panjangBaju'] != null && 
+        measurements['panjangBaju'].toString().isNotEmpty) {
+      ukuranParts.add('Panjang: ${measurements['panjangBaju']} cm');
+    }
+    if (measurements['lingkarLengan'] != null && 
+        measurements['lingkarLengan'].toString().isNotEmpty) {
+      ukuranParts.add('Lengan: ${measurements['lingkarLengan']} cm');
+    }
+    if (measurements['panjangLengan'] != null && 
+        measurements['panjangLengan'].toString().isNotEmpty) {
+      ukuranParts.add('Panjang Lengan: ${measurements['panjangLengan']} cm');
+    }
+    
+    return ukuranParts.isEmpty ? '-' : ukuranParts.join(', ');
   }
 
   Color _getStatusColor(String status) {

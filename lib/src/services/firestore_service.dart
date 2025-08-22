@@ -3,6 +3,7 @@ import 'package:jasa_jahit_aplication/src/model/order_model.dart'
     as order_model;
 import 'package:jasa_jahit_aplication/src/model/kain_model.dart';
 import 'package:firebase_storage/firebase_storage.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'dart:io';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
@@ -95,6 +96,14 @@ class FirestoreService {
         throw Exception('File tidak ditemukan');
       }
 
+      // Validasi user sudah login
+      final auth = FirebaseAuth.instance;
+      if (auth.currentUser == null) {
+        throw Exception(
+          'User tidak terautentikasi. Silakan login terlebih dahulu.',
+        );
+      }
+
       final storage = FirebaseStorage.instance;
       final fileName =
           'payment_proof_${orderId}_${DateTime.now().millisecondsSinceEpoch}.jpg';
@@ -106,6 +115,7 @@ class FirestoreService {
         customMetadata: {
           'orderId': orderId,
           'uploadedAt': DateTime.now().toIso8601String(),
+          'userId': auth.currentUser!.uid,
         },
       );
 

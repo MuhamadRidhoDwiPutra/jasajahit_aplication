@@ -120,40 +120,43 @@ class CekDetailRiwayatCelanaCustomerScreen extends StatelessWidget {
                       ),
                     ],
                   ),
-                  const Divider(height: 24),
-                  Text(
-                    'Model',
-                    style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 16,
-                      color: isDark ? Colors.white : Colors.black,
+                  // Tampilkan Model dan Jenis Kain hanya untuk single order
+                  if (order.items.length == 1) ...[
+                    const Divider(height: 24),
+                    Text(
+                      'Model',
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 16,
+                        color: isDark ? Colors.white : Colors.black,
+                      ),
                     ),
-                  ),
-                  const SizedBox(height: 4),
-                  Text(
-                    model,
-                    style: TextStyle(
-                      fontSize: 16,
-                      color: isDark ? Colors.white70 : Colors.black87,
+                    const SizedBox(height: 4),
+                    Text(
+                      model,
+                      style: TextStyle(
+                        fontSize: 16,
+                        color: isDark ? Colors.white70 : Colors.black87,
+                      ),
                     ),
-                  ),
-                  const Divider(height: 24),
-                  Text(
-                    'Jenis Kain',
-                    style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 16,
-                      color: isDark ? Colors.white : Colors.black,
+                    const Divider(height: 24),
+                    Text(
+                      'Jenis Kain',
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 16,
+                        color: isDark ? Colors.white : Colors.black,
+                      ),
                     ),
-                  ),
-                  const SizedBox(height: 4),
-                  Text(
-                    fabric,
-                    style: TextStyle(
-                      fontSize: 16,
-                      color: isDark ? Colors.white70 : Colors.black87,
+                    const SizedBox(height: 4),
+                    Text(
+                      fabric,
+                      style: TextStyle(
+                        fontSize: 16,
+                        color: isDark ? Colors.white70 : Colors.black87,
+                      ),
                     ),
-                  ),
+                  ],
                   const Divider(height: 24),
                   Text(
                     'Jumlah Produk',
@@ -258,6 +261,16 @@ class CekDetailRiwayatCelanaCustomerScreen extends StatelessWidget {
                               value: 'Rp ${itemPrice.toStringAsFixed(0)}',
                               isDark: isDark,
                             ),
+                            // Tambahkan ukuran untuk setiap item
+                            if (item['measurements'] != null) ...[
+                              _DetailRow(
+                                label: 'Ukuran',
+                                value: _formatUkuranCelana(
+                                  item['measurements'],
+                                ),
+                                isDark: isDark,
+                              ),
+                            ],
                           ],
                         ),
                       );
@@ -444,6 +457,37 @@ class CekDetailRiwayatCelanaCustomerScreen extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  String _formatUkuranCelana(Map<String, dynamic> measurements) {
+    final List<String> ukuranParts = [];
+
+    if (measurements['lingkarPinggang'] != null &&
+        measurements['lingkarPinggang'].toString().isNotEmpty) {
+      ukuranParts.add('Pinggang: ${measurements['lingkarPinggang']} cm');
+    }
+    if (measurements['lingkarPinggul'] != null &&
+        measurements['lingkarPinggul'].toString().isNotEmpty) {
+      ukuranParts.add('Pinggul: ${measurements['lingkarPinggul']} cm');
+    }
+    if (measurements['panjangCelana'] != null &&
+        measurements['panjangCelana'].toString().isNotEmpty) {
+      ukuranParts.add('Panjang: ${measurements['panjangCelana']} cm');
+    }
+    if (measurements['lingkarPaha'] != null &&
+        measurements['lingkarPaha'].toString().isNotEmpty) {
+      ukuranParts.add('Paha: ${measurements['lingkarPaha']} cm');
+    }
+    if (measurements['lingkarLutut'] != null &&
+        measurements['lingkarLutut'].toString().isNotEmpty) {
+      ukuranParts.add('Lutut: ${measurements['lingkarLutut']} cm');
+    }
+    if (measurements['lingkarPergelangan'] != null &&
+        measurements['lingkarPergelangan'].toString().isNotEmpty) {
+      ukuranParts.add('Pergelangan: ${measurements['lingkarPergelangan']} cm');
+    }
+
+    return ukuranParts.isEmpty ? '-' : ukuranParts.join(', ');
   }
 
   Color _getStatusColor(String status) {

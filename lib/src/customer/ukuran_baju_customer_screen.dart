@@ -162,9 +162,52 @@ class _UkuranBajuCustomerScreenState extends State<UkuranBajuCustomerScreen> {
                             ),
                           ],
                         ),
-        child: Column(
+                                child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
+                          children: [
+                            // Panduan Ukuran Baju
+                            Text(
+                              'Panduan Ukuran Baju',
+                              style: TextStyle(
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold,
+                                color: isDark ? Colors.white : Colors.black,
+                                fontFamily: 'SF Pro Display',
+                              ),
+                            ),
+                            const SizedBox(height: 12),
+                            Container(
+                              width: double.infinity,
+                              height: 500,
+                              decoration: BoxDecoration(
+                                color: isDark
+                                    ? Colors.grey[800]
+                                    : Colors.grey[100],
+                                borderRadius: BorderRadius.circular(12),
+                                border: Border.all(
+                                  color: const Color(0xFFDE8500),
+                                  width: 1,
+                                ),
+                              ),
+                              child: Center(
+                                child: Padding(
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: ConstrainedBox(
+                                    constraints: const BoxConstraints(
+                                      maxWidth: double.infinity,
+                                      maxHeight: 450,
+                                    ),
+                                    child: Image.asset(
+                                      'assets/images/panduan_baju.png',
+                                      fit: BoxFit.contain,
+                                      width: double.infinity,
+                                      height: 450,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ),
+                            const SizedBox(height: 24),
                             // Dropdown Jenis Baju
                             Text(
                               'Jenis Baju',
