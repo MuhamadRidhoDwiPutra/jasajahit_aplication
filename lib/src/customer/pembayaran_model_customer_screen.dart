@@ -21,6 +21,8 @@ class PembayaranModelCustomerScreen extends StatefulWidget {
   final String selectedSize;
   final FirestoreService firestoreService;
   final String? sourcePage; // Tambah parameter untuk tracking asal halaman
+  final bool isDraft; // Tambah parameter untuk menandai apakah ini adalah draft
+  final order_model.Order? order; // Tambah parameter order untuk kasus draft
 
   const PembayaranModelCustomerScreen({
     super.key,
@@ -28,6 +30,8 @@ class PembayaranModelCustomerScreen extends StatefulWidget {
     required this.selectedSize,
     required this.firestoreService,
     this.sourcePage, // Parameter opsional
+    this.isDraft = false, // Parameter opsional, default false
+    this.order, // Parameter opsional untuk kasus draft
   });
 
   @override
@@ -532,46 +536,63 @@ class _PembayaranModelCustomerScreenState
                     // Dapatkan data customer
                     final customerData = await _getCustomerData();
 
-                    // Buat order untuk model
-                    final order = order_model.Order(
-                      userId:
-                          FirebaseAuth.instance.currentUser?.uid ??
-                          'customer_001',
-                      userName: customerData['username'] ?? 'Customer',
-                      customerName: customerData['name'],
-                      customerAddress: customerData['address'],
-                      items: [
-                        {
-                          'orderType': 'Model',
-                          'model': widget.product.name,
-                          'description': widget.product.description,
-                          'price': widget.product.price,
-                          'imagePath': widget.product.imagePath,
-                          'category': widget.product.category,
-                          'size': widget.selectedSize,
-                        },
-                      ],
-                      orderDate: Timestamp.now(),
-                      totalPrice: widget.product.price,
-                      estimatedPrice: widget.product.price.toInt(),
-                    );
+                    // Jika ini adalah draft (dari fitur Pesan Lagi), simpan order baru
+                    // Jika bukan draft (dari pesanan baru), buat order baru
+                    String orderId;
+                    if (widget.isDraft && widget.order != null) {
+                      // Simpan order baru untuk draft
+                      final orderDoc = await widget.firestoreService.saveOrder(
+                        widget.order!,
+                      );
+                      orderId = orderDoc.id;
+                      print(
+                        '🔍 DEBUG: Order draft disimpan dengan ID: $orderId',
+                      );
+                    } else {
+                      // Buat order baru untuk pesanan baru
+                      final order = order_model.Order(
+                        userId:
+                            FirebaseAuth.instance.currentUser?.uid ??
+                            'customer_001',
+                        userName: customerData['username'] ?? 'Customer',
+                        customerName: customerData['name'],
+                        customerAddress: customerData['address'],
+                        items: [
+                          {
+                            'orderType': 'Model',
+                            'model': widget.product.name,
+                            'description': widget.product.description,
+                            'price': widget.product.price,
+                            'imagePath': widget.product.imagePath,
+                            'category': widget.product.category,
+                            'size': widget.selectedSize,
+                          },
+                        ],
+                        orderDate: Timestamp.now(),
+                        totalPrice: widget.product.price,
+                        estimatedPrice: widget.product.price.toInt(),
+                      );
 
-                    // Simpan order terlebih dahulu
-                    final orderDoc = await widget.firestoreService.saveOrder(
-                      order,
-                    );
+                      final orderDoc = await widget.firestoreService.saveOrder(
+                        order,
+                      );
+                      orderId = orderDoc.id;
+                      print('🔍 DEBUG: Order baru dibuat dengan ID: $orderId');
+                    }
 
                     print('🔍 DEBUG PembayaranModelCustomerScreen:');
-                    print('   - orderDoc.id: ${orderDoc.id}');
-                    print('   - order.id (sebelum): ${order.id}');
+                    print('   - orderId: $orderId');
+                    print(
+                      '   - widget.order.id (sebelum): ${widget.order?.id}',
+                    );
 
                     // Upload bukti pembayaran
                     final paymentProofUrl = await widget.firestoreService
-                        .uploadPaymentProof(_selectedFile!, orderDoc.id);
+                        .uploadPaymentProof(_selectedFile!, orderId);
 
                     // Update order dengan URL bukti pembayaran
                     await widget.firestoreService.updateOrderWithPaymentProof(
-                      orderDoc.id,
+                      orderId,
                       paymentProofUrl,
                       _fileName ?? 'bukti_pembayaran.jpg',
                     );
@@ -582,7 +603,7 @@ class _PembayaranModelCustomerScreenState
                         .add({
                           'title': 'Pesanan Baru',
                           'body': 'Ada pesanan baru yang memerlukan konfirmasi',
-                          'orderId': orderDoc.id,
+                          'orderId': orderId,
                           'customerId':
                               FirebaseAuth.instance.currentUser?.uid ??
                               'customer_001',
@@ -599,21 +620,56 @@ class _PembayaranModelCustomerScreenState
 
                     // Buat order baru dengan ID yang sudah didapatkan dari Firebase
                     final updatedOrder = order_model.Order(
-                      id: orderDoc.id,
-                      userId: order.userId,
-                      userName: order.userName,
-                      customerName: order.customerName,
-                      customerAddress: order.customerAddress,
-                      items: order.items,
-                      status: order.status,
-                      orderDate: order.orderDate,
-                      totalPrice: order.totalPrice,
+                      id: orderId,
+                      userId: widget.isDraft && widget.order != null
+                          ? widget.order!.userId
+                          : (FirebaseAuth.instance.currentUser?.uid ??
+                                'customer_001'),
+                      userName: widget.isDraft && widget.order != null
+                          ? widget.order!.userName
+                          : (customerData['username'] ?? 'Customer'),
+                      customerName: widget.isDraft && widget.order != null
+                          ? widget.order!.customerName
+                          : customerData['name'],
+                      customerAddress: widget.isDraft && widget.order != null
+                          ? widget.order!.customerAddress
+                          : customerData['address'],
+                      items: widget.isDraft && widget.order != null
+                          ? widget.order!.items
+                          : [
+                              {
+                                'orderType': 'Model',
+                                'model': widget.product.name,
+                                'description': widget.product.description,
+                                'price': widget.product.price,
+                                'imagePath': widget.product.imagePath,
+                                'category': widget.product.category,
+                                'size': widget.selectedSize,
+                              },
+                            ],
+                      status: widget.isDraft && widget.order != null
+                          ? widget.order!.status
+                          : 'Menunggu Konfirmasi',
+                      orderDate: widget.isDraft && widget.order != null
+                          ? widget.order!.orderDate
+                          : Timestamp.now(),
+                      totalPrice: widget.isDraft && widget.order != null
+                          ? widget.order!.totalPrice
+                          : widget.product.price,
                       paymentProofUrl: paymentProofUrl,
                       paymentProofFileName: _fileName ?? 'bukti_pembayaran.jpg',
-                      estimatedPrice: order.estimatedPrice,
-                      estimatedSize: order.estimatedSize,
-                      isCustomSize: order.isCustomSize,
-                      selectedKain: order.selectedKain,
+                      estimatedPrice: widget.isDraft && widget.order != null
+                          ? widget.order!.estimatedPrice
+                          : widget.product.price.toInt(),
+                      estimatedSize: widget.isDraft && widget.order != null
+                          ? widget.order!.estimatedSize
+                          : widget.selectedSize,
+                      isCustomSize: widget.isDraft && widget.order != null
+                          ? widget.order!.isCustomSize
+                          : false,
+                      selectedKain: widget.isDraft && widget.order != null
+                          ? widget.order!.selectedKain
+                          : null,
                     );
 
                     print('   - updatedOrder.id: ${updatedOrder.id}');

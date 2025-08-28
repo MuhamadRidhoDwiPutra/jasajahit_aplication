@@ -32,6 +32,12 @@ class AuthProvider extends ChangeNotifier {
           email: enteredEmail,
           password: enteredPassword,
         );
+
+        // Update username untuk user yang sudah ada agar menggunakan email
+        final currentUser = _fireAuth.currentUser;
+        if (currentUser != null) {
+          await _updateUsernameToEmail(currentUser.uid, enteredEmail);
+        }
       } else {
         // Create user account
         final userCredential = await _fireAuth.createUserWithEmailAndPassword(
@@ -41,13 +47,15 @@ class AuthProvider extends ChangeNotifier {
 
         // Save user data to Firestore dengan data yang benar
         if (userCredential.user != null) {
+          // Generate username dari email lengkap
+          String username = enteredEmail;
+
           await _firestore
               .collection('users')
               .doc(userCredential.user!.uid)
               .set({
                 'name': enteredName, // Nama asli user
-                'username':
-                    enteredName, // Username menggunakan nama, bukan email
+                'username': username, // Username menggunakan email lengkap
                 'email': enteredEmail, // Email tersimpan terpisah
                 'position': 'Customer',
                 'address': 'Alamat belum diisi', // Default address
@@ -65,6 +73,26 @@ class AuthProvider extends ChangeNotifier {
     }
 
     notifyListeners();
+  }
+
+  // Fungsi untuk mengupdate username user yang sudah ada agar menggunakan email
+  Future<void> _updateUsernameToEmail(String uid, String email) async {
+    try {
+      final userDoc = await _firestore.collection('users').doc(uid).get();
+      if (userDoc.exists) {
+        final userData = userDoc.data();
+        if (userData != null && userData['username'] != email) {
+          // Update username jika berbeda dengan email
+          await _firestore.collection('users').doc(uid).update({
+            'username': email,
+            'updatedAt': FieldValue.serverTimestamp(),
+          });
+          print('Username updated to email for user: $uid');
+        }
+      }
+    } catch (e) {
+      print('Error updating username to email: $e');
+    }
   }
 
   Future<Map<String, dynamic>?> getUserData(String uid) async {

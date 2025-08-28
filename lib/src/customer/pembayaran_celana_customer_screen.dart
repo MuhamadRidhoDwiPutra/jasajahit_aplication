@@ -19,11 +19,13 @@ class PembayaranCelanaCustomerScreen extends StatefulWidget {
   final order_model.Order order;
   final FirestoreService _firestoreService = FirestoreService();
   final String? sourcePage; // Tambah parameter untuk tracking asal halaman
+  final bool isDraft; // Tambah parameter untuk menandai apakah ini adalah draft
 
   PembayaranCelanaCustomerScreen({
     super.key,
     required this.order,
     this.sourcePage, // Parameter opsional
+    this.isDraft = false, // Parameter opsional, default false
   });
 
   @override
@@ -512,22 +514,37 @@ class _PembayaranCelanaCustomerScreenState
                     // Dapatkan data customer
                     final customerData = await _getCustomerData();
 
-                    // Simpan order terlebih dahulu
-                    final orderDoc = await widget._firestoreService.saveOrder(
-                      widget.order,
-                    );
+                    // Jika ini adalah draft (dari fitur Pesan Lagi), simpan order baru
+                    // Jika bukan draft (dari pesanan baru), gunakan order yang sudah ada
+                    String orderId;
+                    if (widget.isDraft) {
+                      // Simpan order baru untuk draft
+                      final orderDoc = await widget._firestoreService.saveOrder(
+                        widget.order,
+                      );
+                      orderId = orderDoc.id;
+                      print(
+                        '🔍 DEBUG: Order draft disimpan dengan ID: $orderId',
+                      );
+                    } else {
+                      // Gunakan order yang sudah ada
+                      orderId = widget.order.id ?? '';
+                      print(
+                        '🔍 DEBUG: Menggunakan order yang sudah ada dengan ID: $orderId',
+                      );
+                    }
 
                     print('🔍 DEBUG PembayaranCelanaCustomerScreen:');
-                    print('   - orderDoc.id: ${orderDoc.id}');
+                    print('   - orderId: $orderId');
                     print('   - widget.order.id (sebelum): ${widget.order.id}');
 
                     // Upload bukti pembayaran
                     final paymentProofUrl = await widget._firestoreService
-                        .uploadPaymentProof(_selectedFile!, orderDoc.id);
+                        .uploadPaymentProof(_selectedFile!, orderId);
 
                     // Update order dengan URL bukti pembayaran
                     await widget._firestoreService.updateOrderWithPaymentProof(
-                      orderDoc.id,
+                      orderId,
                       paymentProofUrl,
                       _fileName ?? 'bukti_pembayaran.jpg',
                     );
@@ -536,7 +553,7 @@ class _PembayaranCelanaCustomerScreenState
                     await NotificationService.sendJasaJahitNotification(
                       customerName: customerData['name'] ?? 'Customer',
                       orderType: 'Celana',
-                      orderId: orderDoc.id,
+                      orderId: orderId,
                       price: widget.order.totalPrice ?? 0,
                     );
 
@@ -547,7 +564,7 @@ class _PembayaranCelanaCustomerScreenState
                           'title': 'Pesanan Baru',
                           'body':
                               '${customerData['name'] ?? 'Customer'} telah membuat pesanan Celana seharga Rp ${(widget.order.totalPrice ?? 0).toStringAsFixed(0)}',
-                          'orderId': orderDoc.id,
+                          'orderId': orderId,
                           'customerId':
                               FirebaseAuth.instance.currentUser?.uid ??
                               'customer_001',
@@ -564,7 +581,7 @@ class _PembayaranCelanaCustomerScreenState
 
                     // Buat order baru dengan ID yang sudah didapatkan dari Firebase
                     final updatedOrder = order_model.Order(
-                      id: orderDoc.id,
+                      id: orderId,
                       userId: widget.order.userId,
                       userName: widget.order.userName,
                       customerName: widget.order.customerName,

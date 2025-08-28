@@ -93,7 +93,19 @@ class StatusPesananCustomerScreen extends StatelessWidget {
                           firstItem['model'] ??
                           '-';
                       final fabric = firstItem['fabric'] ?? '-';
-                      final price = firstItem['price'] ?? 0;
+
+                      // Hitung total harga dan jumlah item
+                      final totalPrice = order.items.fold<double>(
+                        0,
+                        (sum, item) => sum + (item['price'] ?? 0).toDouble(),
+                      );
+                      final itemCount = order.items.length;
+                      final isMultiOrder = itemCount > 1;
+
+                      // Gunakan total harga untuk multi order, harga item pertama untuk single order
+                      final displayPrice = isMultiOrder
+                          ? totalPrice
+                          : (firstItem['price'] ?? 0);
                       return Card(
                         color: isDark ? const Color(0xFF2A2A2A) : Colors.white,
                         elevation: 3,
@@ -176,13 +188,26 @@ class StatusPesananCustomerScreen extends StatelessWidget {
                                           ),
                                           const SizedBox(height: 2),
                                           Text(
-                                            orderType,
+                                            isMultiOrder
+                                                ? 'Multi Order'
+                                                : orderType,
                                             style: const TextStyle(
                                               color: Color(0xFF8FBC8F),
                                               fontSize: 8,
                                               fontWeight: FontWeight.w500,
                                             ),
                                           ),
+                                          if (isMultiOrder) ...[
+                                            const SizedBox(height: 1),
+                                            Text(
+                                              '($itemCount items)',
+                                              style: const TextStyle(
+                                                color: Color(0xFF8FBC8F),
+                                                fontSize: 6,
+                                                fontWeight: FontWeight.w400,
+                                              ),
+                                            ),
+                                          ],
                                         ],
                                       ),
                                     ),
@@ -228,17 +253,41 @@ class StatusPesananCustomerScreen extends StatelessWidget {
                                             fontSize: 10, // Kurangi dari 12
                                           ),
                                         ),
-                                        Text(
-                                          model,
-                                          style: TextStyle(
-                                            fontWeight: FontWeight.w500,
-                                            color: isDark
-                                                ? Colors.white
-                                                : Colors.black,
-                                            fontSize:
-                                                11, // Tambahkan ukuran font yang lebih kecil
+                                        if (isMultiOrder) ...[
+                                          Text(
+                                            '$itemCount Items',
+                                            style: TextStyle(
+                                              fontWeight: FontWeight.w500,
+                                              color: isDark
+                                                  ? Colors.white
+                                                  : Colors.black,
+                                              fontSize: 11,
+                                            ),
                                           ),
-                                        ),
+                                          const SizedBox(height: 2),
+                                          Text(
+                                            'First: $model',
+                                            style: TextStyle(
+                                              fontWeight: FontWeight.w400,
+                                              color: isDark
+                                                  ? Colors.white70
+                                                  : Colors.grey[600],
+                                              fontSize: 9,
+                                              fontStyle: FontStyle.italic,
+                                            ),
+                                          ),
+                                        ] else ...[
+                                          Text(
+                                            model,
+                                            style: TextStyle(
+                                              fontWeight: FontWeight.w500,
+                                              color: isDark
+                                                  ? Colors.white
+                                                  : Colors.black,
+                                              fontSize: 11,
+                                            ),
+                                          ),
+                                        ],
                                         const SizedBox(
                                           height: 6,
                                         ), // Kurangi dari 8
@@ -251,17 +300,29 @@ class StatusPesananCustomerScreen extends StatelessWidget {
                                             fontSize: 10, // Kurangi dari 12
                                           ),
                                         ),
-                                        Text(
-                                          fabric,
-                                          style: TextStyle(
-                                            fontWeight: FontWeight.w500,
-                                            color: isDark
-                                                ? Colors.white
-                                                : Colors.black,
-                                            fontSize:
-                                                11, // Tambahkan ukuran font yang lebih kecil
+                                        if (isMultiOrder) ...[
+                                          Text(
+                                            'Various',
+                                            style: TextStyle(
+                                              fontWeight: FontWeight.w500,
+                                              color: isDark
+                                                  ? Colors.white
+                                                  : Colors.black,
+                                              fontSize: 11,
+                                            ),
                                           ),
-                                        ),
+                                        ] else ...[
+                                          Text(
+                                            fabric,
+                                            style: TextStyle(
+                                              fontWeight: FontWeight.w500,
+                                              color: isDark
+                                                  ? Colors.white
+                                                  : Colors.black,
+                                              fontSize: 11,
+                                            ),
+                                          ),
+                                        ],
                                         const SizedBox(
                                           height: 6,
                                         ), // Kurangi dari 8
@@ -275,12 +336,11 @@ class StatusPesananCustomerScreen extends StatelessWidget {
                                           ),
                                         ),
                                         Text(
-                                          'Rp ${price.toString()}',
+                                          'Rp ${displayPrice.toStringAsFixed(0)}',
                                           style: const TextStyle(
                                             fontWeight: FontWeight.w600,
                                             color: Color(0xFFDE8500),
-                                            fontSize:
-                                                11, // Tambahkan ukuran font yang lebih kecil
+                                            fontSize: 11,
                                           ),
                                         ),
                                       ],

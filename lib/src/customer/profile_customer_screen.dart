@@ -51,7 +51,9 @@ class _ProfileCustomerScreenState extends State<ProfileCustomerScreen> {
         if (userData != null) {
           setState(() {
             _name = userData['name'] ?? '';
-            _username = userData['username'] ?? '';
+            _username =
+                currentUser.email ??
+                ''; // Username langsung dari email user yang login
             _position = userData['position'] ?? 'Customer';
             _address = userData['address'] ?? '';
             _isLoading = false;

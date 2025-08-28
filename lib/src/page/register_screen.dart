@@ -17,6 +17,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
   final TextEditingController _confirmPasswordController =
       TextEditingController();
   bool _isLoading = false;
+  bool _obscurePassword = true;
   bool _obscureConfirmPassword = true;
 
   void _register() async {
@@ -216,11 +217,24 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       // Kolom Password
                       TextField(
                         controller: _passwordController,
-                        obscureText: false,
+                        obscureText: _obscurePassword,
                         style: const TextStyle(color: Colors.black),
                         decoration: InputDecoration(
                           labelText: 'Password',
                           prefixIcon: const Icon(Icons.lock_outline),
+                          suffixIcon: IconButton(
+                            icon: Icon(
+                              _obscurePassword
+                                  ? Icons.visibility_off
+                                  : Icons.visibility,
+                              color: Colors.black54,
+                            ),
+                            onPressed: () {
+                              setState(() {
+                                _obscurePassword = !_obscurePassword;
+                              });
+                            },
+                          ),
                           border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(12),
                             borderSide: BorderSide.none,

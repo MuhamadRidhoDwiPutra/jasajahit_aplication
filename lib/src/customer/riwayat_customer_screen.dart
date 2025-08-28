@@ -205,11 +205,22 @@ class _RiwayatCustomerScreenState extends State<RiwayatCustomerScreen> {
                               ? order.items[0]
                               : {};
                           final orderType = firstItem['orderType'] ?? '-';
-                          final price =
-                              order.estimatedPrice?.toDouble() ??
-                              order.totalPrice ??
-                              firstItem['price'] ??
-                              0;
+
+                          // Hitung total harga dan jumlah item
+                          final totalPrice = order.items.fold<double>(
+                            0,
+                            (sum, item) =>
+                                sum + (item['price'] ?? 0).toDouble(),
+                          );
+                          final itemCount = order.items.length;
+                          final isMultiOrder = itemCount > 1;
+
+                          final price = isMultiOrder
+                              ? totalPrice
+                              : (order.estimatedPrice?.toDouble() ??
+                                    order.totalPrice ??
+                                    firstItem['price'] ??
+                                    0);
 
                           // Cek apakah order sudah memiliki bukti pembayaran
                           final hasPaymentProof =
@@ -296,7 +307,9 @@ class _RiwayatCustomerScreenState extends State<RiwayatCustomerScreen> {
                                         CrossAxisAlignment.start,
                                     children: [
                                       Text(
-                                        orderType,
+                                        isMultiOrder
+                                            ? 'Multi Order'
+                                            : orderType,
                                         style: TextStyle(
                                           fontSize: 16,
                                           fontWeight: FontWeight.w600,
@@ -307,61 +320,130 @@ class _RiwayatCustomerScreenState extends State<RiwayatCustomerScreen> {
                                         ),
                                       ),
                                       const SizedBox(height: 8),
-                                      // Tambahkan detail pesanan
+                                      // Tambahkan detail pesanan dengan pembedaan single vs multi item
                                       if (firstItem['jenisBaju'] != null ||
                                           firstItem['jenisCelana'] != null ||
                                           firstItem['model'] != null) ...[
-                                        Text(
-                                          'Model: ${firstItem['jenisBaju'] ?? firstItem['jenisCelana'] ?? firstItem['model'] ?? '-'}',
-                                          style: TextStyle(
-                                            fontSize: 14,
-                                            color: isDark
-                                                ? Colors.white70
-                                                : Colors.black54,
-                                            fontFamily: 'SF Pro Text',
+                                        // Cek apakah ini multi item order
+                                        if (order.items.length > 1) ...[
+                                          Text(
+                                            '${order.items.length} Items',
+                                            style: TextStyle(
+                                              fontSize: 14,
+                                              fontWeight: FontWeight.w500,
+                                              color: isDark
+                                                  ? Colors.white
+                                                  : Colors.black,
+                                              fontFamily: 'SF Pro Text',
+                                            ),
                                           ),
-                                        ),
+                                          const SizedBox(height: 2),
+                                          Text(
+                                            'First: ${firstItem['jenisBaju'] ?? firstItem['jenisCelana'] ?? firstItem['model'] ?? '-'}',
+                                            style: TextStyle(
+                                              fontSize: 12,
+                                              color: isDark
+                                                  ? Colors.white70
+                                                  : Colors.grey[600],
+                                              fontFamily: 'SF Pro Text',
+                                              fontStyle: FontStyle.italic,
+                                            ),
+                                          ),
+                                        ] else ...[
+                                          Text(
+                                            'Model: ${firstItem['jenisBaju'] ?? firstItem['jenisCelana'] ?? firstItem['model'] ?? '-'}',
+                                            style: TextStyle(
+                                              fontSize: 14,
+                                              color: isDark
+                                                  ? Colors.white70
+                                                  : Colors.black54,
+                                              fontFamily: 'SF Pro Text',
+                                            ),
+                                          ),
+                                        ],
                                         const SizedBox(height: 4),
                                       ],
                                       if (firstItem['fabric'] != null ||
                                           order.selectedKain != null) ...[
-                                        Text(
-                                          'Kain: ${firstItem['fabric'] ?? order.selectedKain ?? '-'}',
-                                          style: TextStyle(
-                                            fontSize: 14,
-                                            color: isDark
-                                                ? Colors.white70
-                                                : Colors.black54,
-                                            fontFamily: 'SF Pro Text',
+                                        // Cek apakah ini multi item order
+                                        if (order.items.length > 1) ...[
+                                          Text(
+                                            'Kain: Various',
+                                            style: TextStyle(
+                                              fontSize: 14,
+                                              color: isDark
+                                                  ? Colors.white70
+                                                  : Colors.black54,
+                                              fontFamily: 'SF Pro Text',
+                                            ),
                                           ),
-                                        ),
+                                        ] else ...[
+                                          Text(
+                                            'Kain: ${firstItem['fabric'] ?? order.selectedKain ?? '-'}',
+                                            style: TextStyle(
+                                              fontSize: 14,
+                                              color: isDark
+                                                  ? Colors.white70
+                                                  : Colors.black54,
+                                              fontFamily: 'SF Pro Text',
+                                            ),
+                                          ),
+                                        ],
                                         const SizedBox(height: 4),
                                       ],
                                       if (firstItem['measurements'] != null ||
                                           order.estimatedSize != null) ...[
-                                        Text(
-                                          'Ukuran: ${order.isCustomSize == true ? 'Custom' : (order.estimatedSize ?? 'Standard')}',
-                                          style: TextStyle(
-                                            fontSize: 14,
-                                            color: isDark
-                                                ? Colors.white70
-                                                : Colors.black54,
-                                            fontFamily: 'SF Pro Text',
+                                        // Cek apakah ini multi item order
+                                        if (order.items.length > 1) ...[
+                                          Text(
+                                            'Ukuran: Various',
+                                            style: TextStyle(
+                                              fontSize: 14,
+                                              color: isDark
+                                                  ? Colors.white70
+                                                  : Colors.black54,
+                                              fontFamily: 'SF Pro Text',
+                                            ),
                                           ),
-                                        ),
+                                        ] else ...[
+                                          Text(
+                                            'Ukuran: ${order.isCustomSize == true ? 'Custom' : (order.estimatedSize ?? 'Standard')}',
+                                            style: TextStyle(
+                                              fontSize: 14,
+                                              color: isDark
+                                                  ? Colors.white70
+                                                  : Colors.black54,
+                                              fontFamily: 'SF Pro Text',
+                                            ),
+                                          ),
+                                        ],
                                         const SizedBox(height: 4),
                                       ],
                                       if (firstItem['size'] != null) ...[
-                                        Text(
-                                          'Size: ${firstItem['size']}',
-                                          style: TextStyle(
-                                            fontSize: 14,
-                                            color: isDark
-                                                ? Colors.white70
-                                                : Colors.black54,
-                                            fontFamily: 'SF Pro Text',
+                                        // Cek apakah ini multi item order
+                                        if (order.items.length > 1) ...[
+                                          Text(
+                                            'Size: Various',
+                                            style: TextStyle(
+                                              fontSize: 14,
+                                              color: isDark
+                                                  ? Colors.white70
+                                                  : Colors.black54,
+                                              fontFamily: 'SF Pro Text',
+                                            ),
                                           ),
-                                        ),
+                                        ] else ...[
+                                          Text(
+                                            'Size: ${firstItem['size']}',
+                                            style: TextStyle(
+                                              fontSize: 14,
+                                              color: isDark
+                                                  ? Colors.white70
+                                                  : Colors.black54,
+                                              fontFamily: 'SF Pro Text',
+                                            ),
+                                          ),
+                                        ],
                                         const SizedBox(height: 4),
                                       ],
                                       Row(
@@ -585,7 +667,6 @@ class _RiwayatCustomerScreenState extends State<RiwayatCustomerScreen> {
           firstItem['model'] ??
           '';
       final fabric = firstItem['fabric'] ?? order.selectedKain ?? '';
-      final measurements = firstItem['measurements'] ?? {};
       final price =
           firstItem['price'] ??
           order.estimatedPrice?.toDouble() ??
@@ -610,40 +691,31 @@ class _RiwayatCustomerScreenState extends State<RiwayatCustomerScreen> {
         return;
       }
 
-      // Buat order baru berdasarkan tipe pesanan dengan data yang sesuai database
-      final newOrder = order_model.Order(
+      // Buat order sementara (tidak disimpan ke database) untuk navigasi
+      // Salin semua item dari order asli untuk mendukung multi order
+      final tempOrder = order_model.Order(
         id: null,
         userId: userId,
         userName: order.userName,
         customerName: order.customerName,
         customerAddress: order.customerAddress,
-        items: [
-          {
-            'orderType': orderType,
-            'jenisBaju': firstItem['jenisBaju'],
-            'jenisCelana': firstItem['jenisCelana'],
-            'model': productModel,
-            'fabric': fabric,
-            'measurements': measurements,
-            'price': price,
-            'size': firstItem['size'],
-          },
-        ],
-        status: 'Menunggu Konfirmasi',
+        items: order.items, // Salin semua item, bukan hanya item pertama
+        status: 'Draft', // Status sementara, bukan 'Menunggu Konfirmasi'
         orderDate: Timestamp.now(),
-        totalPrice: price.toDouble(),
-        estimatedPrice: price.toInt(),
+        totalPrice: order.items.fold<double>(
+          0,
+          (sum, item) => sum + (item['price'] ?? 0).toDouble(),
+        ), // Hitung total dari semua item
+        estimatedPrice: order.items.fold<int>(
+          0,
+          (sum, item) => sum + ((item['price'] ?? 0) as int),
+        ), // Hitung total dari semua item
         estimatedSize: estimatedSize,
         isCustomSize: isCustomSize,
         selectedKain: fabric,
       );
 
-      print('Order baru dibuat: ${newOrder.id}');
-
-      // Simpan order terlebih dahulu
-      await FirestoreService().saveOrder(newOrder);
-
-      print('Order berhasil disimpan');
+      print('Order sementara dibuat untuk navigasi');
 
       // Navigasi ke screen pembayaran berdasarkan tipe pesanan
       if (orderType == 'Baju') {
@@ -651,8 +723,9 @@ class _RiwayatCustomerScreenState extends State<RiwayatCustomerScreen> {
           context,
           MaterialPageRoute(
             builder: (context) => PembayaranBajuCustomerScreen(
-              order: newOrder,
+              order: tempOrder,
               sourcePage: 'riwayat', // Tambah parameter asal halaman
+              isDraft: true, // Tambah parameter untuk menandai ini adalah draft
             ),
           ),
         );
@@ -661,8 +734,9 @@ class _RiwayatCustomerScreenState extends State<RiwayatCustomerScreen> {
           context,
           MaterialPageRoute(
             builder: (context) => PembayaranCelanaCustomerScreen(
-              order: newOrder,
+              order: tempOrder,
               sourcePage: 'riwayat', // Tambah parameter asal halaman
+              isDraft: true, // Tambah parameter untuk menandai ini adalah draft
             ),
           ),
         );
@@ -683,6 +757,8 @@ class _RiwayatCustomerScreenState extends State<RiwayatCustomerScreen> {
               selectedSize: firstItem['size'] ?? 'L',
               firestoreService: FirestoreService(),
               sourcePage: 'riwayat', // Tambah parameter asal halaman
+              isDraft: true, // Tambah parameter untuk menandai ini adalah draft
+              order: tempOrder, // Tambah parameter order untuk kasus draft
             ),
           ),
         );
@@ -692,9 +768,9 @@ class _RiwayatCustomerScreenState extends State<RiwayatCustomerScreen> {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
             content: Text(
-              'Pesanan berhasil dibuat! Silakan lakukan pembayaran.',
+              'Silakan lakukan pembayaran untuk melanjutkan pesanan.',
             ),
-            backgroundColor: Colors.green,
+            backgroundColor: Colors.blue,
           ),
         );
       }
@@ -703,7 +779,7 @@ class _RiwayatCustomerScreenState extends State<RiwayatCustomerScreen> {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Gagal membuat pesanan: $e'),
+            content: Text('Gagal memproses pesanan: $e'),
             backgroundColor: Colors.red,
           ),
         );
@@ -789,6 +865,8 @@ class _RiwayatCustomerScreenState extends State<RiwayatCustomerScreen> {
             selectedSize: firstItem['size'] ?? 'L',
             firestoreService: FirestoreService(),
             sourcePage: 'riwayat', // Tambah parameter asal halaman
+            order:
+                order, // Tambah parameter order untuk kasus lanjutkan pembayaran
           ),
         ),
       );
