@@ -770,7 +770,8 @@ class _HomeCustomerContentState extends State<_HomeCustomerContent> {
             physics: const NeverScrollableScrollPhysics(),
             gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
               crossAxisCount: 2,
-              childAspectRatio: 0.85,
+              childAspectRatio:
+                  0.75, // Ubah dari 0.85 ke 0.75 untuk memberikan ruang lebih
               crossAxisSpacing: 16,
               mainAxisSpacing: 16,
             ),
@@ -1080,7 +1081,9 @@ class _ModelCard extends StatelessWidget {
           ),
           Expanded(
             child: Padding(
-              padding: const EdgeInsets.all(6),
+              padding: const EdgeInsets.all(
+                8,
+              ), // Tingkatkan dari 6 ke 8 untuk memberikan ruang lebih
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -1095,7 +1098,9 @@ class _ModelCard extends StatelessWidget {
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                   ),
-                  const SizedBox(height: 4),
+                  const SizedBox(
+                    height: 3,
+                  ), // Kurangi dari 4 ke 3 untuk menghemat ruang
                   Text(
                     product.description,
                     style: TextStyle(
@@ -1116,9 +1121,12 @@ class _ModelCard extends StatelessWidget {
                       fontFamily: 'SF Pro Text',
                     ),
                   ),
-                  const SizedBox(height: 4),
+                  const SizedBox(
+                    height: 3,
+                  ), // Kurangi dari 4 ke 3 untuk menghemat ruang
                   SizedBox(
-                    height: 24,
+                    height:
+                        26, // Tingkatkan dari 24 ke 26 untuk mencegah overflow
                     child: Row(
                       children: [
                         Expanded(
@@ -1129,7 +1137,13 @@ class _ModelCard extends StatelessWidget {
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(4),
                               ),
-                              padding: const EdgeInsets.symmetric(vertical: 2),
+                              padding: const EdgeInsets.symmetric(
+                                vertical: 3,
+                              ), // Tingkatkan dari 2 ke 3
+                              minimumSize: const Size(
+                                0,
+                                20,
+                              ), // Tambahkan minimum size
                             ),
                             onPressed: () => _showProductDetail(context),
                             child: const Text(
@@ -1142,7 +1156,7 @@ class _ModelCard extends StatelessWidget {
                             ),
                           ),
                         ),
-                        const SizedBox(width: 2),
+                        const SizedBox(width: 3), // Tingkatkan dari 2 ke 3
                         Expanded(
                           child: ElevatedButton(
                             style: ElevatedButton.styleFrom(
@@ -1151,7 +1165,13 @@ class _ModelCard extends StatelessWidget {
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(4),
                               ),
-                              padding: const EdgeInsets.symmetric(vertical: 2),
+                              padding: const EdgeInsets.symmetric(
+                                vertical: 3,
+                              ), // Tingkatkan dari 2 ke 3
+                              minimumSize: const Size(
+                                0,
+                                20,
+                              ), // Tambahkan minimum size
                             ),
                             onPressed: () {
                               Navigator.push(

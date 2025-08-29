@@ -146,6 +146,9 @@ class _PembayaranBajuCustomerScreenState
     return total;
   }
 
+  // Variabel untuk menyimpan order yang sudah memiliki ID
+  order_model.Order? _orderWithId;
+
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
@@ -212,12 +215,15 @@ class _PembayaranBajuCustomerScreenState
         ),
         centerTitle: true,
       ),
-      body: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 12),
+      body: SingleChildScrollView(
+        padding: const EdgeInsets.symmetric(
+          horizontal: 18,
+          vertical: 8,
+        ), // Kurangi vertical padding
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const SizedBox(height: 8),
+            const SizedBox(height: 4), // Kurangi dari 8 ke 4
             Text(
               'Detail Pesanan',
               style: TextStyle(
@@ -226,11 +232,11 @@ class _PembayaranBajuCustomerScreenState
                 fontWeight: FontWeight.bold,
               ),
             ),
-            const SizedBox(height: 12),
+            const SizedBox(height: 8), // Kurangi dari 12 ke 8
             // Card utama
             Container(
               width: double.infinity,
-              padding: const EdgeInsets.all(12),
+              padding: const EdgeInsets.all(10), // Kurangi dari 12 ke 10
               decoration: BoxDecoration(
                 color: isDark ? const Color(0xFF2A2A2A) : Colors.grey[300],
                 borderRadius: BorderRadius.circular(10),
@@ -290,6 +296,17 @@ class _PembayaranBajuCustomerScreenState
                                 color: isDark ? Colors.white : Colors.black,
                               ),
                             ),
+                            // Tambahkan kode pesanan
+                            if (widget.order.id != null) ...[
+                              const SizedBox(height: 8),
+                              Text(
+                                'Kode Pesanan\n${widget.order.id}',
+                                style: TextStyle(
+                                  color: isDark ? Colors.white : Colors.black,
+                                  fontWeight: FontWeight.w500,
+                                ),
+                              ),
+                            ],
                           ],
                         ),
                       ),
@@ -332,11 +349,13 @@ class _PembayaranBajuCustomerScreenState
                       ),
                       GestureDetector(
                         onTap: () {
-                          Navigator.push(
+                          // Gunakan order yang sudah memiliki ID jika tersedia
+                          final orderToShow = _orderWithId ?? widget.order;
+                          Navigator.pushReplacement(
                             context,
                             MaterialPageRoute(
                               builder: (context) => CekDetailPesananBajuScreen(
-                                order: widget.order,
+                                order: orderToShow,
                               ),
                             ),
                           );
@@ -360,7 +379,7 @@ class _PembayaranBajuCustomerScreenState
               'Kirim bukti pembayaran',
               style: TextStyle(color: isDark ? Colors.white : Colors.white),
             ),
-            const SizedBox(height: 6),
+            const SizedBox(height: 4), // Kurangi dari 6 ke 4
             Row(
               children: [
                 Expanded(
@@ -374,6 +393,9 @@ class _PembayaranBajuCustomerScreenState
                         borderRadius: BorderRadius.circular(6),
                       ),
                       elevation: 0,
+                      padding: const EdgeInsets.symmetric(
+                        vertical: 10,
+                      ), // Tambahkan padding yang lebih kecil
                     ),
                     onPressed: () {
                       _pickFile();
@@ -383,7 +405,7 @@ class _PembayaranBajuCustomerScreenState
                         : const Text('Choose file'),
                   ),
                 ),
-                const SizedBox(width: 8),
+                const SizedBox(width: 6), // Kurangi dari 8 ke 6
                 ElevatedButton(
                   style: ElevatedButton.styleFrom(
                     backgroundColor: isDark
@@ -394,6 +416,9 @@ class _PembayaranBajuCustomerScreenState
                       borderRadius: BorderRadius.circular(6),
                     ),
                     elevation: 0,
+                    padding: const EdgeInsets.symmetric(
+                      vertical: 10,
+                    ), // Tambahkan padding yang lebih kecil
                   ),
                   onPressed: () {
                     _pickFileFromCamera();
@@ -403,9 +428,9 @@ class _PembayaranBajuCustomerScreenState
               ],
             ),
             if (_selectedFile != null) ...[
-              const SizedBox(height: 8),
+              const SizedBox(height: 6), // Kurangi dari 8 ke 6
               Container(
-                padding: const EdgeInsets.all(8),
+                padding: const EdgeInsets.all(6), // Kurangi dari 8 ke 6
                 decoration: BoxDecoration(
                   color: isDark ? const Color(0xFF2A2A2A) : Colors.grey[200],
                   borderRadius: BorderRadius.circular(6),
@@ -445,32 +470,7 @@ class _PembayaranBajuCustomerScreenState
                 ),
               ),
             ],
-            const SizedBox(height: 18),
-            // QRIS
-            Text(
-              'QRIS',
-              style: TextStyle(color: isDark ? Colors.white : Colors.white),
-            ),
-            const SizedBox(height: 6),
-            Center(
-              child: Container(
-                width: 120,
-                height: 90,
-                decoration: BoxDecoration(
-                  color: isDark ? const Color(0xFF2A2A2A) : Colors.grey[300],
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                child: Center(
-                  child: Text(
-                    'Scan disini',
-                    style: TextStyle(
-                      color: isDark ? Colors.white70 : Colors.black54,
-                    ),
-                  ),
-                ),
-              ),
-            ),
-            const Spacer(),
+            const SizedBox(height: 8), // Kurangi spacing karena QRIS dihapus
             SizedBox(
               width: double.infinity,
               child: ElevatedButton(
@@ -479,7 +479,9 @@ class _PembayaranBajuCustomerScreenState
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(8),
                   ),
-                  padding: const EdgeInsets.symmetric(vertical: 14),
+                  padding: const EdgeInsets.symmetric(
+                    vertical: 12,
+                  ), // Kurangi dari 14 ke 12
                 ),
                 onPressed: () async {
                   if (_selectedFile == null) {
@@ -516,7 +518,7 @@ class _PembayaranBajuCustomerScreenState
                     final customerData = await _getCustomerData();
 
                     // Jika ini adalah draft (dari fitur Pesan Lagi), simpan order baru
-                    // Jika bukan draft (dari pesanan baru), gunakan order yang sudah ada
+                    // Jika bukan draft (dari pesanan baru), buat order baru
                     String orderId;
                     if (widget.isDraft) {
                       // Simpan order baru untuk draft
@@ -528,16 +530,59 @@ class _PembayaranBajuCustomerScreenState
                         '🔍 DEBUG: Order draft disimpan dengan ID: $orderId',
                       );
                     } else {
-                      // Gunakan order yang sudah ada
-                      orderId = widget.order.id ?? '';
-                      print(
-                        '🔍 DEBUG: Menggunakan order yang sudah ada dengan ID: $orderId',
+                      // Buat order baru untuk pesanan baru
+                      final order = order_model.Order(
+                        userId:
+                            FirebaseAuth.instance.currentUser?.uid ??
+                            'customer_001',
+                        userName: customerData['username'] ?? 'Customer',
+                        customerName: customerData['name'],
+                        customerAddress: customerData['address'],
+                        // Gunakan semua items dari widget.order untuk mendukung multi order
+                        items: widget.order.items,
+                        orderDate: firestore.Timestamp.now(),
+                        totalPrice: widget.order.totalPrice ?? 0,
+                        estimatedPrice: widget.order.estimatedPrice ?? 0,
+                        estimatedSize: widget.order.estimatedSize,
+                        isCustomSize: widget.order.isCustomSize,
+                        selectedKain: widget.order.selectedKain,
                       );
+
+                      final orderDoc = await widget._firestoreService.saveOrder(
+                        order,
+                      );
+                      orderId = orderDoc.id;
+                      print('🔍 DEBUG: Order baru dibuat dengan ID: $orderId');
                     }
+
+                    // Validasi orderId tidak boleh kosong
+                    if (orderId.isEmpty) {
+                      throw Exception('Order ID tidak boleh kosong');
+                    }
+
+                    // Update order dengan ID yang baru
+                    _orderWithId = order_model.Order(
+                      id: orderId,
+                      userId: widget.order.userId,
+                      userName: widget.order.userName,
+                      customerName: widget.order.customerName,
+                      customerAddress: widget.order.customerAddress,
+                      items: widget.order.items,
+                      status: widget.order.status,
+                      orderDate: widget.order.orderDate,
+                      totalPrice: widget.order.totalPrice,
+                      paymentProofUrl: widget.order.paymentProofUrl,
+                      paymentProofFileName: widget.order.paymentProofFileName,
+                      estimatedPrice: widget.order.estimatedPrice,
+                      estimatedSize: widget.order.estimatedSize,
+                      isCustomSize: widget.order.isCustomSize,
+                      selectedKain: widget.order.selectedKain,
+                    );
 
                     print('🔍 DEBUG PembayaranBajuCustomerScreen:');
                     print('   - orderId: $orderId');
                     print('   - widget.order.id (sebelum): ${widget.order.id}');
+                    print('   - _orderWithId.id: ${_orderWithId?.id}');
 
                     // Upload bukti pembayaran
                     final paymentProofUrl = await widget._firestoreService
@@ -631,7 +676,7 @@ class _PembayaranBajuCustomerScreenState
                 ),
               ),
             ),
-            const SizedBox(height: 16),
+            const SizedBox(height: 20), // Tambahkan bottom padding yang cukup
           ],
         ),
       ),

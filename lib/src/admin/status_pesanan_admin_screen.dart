@@ -20,6 +20,13 @@ class StatusPesananAdminScreen extends StatefulWidget {
 class _StatusPesananAdminScreenState extends State<StatusPesananAdminScreen> {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
+  // Search and filter variables
+  late TextEditingController _searchController;
+  String _searchQuery = '';
+  String _selectedStatusFilter = 'Semua Status';
+  String _sortBy = 'date'; // 'date', 'name', 'status'
+  bool _isAscending = false;
+
   List<String> statusOptions = [
     'Menunggu Konfirmasi',
     'Sedang dikerjakan',
@@ -27,6 +34,111 @@ class _StatusPesananAdminScreenState extends State<StatusPesananAdminScreen> {
     'Pesanan telah selesai',
     'Pesanan Dibatalkan',
   ];
+
+  List<String> get allStatusOptions => ['Semua Status', ...statusOptions];
+
+  @override
+  void initState() {
+    super.initState();
+    _searchController = TextEditingController();
+    // Update status lama "Pesanan Diterima" ke "Pesanan telah selesai"
+    _updateOldStatuses();
+  }
+
+  @override
+  void dispose() {
+    _searchController.dispose();
+    super.dispose();
+  }
+
+  // Search and filter functions
+  List<QueryDocumentSnapshot> _filterAndSortOrders(
+    List<QueryDocumentSnapshot> orders,
+  ) {
+    List<QueryDocumentSnapshot> filteredOrders = orders.where((order) {
+      final orderData = order.data() as Map<String, dynamic>;
+
+      // Hanya tampilkan pesanan yang masih dalam proses (belum selesai)
+      final status = orderData['status']?.toString().toLowerCase() ?? '';
+      if (status.contains('selesai') || status.contains('batal')) {
+        return false;
+      }
+
+      // Status filter
+      if (_selectedStatusFilter != 'Semua Status') {
+        if (orderData['status'] != _selectedStatusFilter) {
+          return false;
+        }
+      }
+
+      // Search query filter
+      if (_searchQuery.isNotEmpty) {
+        final query = _searchQuery.toLowerCase();
+        final orderId = order.id.toLowerCase();
+        final customerName = (orderData['customerName'] ?? '')
+            .toString()
+            .toLowerCase();
+        final userName = (orderData['userName'] ?? '').toString().toLowerCase();
+        final customerAddress = (orderData['customerAddress'] ?? '')
+            .toString()
+            .toLowerCase();
+        final orderStatus = (orderData['status'] ?? '')
+            .toString()
+            .toLowerCase();
+
+        if (!orderId.contains(query) &&
+            !customerName.contains(query) &&
+            !userName.contains(query) &&
+            !customerAddress.contains(query) &&
+            !orderStatus.contains(query)) {
+          return false;
+        }
+      }
+
+      return true;
+    }).toList();
+
+    // Sort orders
+    filteredOrders.sort((a, b) {
+      final aData = a.data() as Map<String, dynamic>;
+      final bData = b.data() as Map<String, dynamic>;
+
+      int comparison = 0;
+
+      switch (_sortBy) {
+        case 'date':
+          final aDate = aData['orderDate'] as Timestamp?;
+          final bDate = bData['orderDate'] as Timestamp?;
+          if (aDate != null && bDate != null) {
+            comparison = aDate.compareTo(bDate);
+          }
+          break;
+        case 'name':
+          final aName = (aData['customerName'] ?? aData['userName'] ?? '')
+              .toString();
+          final bName = (bData['customerName'] ?? bData['userName'] ?? '')
+              .toString();
+          comparison = aName.compareTo(bName);
+          break;
+        case 'status':
+          final aStatus = (aData['status'] ?? '').toString();
+          final bStatus = (bData['status'] ?? '').toString();
+          comparison = aStatus.compareTo(bStatus);
+          break;
+      }
+
+      return _isAscending ? comparison : -comparison;
+    });
+
+    return filteredOrders;
+  }
+
+  void _clearSearch() {
+    setState(() {
+      _searchQuery = '';
+      _searchController.clear();
+    });
+  }
 
   Color getStatusColor(String status) {
     status = status.toLowerCase();
@@ -144,13 +256,6 @@ class _StatusPesananAdminScreenState extends State<StatusPesananAdminScreen> {
     }
   }
 
-  @override
-  void initState() {
-    super.initState();
-    // Update status lama "Pesanan Diterima" ke "Pesanan telah selesai"
-    _updateOldStatuses();
-  }
-
   // Fungsi untuk mengupdate status lama "Pesanan Diterima" ke "Pesanan telah selesai"
   Future<void> _updateOldStatuses() async {
     try {
@@ -212,7 +317,235 @@ class _StatusPesananAdminScreenState extends State<StatusPesananAdminScreen> {
       body: SafeArea(
         child: Column(
           children: [
-            // Header dihapus sepenuhnya
+            // Search and Filter Section
+            Container(
+              padding: const EdgeInsets.all(16),
+              decoration: BoxDecoration(
+                color: isDark ? const Color(0xFF2A2A2A) : Colors.white,
+                boxShadow: [
+                  BoxShadow(
+                    color: isDark
+                        ? Colors.black.withOpacity(0.3)
+                        : Colors.black.withOpacity(0.05),
+                    blurRadius: 8,
+                    offset: const Offset(0, 2),
+                  ),
+                ],
+              ),
+              child: Column(
+                children: [
+                  // Search Bar
+                  TextField(
+                    controller: _searchController,
+                    onChanged: (value) {
+                      setState(() {
+                        _searchQuery = value;
+                      });
+                    },
+                    decoration: InputDecoration(
+                      hintText:
+                          'Cari kode pesanan, nama, username, alamat, atau status...',
+                      hintStyle: TextStyle(
+                        color: isDark ? Colors.white54 : Colors.grey[500],
+                        fontSize: 14,
+                      ),
+                      prefixIcon: Icon(
+                        Icons.search,
+                        color: isDark ? Colors.white70 : Colors.grey[600],
+                      ),
+                      suffixIcon: _searchQuery.isNotEmpty
+                          ? IconButton(
+                              icon: Icon(
+                                Icons.clear,
+                                color: isDark
+                                    ? Colors.white70
+                                    : Colors.grey[600],
+                              ),
+                              onPressed: _clearSearch,
+                            )
+                          : null,
+                      filled: true,
+                      fillColor: isDark
+                          ? const Color(0xFF1A1A1A)
+                          : Colors.grey[100],
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12),
+                        borderSide: BorderSide.none,
+                      ),
+                      contentPadding: const EdgeInsets.symmetric(
+                        horizontal: 16,
+                        vertical: 12,
+                      ),
+                    ),
+                    style: TextStyle(
+                      color: isDark ? Colors.white : Colors.black,
+                      fontSize: 14,
+                    ),
+                  ),
+                  const SizedBox(height: 12),
+
+                  // Filter and Sort Row
+                  Row(
+                    children: [
+                      // Status Filter
+                      Expanded(
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 12,
+                            vertical: 8,
+                          ),
+                          decoration: BoxDecoration(
+                            color: isDark
+                                ? const Color(0xFF1A1A1A)
+                                : Colors.grey[100],
+                            borderRadius: BorderRadius.circular(8),
+                            border: Border.all(
+                              color: isDark
+                                  ? Colors.white24
+                                  : Colors.grey[300]!,
+                            ),
+                          ),
+                          child: DropdownButton<String>(
+                            value: _selectedStatusFilter,
+                            isExpanded: true,
+                            dropdownColor: isDark
+                                ? const Color(0xFF2A2A2A)
+                                : Colors.white,
+                            style: TextStyle(
+                              color: isDark ? Colors.white : Colors.black,
+                              fontSize: 13,
+                            ),
+                            underline: Container(),
+                            icon: Icon(
+                              Icons.filter_list,
+                              color: isDark ? Colors.white70 : Colors.grey[600],
+                              size: 20,
+                            ),
+                            items: allStatusOptions.map((status) {
+                              return DropdownMenuItem(
+                                value: status,
+                                child: Text(
+                                  status,
+                                  style: TextStyle(fontSize: 13),
+                                ),
+                              );
+                            }).toList(),
+                            onChanged: (value) {
+                              if (value != null) {
+                                setState(() {
+                                  _selectedStatusFilter = value;
+                                });
+                              }
+                            },
+                          ),
+                        ),
+                      ),
+                      const SizedBox(width: 12),
+
+                      // Sort Dropdown
+                      Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 12,
+                          vertical: 8,
+                        ),
+                        decoration: BoxDecoration(
+                          color: isDark
+                              ? const Color(0xFF1A1A1A)
+                              : Colors.grey[100],
+                          borderRadius: BorderRadius.circular(8),
+                          border: Border.all(
+                            color: isDark ? Colors.white24 : Colors.grey[300]!,
+                          ),
+                        ),
+                        child: DropdownButton<String>(
+                          value: _sortBy,
+                          dropdownColor: isDark
+                              ? const Color(0xFF2A2A2A)
+                              : Colors.white,
+                          style: TextStyle(
+                            color: isDark ? Colors.white : Colors.black,
+                            fontSize: 13,
+                          ),
+                          underline: Container(),
+                          icon: Icon(
+                            Icons.sort,
+                            color: isDark ? Colors.white70 : Colors.grey[600],
+                            size: 20,
+                          ),
+                          items: [
+                            DropdownMenuItem(
+                              value: 'date',
+                              child: Text(
+                                'Tanggal',
+                                style: TextStyle(fontSize: 13),
+                              ),
+                            ),
+                            DropdownMenuItem(
+                              value: 'name',
+                              child: Text(
+                                'Nama',
+                                style: TextStyle(fontSize: 13),
+                              ),
+                            ),
+                            DropdownMenuItem(
+                              value: 'status',
+                              child: Text(
+                                'Status',
+                                style: TextStyle(fontSize: 13),
+                              ),
+                            ),
+                          ],
+                          onChanged: (value) {
+                            if (value != null) {
+                              setState(() {
+                                _sortBy = value;
+                              });
+                            }
+                          },
+                        ),
+                      ),
+
+                      // Sort Direction Toggle
+                      const SizedBox(width: 8),
+                      Container(
+                        decoration: BoxDecoration(
+                          color: isDark
+                              ? const Color(0xFF1A1A1A)
+                              : Colors.grey[100],
+                          borderRadius: BorderRadius.circular(8),
+                          border: Border.all(
+                            color: isDark ? Colors.white24 : Colors.grey[300]!,
+                          ),
+                        ),
+                        child: IconButton(
+                          onPressed: () {
+                            setState(() {
+                              _isAscending = !_isAscending;
+                            });
+                          },
+                          icon: Icon(
+                            _isAscending
+                                ? Icons.arrow_upward
+                                : Icons.arrow_downward,
+                            color: isDark ? Colors.white70 : Colors.grey[600],
+                            size: 20,
+                          ),
+                          tooltip: _isAscending
+                              ? 'Urutkan Naik'
+                              : 'Urutkan Turun',
+                          padding: const EdgeInsets.all(8),
+                          constraints: const BoxConstraints(
+                            minWidth: 36,
+                            minHeight: 36,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+
             // Content area
             Expanded(
               child: StreamBuilder<QuerySnapshot>(
@@ -227,17 +560,68 @@ class _StatusPesananAdminScreenState extends State<StatusPesananAdminScreen> {
                     return const Center(child: CircularProgressIndicator());
                   }
 
-                  final orders = snapshot.data!.docs;
+                  final allOrders = snapshot.data!.docs;
+                  final filteredOrders = _filterAndSortOrders(allOrders);
 
-                  if (orders.isEmpty) {
-                    return const Center(child: Text('Belum ada pesanan.'));
+                  if (filteredOrders.isEmpty) {
+                    if (_searchQuery.isNotEmpty ||
+                        _selectedStatusFilter != 'Semua Status') {
+                      return Center(
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Icon(
+                              Icons.search_off,
+                              size: 64,
+                              color: isDark ? Colors.white54 : Colors.grey[400],
+                            ),
+                            const SizedBox(height: 16),
+                            Text(
+                              'Tidak ada hasil pencarian',
+                              style: TextStyle(
+                                fontSize: 18,
+                                fontWeight: FontWeight.w600,
+                                color: isDark
+                                    ? Colors.white70
+                                    : Colors.grey[600],
+                              ),
+                            ),
+                            const SizedBox(height: 8),
+                            Text(
+                              'Coba ubah kata kunci atau filter',
+                              style: TextStyle(
+                                fontSize: 14,
+                                color: isDark
+                                    ? Colors.white54
+                                    : Colors.grey[500],
+                              ),
+                            ),
+                            const SizedBox(height: 16),
+                            ElevatedButton.icon(
+                              onPressed: _clearSearch,
+                              icon: const Icon(Icons.refresh),
+                              label: const Text('Reset Pencarian'),
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: const Color(0xFFDE8500),
+                                foregroundColor: Colors.white,
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(8),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      );
+                    } else {
+                      return const Center(child: Text('Belum ada pesanan.'));
+                    }
                   }
 
                   return ListView.builder(
                     padding: const EdgeInsets.all(16),
-                    itemCount: orders.length,
+                    itemCount: filteredOrders.length,
                     itemBuilder: (context, index) {
-                      final order = orders[index];
+                      final order = filteredOrders[index];
                       final orderData = order.data() as Map<String, dynamic>;
                       final String currentStatus =
                           orderData['status'] ?? 'Menunggu Konfirmasi';

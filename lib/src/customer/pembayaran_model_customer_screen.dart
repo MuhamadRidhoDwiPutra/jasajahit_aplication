@@ -306,6 +306,20 @@ class _PembayaranModelCustomerScreenState
                                 fontSize: 12,
                               ),
                             ),
+                            // Tambahkan kode pesanan jika ada
+                            if (widget.order?.id != null) ...[
+                              const SizedBox(height: 4),
+                              Text(
+                                'Kode Pesanan: ${widget.order!.id}',
+                                style: TextStyle(
+                                  color: isDark
+                                      ? Colors.white70
+                                      : Colors.black54,
+                                  fontSize: 12,
+                                  fontWeight: FontWeight.w500,
+                                ),
+                              ),
+                            ],
                           ],
                         ),
                       ),
@@ -466,32 +480,7 @@ class _PembayaranModelCustomerScreenState
                 ),
               ),
             ],
-            const SizedBox(height: 18),
-            // QRIS
-            Text(
-              'QRIS',
-              style: TextStyle(color: isDark ? Colors.white : Colors.white),
-            ),
-            const SizedBox(height: 6),
-            Center(
-              child: Container(
-                width: 120,
-                height: 90,
-                decoration: BoxDecoration(
-                  color: isDark ? const Color(0xFF2A2A2A) : Colors.grey[300],
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                child: Center(
-                  child: Text(
-                    'Scan disini',
-                    style: TextStyle(
-                      color: isDark ? Colors.white70 : Colors.black54,
-                    ),
-                  ),
-                ),
-              ),
-            ),
-            const Spacer(),
+            const SizedBox(height: 8), // Kurangi spacing karena QRIS dihapus
             SizedBox(
               width: double.infinity,
               child: ElevatedButton(

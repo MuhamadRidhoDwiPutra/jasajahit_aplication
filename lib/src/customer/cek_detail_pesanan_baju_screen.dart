@@ -119,7 +119,11 @@ class CekDetailPesananBajuScreen extends StatelessWidget {
               const SizedBox(height: 4),
               TextField(
                 enabled: false,
-                controller: TextEditingController(text: order.model),
+                controller: TextEditingController(
+                  text: order.items.isNotEmpty 
+                      ? (order.items.first['jenisBaju'] ?? order.items.first['model'] ?? 'Baju Custom')
+                      : 'Baju Custom'
+                ),
                 style: TextStyle(color: isDark ? Colors.white : Colors.black),
                 decoration: InputDecoration(
                   filled: true,
@@ -169,7 +173,7 @@ class CekDetailPesananBajuScreen extends StatelessWidget {
               const SizedBox(height: 4),
               TextField(
                 enabled: false,
-                controller: TextEditingController(text: '1'),
+                controller: TextEditingController(text: order.items.length.toString()),
                 style: TextStyle(color: isDark ? Colors.white : Colors.black),
                 decoration: InputDecoration(
                   filled: true,
@@ -224,7 +228,7 @@ class CekDetailPesananBajuScreen extends StatelessWidget {
               TextField(
                 enabled: false,
                 controller: TextEditingController(
-                  text: 'Rp ${estimasiHarga.toStringAsFixed(0)}',
+                  text: 'Rp ${(order.totalPrice ?? estimasiHarga).toStringAsFixed(0)}',
                 ),
                 style: TextStyle(color: isDark ? Colors.white : Colors.black),
                 decoration: InputDecoration(
@@ -252,29 +256,143 @@ class CekDetailPesananBajuScreen extends StatelessWidget {
                 ),
               ),
               const SizedBox(height: 4),
-              Text(
-                [
-                  if (order.measurements['lingkarDada'] != null &&
-                      order.measurements['lingkarDada'].toString().isNotEmpty)
-                    'Lingkar Dada: ${order.measurements['lingkarDada']} cm',
-                  if (order.measurements['lebarBahu'] != null &&
-                      order.measurements['lebarBahu'].toString().isNotEmpty)
-                    'Lebar Bahu: ${order.measurements['lebarBahu']} cm',
-                  if (order.measurements['panjangBaju'] != null &&
-                      order.measurements['panjangBaju'].toString().isNotEmpty)
-                    'Panjang Baju: ${order.measurements['panjangBaju']} cm',
-                  if (order.measurements['panjangLengan'] != null &&
-                      order.measurements['panjangLengan'].toString().isNotEmpty)
-                    'Panjang Lengan: ${order.measurements['panjangLengan']} cm',
-                  if (order.measurements['lebarLengan'] != null &&
-                      order.measurements['lebarLengan'].toString().isNotEmpty)
-                    'Lebar Lengan: ${order.measurements['lebarLengan']} cm',
-                ].join('\n'),
-                style: TextStyle(
-                  fontSize: 16,
-                  color: isDark ? Colors.white70 : Colors.black87,
+              
+              // Tampilkan detail ukuran jika ada
+              if (order.items.isNotEmpty) ...[
+                Text(
+                  [
+                    if (order.items.first['measurements']['lingkarDada'] != null &&
+                        order.items.first['measurements']['lingkarDada'].toString().isNotEmpty)
+                      'Lingkar Dada: ${order.items.first['measurements']['lingkarDada']} cm',
+                    if (order.items.first['measurements']['lebarBahu'] != null &&
+                        order.items.first['measurements']['lebarBahu'].toString().isNotEmpty)
+                      'Lebar Bahu: ${order.items.first['measurements']['lebarBahu']} cm',
+                    if (order.items.first['measurements']['panjangBaju'] != null &&
+                        order.items.first['measurements']['panjangBaju'].toString().isNotEmpty)
+                      'Panjang Baju: ${order.items.first['measurements']['panjangBaju']} cm',
+                    if (order.items.first['measurements']['panjangLengan'] != null &&
+                        order.items.first['measurements']['panjangLengan'].toString().isNotEmpty)
+                      'Panjang Lengan: ${order.items.first['measurements']['panjangLengan']} cm',
+                    if (order.items.first['measurements']['lebarLengan'] != null &&
+                        order.items.first['measurements']['lebarLengan'].toString().isNotEmpty)
+                      'Lebar Lengan: ${order.items.first['measurements']['lebarLengan']} cm',
+                  ].join('\n'),
+                  style: TextStyle(
+                    fontSize: 16,
+                    color: isDark ? Colors.white70 : Colors.black87,
+                  ),
                 ),
-              ),
+              ] else ...[
+                Text(
+                  'Ukuran standar: $ukuranEstimasi',
+                  style: TextStyle(
+                    fontSize: 16,
+                    color: isDark ? Colors.white70 : Colors.black87,
+                  ),
+                ),
+              ],
+              
+              // Tampilkan semua item jika multi order
+              if (order.items.length > 1) ...[
+                const SizedBox(height: 24),
+                Text(
+                  'Daftar Item Pesanan',
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 16,
+                    color: isDark ? Colors.white : Colors.black,
+                  ),
+                ),
+                const SizedBox(height: 12),
+                ...order.items.asMap().entries.map((entry) {
+                  final index = entry.key;
+                  final item = entry.value;
+                  final itemModel = item['jenisBaju'] ?? item['model'] ?? 'Baju';
+                  final itemPrice = item['price'] ?? 0;
+                  final itemSize = item['size'] ?? 'M';
+
+                  return Container(
+                    margin: const EdgeInsets.only(bottom: 12),
+                    padding: const EdgeInsets.all(12),
+                    decoration: BoxDecoration(
+                      color: isDark
+                          ? Colors.white.withOpacity(0.05)
+                          : Colors.grey.withOpacity(0.1),
+                      borderRadius: BorderRadius.circular(8),
+                      border: Border.all(
+                        color: isDark
+                            ? Colors.white24
+                            : Colors.grey.withOpacity(0.3),
+                      ),
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text(
+                              'Item ${index + 1}',
+                              style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                fontSize: 14,
+                                color: isDark ? Colors.white : Colors.black,
+                              ),
+                            ),
+                            Text(
+                              'Rp ${itemPrice.toStringAsFixed(0)}',
+                              style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                fontSize: 14,
+                                color: const Color(0xFFDE8500),
+                              ),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 8),
+                        Text(
+                          'Model: $itemModel',
+                          style: TextStyle(
+                            fontSize: 14,
+                            color: isDark ? Colors.white70 : Colors.black87,
+                          ),
+                        ),
+                        const SizedBox(height: 4),
+                        Text(
+                          'Ukuran: $itemSize',
+                          style: TextStyle(
+                            fontSize: 14,
+                            color: isDark ? Colors.white70 : Colors.black87,
+                          ),
+                        ),
+                      ],
+                    ),
+                  );
+                }),
+                const Divider(height: 24),
+                // Total harga untuk multi order
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      'Total Harga:',
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 16,
+                        color: isDark ? Colors.white : Colors.black,
+                      ),
+                    ),
+                                         Text(
+                       'Rp ${(order.totalPrice ?? 0).toStringAsFixed(0)}',
+                       style: TextStyle(
+                         fontWeight: FontWeight.bold,
+                         fontSize: 18,
+                         color: const Color(0xFFDE8500),
+                       ),
+                     ),
+                  ],
+                ),
+              ],
             ],
           ),
         ),

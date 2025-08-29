@@ -548,7 +548,9 @@ class _UkuranCelanaCustomerScreenState
                           };
 
                           // Langsung lanjut ke konfirmasi dengan kain yang sudah dipilih
-                          final items = widget.items ?? [];
+                          final items = List<Map<String, dynamic>>.from(
+                            widget.items ?? [],
+                          );
                           const modelName = 'Model Celana';
 
                           items.add({

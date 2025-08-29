@@ -14,9 +14,24 @@ class CekDetailStatusPesananCustomerScreen extends StatelessWidget {
         firstItem['jenisCelana'] ??
         firstItem['model'] ??
         '-';
-    final fabric = firstItem['fabric'] ?? '-';
+    // Gunakan selectedKain dari order, bukan fabric dari item
+    final jenisKain = order.selectedKain ?? '-';
     final measurements = firstItem['measurements'] ?? {};
     final orderType = (firstItem['orderType'] ?? '').toString();
+
+    // Debug print untuk multi order
+    print('🔍 DEBUG CekDetailStatusPesananCustomerScreen:');
+    print('   - order.id: ${order.id}');
+    print('   - order.items.length: ${order.items.length}');
+    print('   - order.totalPrice: ${order.totalPrice}');
+    print('   - order.selectedKain: ${order.selectedKain}');
+
+    for (int i = 0; i < order.items.length; i++) {
+      final item = order.items[i];
+      print(
+        '   - Item $i: model=${item['model']}, price=${item['price']}, orderType=${item['orderType']}',
+      );
+    }
     return Scaffold(
       backgroundColor: isDark
           ? const Color(0xFF1A1A1A)
@@ -98,7 +113,7 @@ class CekDetailStatusPesananCustomerScreen extends StatelessWidget {
                   ),
                   const SizedBox(height: 4),
                   Text(
-                    fabric,
+                    jenisKain,
                     style: TextStyle(
                       fontSize: 16,
                       color: isDark ? Colors.white70 : Colors.black87,
@@ -108,6 +123,38 @@ class CekDetailStatusPesananCustomerScreen extends StatelessWidget {
                     height: 24,
                     color: isDark ? Colors.white24 : Colors.black12,
                   ),
+                  Text(
+                    'Status Pesanan',
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 16,
+                      color: isDark ? Colors.white : Colors.black,
+                    ),
+                  ),
+                  const SizedBox(height: 4),
+                  Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 12,
+                      vertical: 6,
+                    ),
+                    decoration: BoxDecoration(
+                      color: _getStatusColor(order.status).withOpacity(0.1),
+                      borderRadius: BorderRadius.circular(20),
+                      border: Border.all(
+                        color: _getStatusColor(order.status),
+                        width: 1,
+                      ),
+                    ),
+                    child: Text(
+                      order.status,
+                      style: TextStyle(
+                        color: _getStatusColor(order.status),
+                        fontWeight: FontWeight.w600,
+                        fontSize: 14,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 24),
                   Text(
                     'Jumlah Produk',
                     style: TextStyle(
@@ -128,6 +175,26 @@ class CekDetailStatusPesananCustomerScreen extends StatelessWidget {
                     height: 24,
                     color: isDark ? Colors.white24 : Colors.black12,
                   ),
+                  // Tampilkan harga untuk single order
+                  if (order.items.length == 1) ...[
+                    Text(
+                      'Harga',
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 16,
+                        color: isDark ? Colors.white : Colors.black,
+                      ),
+                    ),
+                    const SizedBox(height: 4),
+                    Text(
+                      'Rp ${(order.items.first['price'] ?? 0).toStringAsFixed(0)}',
+                      style: TextStyle(
+                        fontSize: 16,
+                        color: isDark ? Colors.white70 : Colors.black87,
+                      ),
+                    ),
+                    const SizedBox(height: 24),
+                  ],
                   // Tampilkan semua item jika multi order
                   if (order.items.length > 1) ...[
                     Text(
@@ -147,7 +214,8 @@ class CekDetailStatusPesananCustomerScreen extends StatelessWidget {
                           item['jenisCelana'] ??
                           item['model'] ??
                           '-';
-                      final itemFabric = item['fabric'] ?? '-';
+                      // Gunakan selectedKain dari order untuk semua item
+                      final itemJenisKain = order.selectedKain ?? '-';
                       final itemPrice = item['price'] ?? 0;
 
                       return Container(
@@ -210,7 +278,7 @@ class CekDetailStatusPesananCustomerScreen extends StatelessWidget {
                             ),
                             _DetailRow(
                               label: 'Jenis Kain',
-                              value: itemFabric,
+                              value: itemJenisKain,
                               isDark: isDark,
                             ),
                             _DetailRow(
@@ -556,6 +624,22 @@ class CekDetailStatusPesananCustomerScreen extends StatelessWidget {
 
   double _calculateTotalPrice() {
     return order.items.fold(0.0, (sum, item) => sum + (item['price'] ?? 0));
+  }
+
+  Color _getStatusColor(String status) {
+    status = status.toLowerCase();
+    if (status.contains('menunggu konfirmasi')) {
+      return Colors.orange; // #FFA500
+    } else if (status.contains('dikonfirmasi')) {
+      return Colors.blue; // #2196F3
+    } else if (status.contains('sedang dikerjakan')) {
+      return Colors.amber; // #FFC107
+    } else if (status.contains('selesai')) {
+      return Colors.green; // #4CAF50
+    } else if (status.contains('batal')) {
+      return Colors.red; // #F44336
+    }
+    return Colors.grey; // Default
   }
 }
 

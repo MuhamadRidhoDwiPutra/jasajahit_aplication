@@ -15,7 +15,118 @@ class RiwayatTransaksiAdminScreen extends StatefulWidget {
 class _RiwayatTransaksiAdminScreenState
     extends State<RiwayatTransaksiAdminScreen> {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
-  String searchQuery = '';
+
+  // Search and filter variables
+  late TextEditingController _searchController;
+  String _searchQuery = '';
+  String _selectedStatusFilter = 'Semua Status';
+  String _sortBy = 'date'; // 'date', 'name', 'status'
+  bool _isAscending = false;
+
+  List<String> statusOptions = ['Pesanan telah selesai', 'Pesanan Dibatalkan'];
+
+  List<String> get allStatusOptions => ['Semua Status', ...statusOptions];
+
+  @override
+  void initState() {
+    super.initState();
+    _searchController = TextEditingController();
+  }
+
+  @override
+  void dispose() {
+    _searchController.dispose();
+    super.dispose();
+  }
+
+  // Search and filter functions
+  List<QueryDocumentSnapshot> _filterAndSortOrders(
+    List<QueryDocumentSnapshot> orders,
+  ) {
+    List<QueryDocumentSnapshot> filteredOrders = orders.where((order) {
+      final orderData = order.data() as Map<String, dynamic>;
+
+      // Hanya tampilkan pesanan yang sudah selesai atau dibatalkan
+      final status = orderData['status']?.toString().toLowerCase() ?? '';
+      if (!status.contains('selesai') && !status.contains('batal')) {
+        return false;
+      }
+
+      // Status filter
+      if (_selectedStatusFilter != 'Semua Status') {
+        if (orderData['status'] != _selectedStatusFilter) {
+          return false;
+        }
+      }
+
+      // Search query filter
+      if (_searchQuery.isNotEmpty) {
+        final query = _searchQuery.toLowerCase();
+        final orderId = order.id.toLowerCase();
+        final customerName = (orderData['customerName'] ?? '')
+            .toString()
+            .toLowerCase();
+        final userName = (orderData['userName'] ?? '').toString().toLowerCase();
+        final customerAddress = (orderData['customerAddress'] ?? '')
+            .toString()
+            .toLowerCase();
+        final orderStatus = (orderData['status'] ?? '')
+            .toString()
+            .toLowerCase();
+
+        if (!orderId.contains(query) &&
+            !customerName.contains(query) &&
+            !userName.contains(query) &&
+            !customerAddress.contains(query) &&
+            !orderStatus.contains(query)) {
+          return false;
+        }
+      }
+
+      return true;
+    }).toList();
+
+    // Sort orders
+    filteredOrders.sort((a, b) {
+      final aData = a.data() as Map<String, dynamic>;
+      final bData = b.data() as Map<String, dynamic>;
+
+      int comparison = 0;
+
+      switch (_sortBy) {
+        case 'date':
+          final aDate = aData['orderDate'] as Timestamp?;
+          final bDate = bData['orderDate'] as Timestamp?;
+          if (aDate != null && bDate != null) {
+            comparison = aDate.compareTo(bDate);
+          }
+          break;
+        case 'name':
+          final aName = (aData['customerName'] ?? aData['userName'] ?? '')
+              .toString();
+          final bName = (bData['customerName'] ?? bData['userName'] ?? '')
+              .toString();
+          comparison = aName.compareTo(bName);
+          break;
+        case 'status':
+          final aStatus = (aData['status'] ?? '').toString();
+          final bStatus = (bData['status'] ?? '').toString();
+          comparison = aStatus.compareTo(bStatus);
+          break;
+      }
+
+      return _isAscending ? comparison : -comparison;
+    });
+
+    return filteredOrders;
+  }
+
+  void _clearSearch() {
+    setState(() {
+      _searchQuery = '';
+      _searchController.clear();
+    });
+  }
 
   // Fungsi untuk mendapatkan data customer yang benar
   Future<Map<String, String>> _getCustomerData(String userId) async {
@@ -92,13 +203,13 @@ class _RiwayatTransaksiAdminScreenState
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Icon(
-              searchQuery.isNotEmpty ? Icons.search_off : Icons.history,
+              _searchQuery.isNotEmpty ? Icons.search_off : Icons.history,
               size: 64,
               color: isDark ? Colors.grey[600] : Colors.grey[400],
             ),
             const SizedBox(height: 16),
             Text(
-              searchQuery.isNotEmpty
+              _searchQuery.isNotEmpty
                   ? 'Tidak ada transaksi ditemukan'
                   : 'Belum ada transaksi',
               style: TextStyle(
@@ -107,7 +218,7 @@ class _RiwayatTransaksiAdminScreenState
                 color: isDark ? Colors.white : Colors.black,
               ),
             ),
-            if (searchQuery.isNotEmpty) ...[
+            if (_searchQuery.isNotEmpty) ...[
               const SizedBox(height: 8),
               Text(
                 'Coba ubah kata kunci pencarian',
@@ -356,7 +467,7 @@ class _RiwayatTransaksiAdminScreenState
                   ),
                   onChanged: (value) {
                     setState(() {
-                      searchQuery = value.toLowerCase();
+                      _searchQuery = value.toLowerCase();
                     });
                   },
                 ),
@@ -377,13 +488,10 @@ class _RiwayatTransaksiAdminScreenState
                 }
 
                 // Filter data menggunakan fungsi pencarian yang baru
-                var filteredDocs = _filterOrders(
-                  snapshot.data!.docs,
-                  searchQuery,
-                );
+                var filteredDocs = _filterAndSortOrders(snapshot.data!.docs);
 
                 // Search info dan statistics
-                if (searchQuery.isNotEmpty) {
+                if (_searchQuery.isNotEmpty) {
                   return Column(
                     children: [
                       // Search info bar
@@ -412,7 +520,7 @@ class _RiwayatTransaksiAdminScreenState
                             const SizedBox(width: 8),
                             Expanded(
                               child: Text(
-                                'Mencari: "$searchQuery"',
+                                'Mencari: "$_searchQuery"',
                                 style: TextStyle(
                                   fontSize: 12,
                                   color: isDark
@@ -443,7 +551,7 @@ class _RiwayatTransaksiAdminScreenState
                             TextButton(
                               onPressed: () {
                                 setState(() {
-                                  searchQuery = '';
+                                  _searchQuery = '';
                                 });
                               },
                               child: const Text(

@@ -56,7 +56,21 @@ class BerhasilPesanBajuCustomerScreen extends StatelessWidget {
     // Ambil data dari order
     final kodePesanan = order.id ?? 'N/A';
     final tanggalPesanan = order.orderDate.toDate();
-    final estimasiHarga = order.estimatedPrice ?? 0;
+
+    // Hitung total harga untuk multi order
+    double totalHarga = 0;
+    if (order.items.isNotEmpty) {
+      // Jika ada items, hitung total dari semua item
+      for (var item in order.items) {
+        totalHarga += (item['price'] ?? 0).toDouble();
+      }
+    } else {
+      // Fallback ke estimatedPrice jika tidak ada items
+      totalHarga = (order.estimatedPrice ?? 0).toDouble();
+    }
+
+    // Gunakan totalPrice jika tersedia, jika tidak gunakan totalHarga yang dihitung
+    final finalTotalHarga = order.totalPrice ?? totalHarga;
 
     // Debug print untuk memastikan data yang diterima
     print('🔍 DEBUG BerhasilPesanBajuCustomerScreen:');
@@ -64,7 +78,16 @@ class BerhasilPesanBajuCustomerScreen extends StatelessWidget {
     print('   - order.userId: ${order.userId}');
     print('   - order.orderDate: ${order.orderDate}');
     print('   - order.estimatedPrice: ${order.estimatedPrice}');
+    print('   - order.totalPrice: ${order.totalPrice}');
+    print('   - order.items.length: ${order.items.length}');
     print('   - kodePesanan: $kodePesanan');
+    print('   - finalTotalHarga: $finalTotalHarga');
+
+    // Debug print untuk items
+    for (int i = 0; i < order.items.length; i++) {
+      final item = order.items[i];
+      print('   - Item $i: price=${item['price']}, model=${item['model']}');
+    }
 
     return Scaffold(
       backgroundColor: isDark
@@ -190,7 +213,7 @@ class BerhasilPesanBajuCustomerScreen extends StatelessWidget {
                             ),
                             _DetailItem(
                               label: 'Total Pembayaran',
-                              value: 'Rp ${estimasiHarga.toStringAsFixed(0)}',
+                              value: 'Rp ${finalTotalHarga.toStringAsFixed(0)}',
                               icon: Icons.payments,
                             ),
                           ],

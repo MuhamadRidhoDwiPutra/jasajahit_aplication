@@ -119,7 +119,11 @@ class CekDetailPesananCelanaScreen extends StatelessWidget {
               const SizedBox(height: 4),
               TextField(
                 enabled: false,
-                controller: TextEditingController(text: order.model),
+                controller: TextEditingController(
+                  text: order.items.isNotEmpty 
+                      ? (order.items.first['jenisCelana'] ?? order.items.first['model'] ?? 'Celana Custom')
+                      : 'Celana Custom'
+                ),
                 style: TextStyle(color: isDark ? Colors.white : Colors.black),
                 decoration: InputDecoration(
                   filled: true,
@@ -169,7 +173,7 @@ class CekDetailPesananCelanaScreen extends StatelessWidget {
               const SizedBox(height: 4),
               TextField(
                 enabled: false,
-                controller: TextEditingController(text: '1'),
+                controller: TextEditingController(text: order.items.length.toString()),
                 style: TextStyle(color: isDark ? Colors.white : Colors.black),
                 decoration: InputDecoration(
                   filled: true,
@@ -224,7 +228,7 @@ class CekDetailPesananCelanaScreen extends StatelessWidget {
               TextField(
                 enabled: false,
                 controller: TextEditingController(
-                  text: 'Rp ${estimasiHarga.toStringAsFixed(0)}',
+                  text: 'Rp ${(order.totalPrice ?? estimasiHarga).toStringAsFixed(0)}',
                 ),
                 style: TextStyle(color: isDark ? Colors.white : Colors.black),
                 decoration: InputDecoration(
@@ -253,32 +257,7 @@ class CekDetailPesananCelanaScreen extends StatelessWidget {
               ),
               const SizedBox(height: 4),
               Text(
-                [
-                  if (order.measurements['panjangCelana'] != null &&
-                      order.measurements['panjangCelana'].toString().isNotEmpty)
-                    'Panjang Celana: ${order.measurements['panjangCelana']} cm',
-                  if (order.measurements['lingkarPinggang'] != null &&
-                      order.measurements['lingkarPinggang']
-                          .toString()
-                          .isNotEmpty)
-                    'Lingkar Pinggang: ${order.measurements['lingkarPinggang']} cm',
-                  if (order.measurements['lingkarPinggul'] != null &&
-                      order.measurements['lingkarPinggul']
-                          .toString()
-                          .isNotEmpty)
-                    'Lingkar Pinggul: ${order.measurements['lingkarPinggul']} cm',
-                  if (order.measurements['lingkarPesak'] != null &&
-                      order.measurements['lingkarPesak'].toString().isNotEmpty)
-                    'Lingkar Pesak: ${order.measurements['lingkarPesak']} cm',
-                  if (order.measurements['lingkarPaha'] != null &&
-                      order.measurements['lingkarPaha'].toString().isNotEmpty)
-                    'Lingkar Paha: ${order.measurements['lingkarPaha']} cm',
-                  if (order.measurements['lebarBawahCelana'] != null &&
-                      order.measurements['lebarBawahCelana']
-                          .toString()
-                          .isNotEmpty)
-                    'Lebar Bawah Celana: ${order.measurements['lebarBawahCelana']} cm',
-                ].join('\n'),
+                'Ukuran standar: $ukuranEstimasi',
                 style: TextStyle(
                   fontSize: 16,
                   color: isDark ? Colors.white70 : Colors.black87,

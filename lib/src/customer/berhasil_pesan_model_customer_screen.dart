@@ -40,15 +40,15 @@ class BerhasilPesanModelCustomerScreen extends StatelessWidget {
           ? const Color(0xFF1A1A1A)
           : const Color(0xFF8FBC8F),
       body: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.all(24.0),
+        child: SingleChildScrollView(
+          padding: const EdgeInsets.all(20.0),
           child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
             children: [
+              const SizedBox(height: 20),
               // Icon sukses
               Container(
-                width: 120,
-                height: 120,
+                width: 100,
+                height: 100,
                 decoration: BoxDecoration(
                   color: Colors.green.withOpacity(0.1),
                   shape: BoxShape.circle,
@@ -56,46 +56,46 @@ class BerhasilPesanModelCustomerScreen extends StatelessWidget {
                 child: const Icon(
                   Icons.check_circle,
                   color: Colors.green,
-                  size: 60,
+                  size: 50,
                 ),
               ),
-              const SizedBox(height: 32),
+              const SizedBox(height: 24),
               // Judul
               Text(
                 'Pesanan Berhasil!',
                 style: TextStyle(
-                  fontSize: 28,
+                  fontSize: 24,
                   fontWeight: FontWeight.bold,
                   color: isDark ? Colors.white : Colors.black,
                   fontFamily: 'SF Pro Display',
                 ),
                 textAlign: TextAlign.center,
               ),
-              const SizedBox(height: 16),
+              const SizedBox(height: 12),
               // Pesan
               Text(
                 'Pesanan model Anda telah berhasil dibuat dan sedang diproses. Tim kami akan segera menghubungi Anda untuk konfirmasi lebih lanjut.',
                 style: TextStyle(
-                  fontSize: 16,
+                  fontSize: 14,
                   color: isDark ? Colors.white70 : Colors.black54,
                   fontFamily: 'SF Pro Text',
                 ),
                 textAlign: TextAlign.center,
               ),
-              const SizedBox(height: 32),
+              const SizedBox(height: 24),
               // Detail pesanan
               Container(
                 width: double.infinity,
-                padding: const EdgeInsets.all(20),
+                padding: const EdgeInsets.all(16),
                 decoration: BoxDecoration(
                   color: isDark ? const Color(0xFF2A2A2A) : Colors.white,
-                  borderRadius: BorderRadius.circular(16),
+                  borderRadius: BorderRadius.circular(12),
                   boxShadow: [
                     BoxShadow(
                       color: isDark
                           ? Colors.black.withOpacity(0.3)
                           : Colors.black.withOpacity(0.05),
-                      blurRadius: 10,
+                      blurRadius: 8,
                       offset: const Offset(0, 2),
                     ),
                   ],
@@ -106,17 +106,17 @@ class BerhasilPesanModelCustomerScreen extends StatelessWidget {
                     Text(
                       'Detail Pesanan',
                       style: TextStyle(
-                        fontSize: 18,
+                        fontSize: 16,
                         fontWeight: FontWeight.bold,
                         color: isDark ? Colors.white : Colors.black,
                         fontFamily: 'SF Pro Display',
                       ),
                     ),
-                    const SizedBox(height: 16),
+                    const SizedBox(height: 12),
                     // Item pesanan
                     ...order.items.map(
                       (item) => Padding(
-                        padding: const EdgeInsets.only(bottom: 8),
+                        padding: const EdgeInsets.only(bottom: 6),
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
@@ -125,48 +125,48 @@ class BerhasilPesanModelCustomerScreen extends StatelessWidget {
                               style: TextStyle(
                                 fontWeight: FontWeight.w600,
                                 color: isDark ? Colors.white : Colors.black,
-                                fontSize: 14,
+                                fontSize: 13,
                               ),
                             ),
-                            const SizedBox(height: 4),
+                            const SizedBox(height: 3),
                             Text(
                               'Ukuran: ${item['size'] ?? '-'}',
                               style: const TextStyle(
                                 fontWeight: FontWeight.w600,
                                 color: Color(0xFFDE8500),
-                                fontSize: 12,
+                                fontSize: 11,
                               ),
                             ),
-                            const SizedBox(height: 4),
+                            const SizedBox(height: 3),
                             Text(
                               'Deskripsi: ${item['description'] ?? '-'}',
                               style: TextStyle(
                                 color: isDark ? Colors.white70 : Colors.black54,
-                                fontSize: 12,
+                                fontSize: 11,
                               ),
                             ),
                           ],
                         ),
                       ),
                     ),
-                    const Divider(height: 24),
+                    const Divider(height: 20),
                     // Kode Pesanan dengan tombol salin
                     Row(
                       children: [
                         Container(
-                          width: 40,
-                          height: 40,
+                          width: 36,
+                          height: 36,
                           decoration: BoxDecoration(
                             color: const Color(0xFFDE8500).withOpacity(0.1),
-                            borderRadius: BorderRadius.circular(8),
+                            borderRadius: BorderRadius.circular(6),
                           ),
                           child: const Icon(
                             Icons.receipt_long,
                             color: Color(0xFFDE8500),
-                            size: 24,
+                            size: 20,
                           ),
                         ),
-                        const SizedBox(width: 16),
+                        const SizedBox(width: 12),
                         Expanded(
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
@@ -174,13 +174,13 @@ class BerhasilPesanModelCustomerScreen extends StatelessWidget {
                               Text(
                                 'Kode Pesanan',
                                 style: TextStyle(
-                                  fontSize: 14,
+                                  fontSize: 12,
                                   fontWeight: FontWeight.w500,
                                   color: isDark ? Colors.white70 : Colors.grey,
                                   fontFamily: 'SF Pro Text',
                                 ),
                               ),
-                              const SizedBox(height: 4),
+                              const SizedBox(height: 3),
                               Row(
                                 children: [
                                   Expanded(
@@ -189,7 +189,7 @@ class BerhasilPesanModelCustomerScreen extends StatelessWidget {
                                           ? kodePesanan
                                           : 'Sedang diproses...',
                                       style: TextStyle(
-                                        fontSize: 16,
+                                        fontSize: 14,
                                         fontWeight: FontWeight.w600,
                                         color: isDark
                                             ? Colors.white
@@ -218,7 +218,7 @@ class BerhasilPesanModelCustomerScreen extends StatelessWidget {
                                     icon: const Icon(
                                       Icons.copy,
                                       color: Color(0xFFDE8500),
-                                      size: 20,
+                                      size: 18,
                                     ),
                                     tooltip: 'Salin kode pesanan',
                                   ),
@@ -229,7 +229,7 @@ class BerhasilPesanModelCustomerScreen extends StatelessWidget {
                         ),
                       ],
                     ),
-                    const Divider(height: 24),
+                    const Divider(height: 20),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
@@ -238,7 +238,7 @@ class BerhasilPesanModelCustomerScreen extends StatelessWidget {
                           style: TextStyle(
                             fontWeight: FontWeight.bold,
                             color: isDark ? Colors.white : Colors.black,
-                            fontSize: 16,
+                            fontSize: 14,
                           ),
                         ),
                         Text(
@@ -246,7 +246,7 @@ class BerhasilPesanModelCustomerScreen extends StatelessWidget {
                           style: const TextStyle(
                             fontWeight: FontWeight.bold,
                             color: Color(0xFFDE8500),
-                            fontSize: 18,
+                            fontSize: 16,
                           ),
                         ),
                       ],
@@ -254,7 +254,7 @@ class BerhasilPesanModelCustomerScreen extends StatelessWidget {
                   ],
                 ),
               ),
-              const SizedBox(height: 32),
+              const SizedBox(height: 24),
               // Tombol kembali ke beranda
               SizedBox(
                 width: double.infinity,
@@ -263,9 +263,9 @@ class BerhasilPesanModelCustomerScreen extends StatelessWidget {
                     backgroundColor: const Color(0xFFDE8500),
                     foregroundColor: Colors.white,
                     shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
+                      borderRadius: BorderRadius.circular(10),
                     ),
-                    padding: const EdgeInsets.symmetric(vertical: 16),
+                    padding: const EdgeInsets.symmetric(vertical: 14),
                   ),
                   onPressed: () {
                     Navigator.pushAndRemoveUntil(
@@ -279,13 +279,14 @@ class BerhasilPesanModelCustomerScreen extends StatelessWidget {
                   child: const Text(
                     'Kembali ke Beranda',
                     style: TextStyle(
-                      fontSize: 16,
+                      fontSize: 15,
                       fontWeight: FontWeight.bold,
                       fontFamily: 'SF Pro Display',
                     ),
                   ),
                 ),
               ),
+              const SizedBox(height: 20),
             ],
           ),
         ),

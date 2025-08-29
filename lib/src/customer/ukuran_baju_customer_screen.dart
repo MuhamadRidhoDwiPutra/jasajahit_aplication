@@ -488,7 +488,7 @@ class _UkuranBajuCustomerScreenState extends State<UkuranBajuCustomerScreen> {
                           };
 
                           // Langsung lanjut ke konfirmasi dengan kain yang sudah dipilih
-                          final items = widget.items ?? [];
+                          final items = List<Map<String, dynamic>>.from(widget.items ?? []);
                           const modelName = 'Model Baju';
                           
                           items.add({

@@ -210,12 +210,15 @@ class _PembayaranCelanaCustomerScreenState
         ),
         centerTitle: true,
       ),
-      body: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 12),
+      body: SingleChildScrollView(
+        padding: const EdgeInsets.symmetric(
+          horizontal: 18,
+          vertical: 8,
+        ), // Kurangi vertical padding
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const SizedBox(height: 8),
+            const SizedBox(height: 4), // Kurangi dari 8 ke 4
             Text(
               'Detail Pesanan',
               style: TextStyle(
@@ -224,11 +227,11 @@ class _PembayaranCelanaCustomerScreenState
                 fontWeight: FontWeight.bold,
               ),
             ),
-            const SizedBox(height: 12),
+            const SizedBox(height: 8), // Kurangi dari 12 ke 8
             // Card utama
             Container(
               width: double.infinity,
-              padding: const EdgeInsets.all(12),
+              padding: const EdgeInsets.all(10), // Kurangi dari 12 ke 10
               decoration: BoxDecoration(
                 color: isDark ? const Color(0xFF2A2A2A) : Colors.grey[300],
                 borderRadius: BorderRadius.circular(10),
@@ -288,6 +291,17 @@ class _PembayaranCelanaCustomerScreenState
                                 color: isDark ? Colors.white : Colors.black,
                               ),
                             ),
+                            // Tambahkan kode pesanan
+                            if (widget.order.id != null) ...[
+                              const SizedBox(height: 8),
+                              Text(
+                                'Kode Pesanan\n${widget.order.id}',
+                                style: TextStyle(
+                                  color: isDark ? Colors.white : Colors.black,
+                                  fontWeight: FontWeight.w500,
+                                ),
+                              ),
+                            ],
                           ],
                         ),
                       ),
@@ -330,12 +344,34 @@ class _PembayaranCelanaCustomerScreenState
                       ),
                       GestureDetector(
                         onTap: () {
-                          Navigator.push(
+                          // Buat order dengan ID yang sudah ada jika ada, atau gunakan order asli
+                          final orderToShow = widget.order.id != null
+                              ? widget.order
+                              : order_model.Order(
+                                  id: 'Temporary ID - ${DateTime.now().millisecondsSinceEpoch}',
+                                  userId: widget.order.userId,
+                                  userName: widget.order.userName,
+                                  customerName: widget.order.customerName,
+                                  customerAddress: widget.order.customerAddress,
+                                  items: widget.order.items,
+                                  status: widget.order.status,
+                                  orderDate: widget.order.orderDate,
+                                  totalPrice: widget.order.totalPrice,
+                                  paymentProofUrl: widget.order.paymentProofUrl,
+                                  paymentProofFileName:
+                                      widget.order.paymentProofFileName,
+                                  estimatedPrice: widget.order.estimatedPrice,
+                                  estimatedSize: widget.order.estimatedSize,
+                                  isCustomSize: widget.order.isCustomSize,
+                                  selectedKain: widget.order.selectedKain,
+                                );
+
+                          Navigator.pushReplacement(
                             context,
                             MaterialPageRoute(
                               builder: (context) =>
                                   CekDetailPesananCelanaScreen(
-                                    order: widget.order,
+                                    order: orderToShow,
                                   ),
                             ),
                           );
@@ -444,32 +480,7 @@ class _PembayaranCelanaCustomerScreenState
                 ),
               ),
             ],
-            const SizedBox(height: 18),
-            // QRIS
-            Text(
-              'QRIS',
-              style: TextStyle(color: isDark ? Colors.white : Colors.white),
-            ),
-            const SizedBox(height: 6),
-            Center(
-              child: Container(
-                width: 120,
-                height: 90,
-                decoration: BoxDecoration(
-                  color: isDark ? const Color(0xFF2A2A2A) : Colors.grey[300],
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                child: Center(
-                  child: Text(
-                    'Scan disini',
-                    style: TextStyle(
-                      color: isDark ? Colors.white70 : Colors.black54,
-                    ),
-                  ),
-                ),
-              ),
-            ),
-            const Spacer(),
+            const SizedBox(height: 8), // Kurangi spacing karena QRIS dihapus
             SizedBox(
               width: double.infinity,
               child: ElevatedButton(
@@ -478,7 +489,9 @@ class _PembayaranCelanaCustomerScreenState
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(8),
                   ),
-                  padding: const EdgeInsets.symmetric(vertical: 14),
+                  padding: const EdgeInsets.symmetric(
+                    vertical: 12,
+                  ), // Kurangi dari 14 ke 12
                 ),
                 onPressed: () async {
                   if (_selectedFile == null) {
@@ -515,7 +528,7 @@ class _PembayaranCelanaCustomerScreenState
                     final customerData = await _getCustomerData();
 
                     // Jika ini adalah draft (dari fitur Pesan Lagi), simpan order baru
-                    // Jika bukan draft (dari pesanan baru), gunakan order yang sudah ada
+                    // Jika bukan draft (dari pesanan baru), buat order baru
                     String orderId;
                     if (widget.isDraft) {
                       // Simpan order baru untuk draft
@@ -527,11 +540,34 @@ class _PembayaranCelanaCustomerScreenState
                         '🔍 DEBUG: Order draft disimpan dengan ID: $orderId',
                       );
                     } else {
-                      // Gunakan order yang sudah ada
-                      orderId = widget.order.id ?? '';
-                      print(
-                        '🔍 DEBUG: Menggunakan order yang sudah ada dengan ID: $orderId',
+                      // Buat order baru untuk pesanan baru
+                      final order = order_model.Order(
+                        userId:
+                            FirebaseAuth.instance.currentUser?.uid ??
+                            'customer_001',
+                        userName: customerData['username'] ?? 'Customer',
+                        customerName: customerData['name'],
+                        customerAddress: customerData['address'],
+                        // Gunakan semua items dari widget.order untuk mendukung multi order
+                        items: widget.order.items,
+                        orderDate: firestore.Timestamp.now(),
+                        totalPrice: widget.order.totalPrice ?? 0,
+                        estimatedPrice: widget.order.estimatedPrice ?? 0,
+                        estimatedSize: widget.order.estimatedSize,
+                        isCustomSize: widget.order.isCustomSize,
+                        selectedKain: widget.order.selectedKain,
                       );
+
+                      final orderDoc = await widget._firestoreService.saveOrder(
+                        order,
+                      );
+                      orderId = orderDoc.id;
+                      print('🔍 DEBUG: Order baru dibuat dengan ID: $orderId');
+                    }
+
+                    // Validasi orderId tidak boleh kosong
+                    if (orderId.isEmpty) {
+                      throw Exception('Order ID tidak boleh kosong');
                     }
 
                     print('🔍 DEBUG PembayaranCelanaCustomerScreen:');
@@ -630,7 +666,7 @@ class _PembayaranCelanaCustomerScreenState
                 ),
               ),
             ),
-            const SizedBox(height: 16),
+            const SizedBox(height: 20), // Tambahkan bottom padding yang cukup
           ],
         ),
       ),

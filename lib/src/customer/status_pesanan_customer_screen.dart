@@ -92,7 +92,24 @@ class StatusPesananCustomerScreen extends StatelessWidget {
                           firstItem['jenisCelana'] ??
                           firstItem['model'] ??
                           '-';
-                      final fabric = firstItem['fabric'] ?? '-';
+                      // Gunakan selectedKain dari order, bukan fabric dari item
+                      final jenisKain = order.selectedKain ?? '-';
+
+                      // Debug print untuk multi order
+                      print(
+                        '🔍 DEBUG StatusPesananCustomerScreen - Order ${order.id}:',
+                      );
+                      print('   - items.length: ${order.items.length}');
+                      print('   - isMultiOrder: ${order.items.length > 1}');
+                      print('   - totalPrice: ${order.totalPrice}');
+                      print('   - selectedKain: ${order.selectedKain}');
+
+                      for (int i = 0; i < order.items.length; i++) {
+                        final item = order.items[i];
+                        print(
+                          '   - Item $i: model=${item['model']}, price=${item['price']}, orderType=${item['orderType']}',
+                        );
+                      }
 
                       // Hitung total harga dan jumlah item
                       final totalPrice = order.items.fold<double>(
@@ -313,7 +330,7 @@ class StatusPesananCustomerScreen extends StatelessWidget {
                                           ),
                                         ] else ...[
                                           Text(
-                                            fabric,
+                                            jenisKain,
                                             style: TextStyle(
                                               fontWeight: FontWeight.w500,
                                               color: isDark

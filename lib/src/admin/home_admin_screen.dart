@@ -690,11 +690,10 @@ class _HomeAdminContentState extends State<_HomeAdminContent> {
                       ),
                       child: Padding(
                         padding: const EdgeInsets.symmetric(
-                          vertical: 20,
-                          horizontal: 12,
+                          vertical: 16,
+                          horizontal: 8,
                         ),
                         child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceAround,
                           children: [
                             _DashboardItem(
                               label: 'Masuk',
@@ -894,7 +893,7 @@ class _HomeAdminContentState extends State<_HomeAdminContent> {
                             ),
                             const SizedBox(height: 12),
                             SizedBox(
-                              height: 180,
+                              height: 160,
                               child: BarChart(
                                 BarChartData(
                                   alignment: BarChartAlignment.spaceAround,
@@ -934,7 +933,7 @@ class _HomeAdminContentState extends State<_HomeAdminContent> {
                                     leftTitles: AxisTitles(
                                       sideTitles: SideTitles(
                                         showTitles: true,
-                                        reservedSize: 28,
+                                        reservedSize: 24,
                                         getTitlesWidget: (value, meta) {
                                           return Text(
                                             value.toInt().toString(),
@@ -946,7 +945,7 @@ class _HomeAdminContentState extends State<_HomeAdminContent> {
                                                       Brightness.dark
                                                   ? Colors.white70
                                                   : Colors.black54,
-                                              fontSize: 12,
+                                              fontSize: 10,
                                             ),
                                           );
                                         },
@@ -966,12 +965,12 @@ class _HomeAdminContentState extends State<_HomeAdminContent> {
                                               ];
                                               return Padding(
                                                 padding: const EdgeInsets.only(
-                                                  top: 8.0,
+                                                  top: 6.0,
                                                 ),
                                                 child: Text(
                                                   labels[value.toInt()],
                                                   style: TextStyle(
-                                                    fontSize: 12,
+                                                    fontSize: 10,
                                                     color:
                                                         Theme.of(
                                                               context,
@@ -1016,7 +1015,7 @@ class _HomeAdminContentState extends State<_HomeAdminContent> {
                                         BarChartRodData(
                                           toY: monthData['masuk'].toDouble(),
                                           color: Colors.orange,
-                                          width: 20,
+                                          width: 16,
                                           borderRadius: const BorderRadius.only(
                                             topLeft: Radius.circular(4),
                                             topRight: Radius.circular(4),
@@ -1031,7 +1030,7 @@ class _HomeAdminContentState extends State<_HomeAdminContent> {
                                           toY: monthData['dikonfirmasi']
                                               .toDouble(),
                                           color: Colors.blue,
-                                          width: 20,
+                                          width: 16,
                                           borderRadius: const BorderRadius.only(
                                             topLeft: Radius.circular(4),
                                             topRight: Radius.circular(4),
@@ -1046,7 +1045,7 @@ class _HomeAdminContentState extends State<_HomeAdminContent> {
                                           toY: monthData['dikerjakan']
                                               .toDouble(),
                                           color: Colors.purple,
-                                          width: 20,
+                                          width: 16,
                                           borderRadius: const BorderRadius.only(
                                             topLeft: Radius.circular(4),
                                             topRight: Radius.circular(4),
@@ -1060,7 +1059,7 @@ class _HomeAdminContentState extends State<_HomeAdminContent> {
                                         BarChartRodData(
                                           toY: monthData['selesai'].toDouble(),
                                           color: Colors.green,
-                                          width: 20,
+                                          width: 16,
                                           borderRadius: const BorderRadius.only(
                                             topLeft: Radius.circular(4),
                                             topRight: Radius.circular(4),
@@ -1075,7 +1074,7 @@ class _HomeAdminContentState extends State<_HomeAdminContent> {
                                           toY: monthData['dibatalkan']
                                               .toDouble(),
                                           color: Colors.red,
-                                          width: 20,
+                                          width: 16,
                                           borderRadius: const BorderRadius.only(
                                             topLeft: Radius.circular(4),
                                             topRight: Radius.circular(4),
@@ -1189,23 +1188,23 @@ class _HomeAdminContentState extends State<_HomeAdminContent> {
                                 ),
                               ],
                             ),
-                            const SizedBox(height: 8),
+                            const SizedBox(height: 6),
                             // Indikator Real-time Update
                             Row(
                               children: [
                                 Container(
-                                  width: 8,
-                                  height: 8,
+                                  width: 6,
+                                  height: 6,
                                   decoration: const BoxDecoration(
                                     color: Colors.green,
                                     shape: BoxShape.circle,
                                   ),
                                 ),
-                                const SizedBox(width: 8),
+                                const SizedBox(width: 6),
                                 const Text(
                                   'Real-time Update',
                                   style: TextStyle(
-                                    fontSize: 12,
+                                    fontSize: 11,
                                     color: Colors.green,
                                     fontStyle: FontStyle.italic,
                                   ),
@@ -1214,20 +1213,20 @@ class _HomeAdminContentState extends State<_HomeAdminContent> {
                                 Text(
                                   'Last updated: ${_lastUpdateTime.hour.toString().padLeft(2, '0')}:${_lastUpdateTime.minute.toString().padLeft(2, '0')}',
                                   style: TextStyle(
-                                    fontSize: 12,
+                                    fontSize: 11,
                                     color: Colors.grey[600],
                                     fontStyle: FontStyle.italic,
                                   ),
                                 ),
                               ],
                             ),
-                            const SizedBox(height: 8),
+                            const SizedBox(height: 6),
                             // Debug Info untuk memastikan sinkronisasi
                             Container(
-                              padding: const EdgeInsets.all(8),
+                              padding: const EdgeInsets.all(6),
                               decoration: BoxDecoration(
                                 color: Colors.blue.withOpacity(0.1),
-                                borderRadius: BorderRadius.circular(8),
+                                borderRadius: BorderRadius.circular(6),
                                 border: Border.all(
                                   color: Colors.blue.withOpacity(0.3),
                                 ),
@@ -1236,15 +1235,15 @@ class _HomeAdminContentState extends State<_HomeAdminContent> {
                                 children: [
                                   const Icon(
                                     Icons.info_outline,
-                                    size: 16,
+                                    size: 14,
                                     color: Colors.blue,
                                   ),
-                                  const SizedBox(width: 8),
+                                  const SizedBox(width: 6),
                                   Expanded(
                                     child: Text(
                                       'Data terakhir: ${_currentOrders.length} pesanan | Update: ${_lastUpdateTime.hour.toString().padLeft(2, '0')}:${_lastUpdateTime.minute.toString().padLeft(2, '0')}',
                                       style: const TextStyle(
-                                        fontSize: 12,
+                                        fontSize: 11,
                                         color: Colors.blue,
                                         fontStyle: FontStyle.italic,
                                       ),
@@ -1253,25 +1252,26 @@ class _HomeAdminContentState extends State<_HomeAdminContent> {
                                 ],
                               ),
                             ),
-                            const SizedBox(height: 8),
+                            const SizedBox(height: 6),
                             Text(
                               'Total Keuntungan: Rp ${monthData['totalProfit'].toStringAsFixed(0).replaceAllMapped(RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'), (m) => '${m[1]}.')}',
                               style: const TextStyle(
-                                fontSize: 16,
+                                fontSize: 14,
                                 fontWeight: FontWeight.w600,
                                 color: Colors.green,
                                 fontFamily: 'SF Pro Text',
                               ),
                             ),
-                            const SizedBox(height: 16),
+                            const SizedBox(height: 12),
                             // Pie Chart dan Legend
                             if (monthData['totalProfit'] > 0) ...[
                               SizedBox(
-                                height: 200,
-                                child: Row(
+                                height: 150,
+                                child: Column(
                                   children: [
-                                    Expanded(
-                                      flex: 2,
+                                    // Pie Chart
+                                    SizedBox(
+                                      height: 90,
                                       child: PieChart(
                                         PieChartData(
                                           sections: [
@@ -1281,9 +1281,9 @@ class _HomeAdminContentState extends State<_HomeAdminContent> {
                                                 title:
                                                     'Baju\n${((monthData['bajuProfit'] / monthData['totalProfit']) * 100).toStringAsFixed(1)}%',
                                                 color: Colors.blue,
-                                                radius: 80,
+                                                radius: 35,
                                                 titleStyle: const TextStyle(
-                                                  fontSize: 12,
+                                                  fontSize: 8,
                                                   fontWeight: FontWeight.bold,
                                                   color: Colors.white,
                                                 ),
@@ -1295,9 +1295,9 @@ class _HomeAdminContentState extends State<_HomeAdminContent> {
                                                 title:
                                                     'Celana\n${((monthData['celanaProfit'] / monthData['totalProfit']) * 100).toStringAsFixed(1)}%',
                                                 color: Colors.green,
-                                                radius: 80,
+                                                radius: 35,
                                                 titleStyle: const TextStyle(
-                                                  fontSize: 12,
+                                                  fontSize: 8,
                                                   fontWeight: FontWeight.bold,
                                                   color: Colors.white,
                                                 ),
@@ -1308,58 +1308,54 @@ class _HomeAdminContentState extends State<_HomeAdminContent> {
                                                 title:
                                                     'Model\n${((monthData['modelProfit'] / monthData['totalProfit']) * 100).toStringAsFixed(1)}%',
                                                 color: Colors.orange,
-                                                radius: 80,
+                                                radius: 35,
                                                 titleStyle: const TextStyle(
-                                                  fontSize: 12,
+                                                  fontSize: 8,
                                                   fontWeight: FontWeight.bold,
                                                   color: Colors.white,
                                                 ),
                                               ),
                                           ],
-                                          centerSpaceRadius: 40,
+                                          centerSpaceRadius: 12,
                                           sectionsSpace: 2,
                                         ),
                                       ),
                                     ),
-                                    const SizedBox(width: 16),
-                                    Expanded(
-                                      flex: 1,
-                                      child: Column(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.center,
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
-                                          if (monthData['bajuProfit'] > 0)
-                                            _PieChartLegend(
-                                              label: 'Baju',
-                                              value: monthData['bajuProfit'],
-                                              sold: monthData['bajuSold'],
-                                              color: Colors.blue,
-                                            ),
-                                          if (monthData['celanaProfit'] > 0)
-                                            _PieChartLegend(
-                                              label: 'Celana',
-                                              value: monthData['celanaProfit'],
-                                              sold: monthData['celanaSold'],
-                                              color: Colors.green,
-                                            ),
-                                          if (monthData['modelProfit'] > 0)
-                                            _PieChartLegend(
-                                              label: 'Model',
-                                              value: monthData['modelProfit'],
-                                              sold: monthData['modelSold'],
-                                              color: Colors.orange,
-                                            ),
-                                        ],
-                                      ),
+                                    const SizedBox(height: 8),
+                                    // Legend dalam row untuk menghemat space
+                                    Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceEvenly,
+                                      children: [
+                                        if (monthData['bajuProfit'] > 0)
+                                          _PieChartLegend(
+                                            label: 'Baju',
+                                            value: monthData['bajuProfit'],
+                                            sold: monthData['bajuSold'],
+                                            color: Colors.blue,
+                                          ),
+                                        if (monthData['celanaProfit'] > 0)
+                                          _PieChartLegend(
+                                            label: 'Celana',
+                                            value: monthData['celanaProfit'],
+                                            sold: monthData['celanaSold'],
+                                            color: Colors.green,
+                                          ),
+                                        if (monthData['modelProfit'] > 0)
+                                          _PieChartLegend(
+                                            label: 'Model',
+                                            value: monthData['modelProfit'],
+                                            sold: monthData['modelSold'],
+                                            color: Colors.orange,
+                                          ),
+                                      ],
                                     ),
                                   ],
                                 ),
                               ),
                             ] else ...[
                               Container(
-                                height: 200,
+                                height: 150,
                                 decoration: BoxDecoration(
                                   color:
                                       Theme.of(context).brightness ==
@@ -1374,14 +1370,14 @@ class _HomeAdminContentState extends State<_HomeAdminContent> {
                                     children: [
                                       Icon(
                                         Icons.pie_chart_outline,
-                                        size: 48,
+                                        size: 36,
                                         color:
                                             Theme.of(context).brightness ==
                                                 Brightness.dark
                                             ? Colors.grey[600]
                                             : Colors.grey[400],
                                       ),
-                                      const SizedBox(height: 8),
+                                      const SizedBox(height: 6),
                                       Text(
                                         'Belum ada data keuntungan',
                                         style: TextStyle(
@@ -1390,7 +1386,7 @@ class _HomeAdminContentState extends State<_HomeAdminContent> {
                                                   Brightness.dark
                                               ? Colors.grey[600]
                                               : Colors.grey[400],
-                                          fontSize: 14,
+                                          fontSize: 12,
                                         ),
                                       ),
                                     ],
@@ -1429,26 +1425,34 @@ class _DashboardItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        Icon(icon, color: color, size: 24),
-        Text(
-          label,
-          style: TextStyle(
-            color: color,
-            fontSize: 16,
-            fontWeight: FontWeight.bold,
+    return Expanded(
+      child: Column(
+        children: [
+          Icon(icon, color: color, size: 20),
+          const SizedBox(height: 4),
+          Text(
+            label,
+            style: TextStyle(
+              color: color,
+              fontSize: 12,
+              fontWeight: FontWeight.bold,
+            ),
+            textAlign: TextAlign.center,
+            maxLines: 2,
+            overflow: TextOverflow.ellipsis,
           ),
-        ),
-        Text(
-          count.toString(),
-          style: TextStyle(
-            color: color,
-            fontSize: 24,
-            fontWeight: FontWeight.bold,
+          const SizedBox(height: 4),
+          Text(
+            count.toString(),
+            style: TextStyle(
+              color: color,
+              fontSize: 18,
+              fontWeight: FontWeight.bold,
+            ),
+            textAlign: TextAlign.center,
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 }
@@ -1469,27 +1473,55 @@ class _PieChartLegend extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 4),
-      child: Row(
+    return Expanded(
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
         children: [
           Container(
-            width: 12,
-            height: 12,
+            width: 10,
+            height: 10,
             decoration: BoxDecoration(color: color, shape: BoxShape.circle),
           ),
-          const SizedBox(width: 8),
-          Expanded(
-            child: Text(
-              '$label\nRp ${value.toStringAsFixed(0).replaceAllMapped(RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'), (m) => '${m[1]}.')}\nTerjual: $sold item',
-              style: TextStyle(
-                fontSize: 12,
-                color: Theme.of(context).brightness == Brightness.dark
-                    ? Colors.white70
-                    : Colors.black54,
-                fontFamily: 'SF Pro Text',
-              ),
+          const SizedBox(height: 2),
+          Text(
+            label,
+            style: TextStyle(
+              fontSize: 10,
+              fontWeight: FontWeight.bold,
+              color: Theme.of(context).brightness == Brightness.dark
+                  ? Colors.white70
+                  : Colors.black54,
+              fontFamily: 'SF Pro Text',
             ),
+            textAlign: TextAlign.center,
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+          ),
+          Text(
+            'Rp ${value.toStringAsFixed(0).replaceAllMapped(RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'), (m) => '${m[1]}.')}',
+            style: TextStyle(
+              fontSize: 9,
+              color: Theme.of(context).brightness == Brightness.dark
+                  ? Colors.white70
+                  : Colors.black54,
+              fontFamily: 'SF Pro Text',
+            ),
+            textAlign: TextAlign.center,
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+          ),
+          Text(
+            '$sold item',
+            style: TextStyle(
+              fontSize: 8,
+              color: Theme.of(context).brightness == Brightness.dark
+                  ? Colors.white54
+                  : Colors.black38,
+              fontFamily: 'SF Pro Text',
+            ),
+            textAlign: TextAlign.center,
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
           ),
         ],
       ),

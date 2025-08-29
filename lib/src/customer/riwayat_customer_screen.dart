@@ -33,6 +33,46 @@ class RiwayatCustomerScreen extends StatefulWidget {
 
 class _RiwayatCustomerScreenState extends State<RiwayatCustomerScreen> {
   String _searchQuery = '';
+  late TextEditingController _searchController;
+  String _sortBy = 'date'; // 'date', 'name', 'model'
+
+  @override
+  void initState() {
+    super.initState();
+    _searchController = TextEditingController();
+  }
+
+  @override
+  void dispose() {
+    _searchController.dispose();
+    super.dispose();
+  }
+
+  // Method untuk mengurutkan hasil pencarian
+  void _sortOrders(List<order_model.Order> orders) {
+    switch (_sortBy) {
+      case 'date':
+        // Urutkan berdasarkan tanggal (terbaru di atas)
+        orders.sort((a, b) => b.orderDate.compareTo(a.orderDate));
+        break;
+      case 'name':
+        // Urutkan berdasarkan nama user (A-Z)
+        orders.sort((a, b) => a.userName.compareTo(b.userName));
+        break;
+      case 'model':
+        // Urutkan berdasarkan model produk (A-Z)
+        orders.sort((a, b) {
+          final aModel = a.items.isNotEmpty
+              ? (a.items.first['model'] ?? '')
+              : '';
+          final bModel = b.items.isNotEmpty
+              ? (b.items.first['model'] ?? '')
+              : '';
+          return aModel.compareTo(bModel);
+        });
+        break;
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -49,43 +89,107 @@ class _RiwayatCustomerScreenState extends State<RiwayatCustomerScreen> {
               children: [
                 Padding(
                   padding: const EdgeInsets.all(16.0),
-                  child: TextField(
-                    controller: TextEditingController(text: _searchQuery),
-                    decoration: InputDecoration(
-                      hintText: 'Cari pesanan... (kode, nama, model, jenis)',
-                      prefixIcon: const Icon(Icons.search),
-                      suffixIcon: _searchQuery.isNotEmpty
-                          ? IconButton(
-                              icon: Icon(
-                                Icons.clear,
-                                color: isDark
-                                    ? Colors.white54
-                                    : Colors.grey[600],
-                              ),
-                              onPressed: () {
-                                setState(() {
-                                  _searchQuery = '';
-                                });
-                              },
-                            )
-                          : null,
-                      filled: true,
-                      fillColor: isDark
-                          ? const Color(0xFF2A2A2A)
-                          : Colors.white,
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(12),
-                        borderSide: BorderSide.none,
+                  child: Column(
+                    children: [
+                      TextField(
+                        controller: _searchController,
+                        decoration: InputDecoration(
+                          hintText:
+                              'Cari pesanan... (kode, nama, model, jenis)',
+                          prefixIcon: const Icon(Icons.search),
+                          suffixIcon: _searchQuery.isNotEmpty
+                              ? IconButton(
+                                  icon: Icon(
+                                    Icons.clear,
+                                    color: isDark
+                                        ? Colors.white54
+                                        : Colors.grey[600],
+                                  ),
+                                  onPressed: () {
+                                    setState(() {
+                                      _searchQuery = '';
+                                      _searchController.clear();
+                                    });
+                                  },
+                                )
+                              : null,
+                          filled: true,
+                          fillColor: isDark
+                              ? const Color(0xFF2A2A2A)
+                              : Colors.white,
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(12),
+                            borderSide: BorderSide.none,
+                          ),
+                        ),
+                        style: TextStyle(
+                          color: isDark ? Colors.white : Colors.black,
+                        ),
+                        onChanged: (value) {
+                          setState(() {
+                            _searchQuery = value;
+                          });
+                        },
                       ),
-                    ),
-                    style: TextStyle(
-                      color: isDark ? Colors.white : Colors.black,
-                    ),
-                    onChanged: (value) {
-                      setState(() {
-                        _searchQuery = value;
-                      });
-                    },
+                      const SizedBox(height: 8),
+                      // Dropdown untuk memilih urutan sorting
+                      Container(
+                        width: double.infinity,
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 12,
+                          vertical: 4,
+                        ),
+                        decoration: BoxDecoration(
+                          color: isDark
+                              ? const Color(0xFF2A2A2A)
+                              : Colors.white,
+                          borderRadius: BorderRadius.circular(8),
+                          border: Border.all(
+                            color: isDark
+                                ? Colors.white24
+                                : Colors.grey.withOpacity(0.3),
+                          ),
+                        ),
+                        child: DropdownButtonHideUnderline(
+                          child: DropdownButton<String>(
+                            value: _sortBy,
+                            isExpanded: true,
+                            icon: Icon(
+                              Icons.sort,
+                              color: isDark ? Colors.white70 : Colors.grey[600],
+                            ),
+                            style: TextStyle(
+                              color: isDark ? Colors.white : Colors.black,
+                              fontSize: 14,
+                            ),
+                            dropdownColor: isDark
+                                ? const Color(0xFF2A2A2A)
+                                : Colors.white,
+                            items: const [
+                              DropdownMenuItem(
+                                value: 'date',
+                                child: Text('Urutkan: Tanggal (Terbaru)'),
+                              ),
+                              DropdownMenuItem(
+                                value: 'name',
+                                child: Text('Urutkan: Nama (A-Z)'),
+                              ),
+                              DropdownMenuItem(
+                                value: 'model',
+                                child: Text('Urutkan: Model (A-Z)'),
+                              ),
+                            ],
+                            onChanged: (String? newValue) {
+                              if (newValue != null) {
+                                setState(() {
+                                  _sortBy = newValue;
+                                });
+                              }
+                            },
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
                 ),
                 Expanded(
@@ -101,8 +205,11 @@ class _RiwayatCustomerScreenState extends State<RiwayatCustomerScreen> {
                       final orders =
                           snapshot.data
                               ?.where((order) {
-                                // Tampilkan semua pesanan di riwayat (seperti sebelumnya)
-                                return true;
+                                // Hanya tampilkan pesanan yang sudah selesai atau dibatalkan di riwayat
+                                final status = order.status.toLowerCase();
+                                return status.contains('selesai') ||
+                                    status.contains('batal') ||
+                                    status.contains('pembayaran selesai');
                               })
                               .where((order) {
                                 final query = _searchQuery.toLowerCase();
@@ -130,6 +237,9 @@ class _RiwayatCustomerScreenState extends State<RiwayatCustomerScreen> {
                               })
                               .toList() ??
                           [];
+
+                      // Urutkan hasil pencarian berdasarkan kriteria yang dipilih
+                      _sortOrders(orders);
                       if (orders.isEmpty) {
                         if (_searchQuery.isNotEmpty) {
                           // Jika ada query pencarian tapi tidak ada hasil
@@ -197,7 +307,7 @@ class _RiwayatCustomerScreenState extends State<RiwayatCustomerScreen> {
                         }
                       }
                       return ListView.builder(
-                        padding: const EdgeInsets.all(16),
+                        padding: const EdgeInsets.all(12), // Kurangi dari 16
                         itemCount: orders.length,
                         itemBuilder: (context, index) {
                           final order = orders[index];
@@ -222,13 +332,17 @@ class _RiwayatCustomerScreenState extends State<RiwayatCustomerScreen> {
                                     firstItem['price'] ??
                                     0);
 
-                          // Cek apakah order sudah memiliki bukti pembayaran
-                          final hasPaymentProof =
-                              order.paymentProofUrl != null &&
-                              order.paymentProofUrl!.isNotEmpty;
+                          // Cek status order untuk menentukan tampilan
+                          final orderStatus = order.status.toLowerCase();
+                          final isCompleted =
+                              orderStatus.contains('selesai') ||
+                              orderStatus.contains('pembayaran selesai');
+                          final isCancelled = orderStatus.contains('batal');
 
                           return Container(
-                            margin: const EdgeInsets.only(bottom: 16),
+                            margin: const EdgeInsets.only(
+                              bottom: 12,
+                            ), // Kurangi dari 16
                             decoration: BoxDecoration(
                               color: isDark
                                   ? const Color(0xFF2A2A2A)
@@ -247,7 +361,9 @@ class _RiwayatCustomerScreenState extends State<RiwayatCustomerScreen> {
                             child: Column(
                               children: [
                                 Padding(
-                                  padding: const EdgeInsets.all(16),
+                                  padding: const EdgeInsets.all(
+                                    12,
+                                  ), // Kurangi dari 16
                                   child: Row(
                                     mainAxisAlignment:
                                         MainAxisAlignment.spaceBetween,
@@ -266,26 +382,32 @@ class _RiwayatCustomerScreenState extends State<RiwayatCustomerScreen> {
                                       // Status pembayaran
                                       Container(
                                         padding: const EdgeInsets.symmetric(
-                                          horizontal: 8,
-                                          vertical: 4,
+                                          horizontal: 6, // Kurangi dari 8
+                                          vertical: 3, // Kurangi dari 4
                                         ),
                                         decoration: BoxDecoration(
-                                          color: hasPaymentProof
+                                          color: isCompleted
                                               ? Colors.green.withOpacity(0.2)
+                                              : isCancelled
+                                              ? Colors.red.withOpacity(0.2)
                                               : Colors.orange.withOpacity(0.2),
                                           borderRadius: BorderRadius.circular(
-                                            12,
+                                            8, // Kurangi dari 12
                                           ),
                                         ),
                                         child: Text(
-                                          hasPaymentProof
-                                              ? 'Pembayaran Selesai'
-                                              : 'Menunggu Pembayaran',
+                                          isCompleted
+                                              ? 'Selesai' // Singkat teks untuk mencegah overflow
+                                              : isCancelled
+                                              ? 'Batal' // Status untuk pesanan yang dibatalkan
+                                              : 'Bayar', // Status untuk pesanan yang belum dibayar
                                           style: TextStyle(
-                                            fontSize: 12,
+                                            fontSize: 11, // Kurangi dari 12
                                             fontWeight: FontWeight.w500,
-                                            color: hasPaymentProof
+                                            color: isCompleted
                                                 ? Colors.green
+                                                : isCancelled
+                                                ? Colors.red
                                                 : Colors.orange,
                                             fontFamily: 'SF Pro Text',
                                           ),
@@ -301,7 +423,9 @@ class _RiwayatCustomerScreenState extends State<RiwayatCustomerScreen> {
                                       : Colors.black12,
                                 ),
                                 Padding(
-                                  padding: const EdgeInsets.all(16),
+                                  padding: const EdgeInsets.all(
+                                    12,
+                                  ), // Kurangi dari 16
                                   child: Column(
                                     crossAxisAlignment:
                                         CrossAxisAlignment.start,
@@ -311,7 +435,7 @@ class _RiwayatCustomerScreenState extends State<RiwayatCustomerScreen> {
                                             ? 'Multi Order'
                                             : orderType,
                                         style: TextStyle(
-                                          fontSize: 16,
+                                          fontSize: 15, // Kurangi dari 16
                                           fontWeight: FontWeight.w600,
                                           color: isDark
                                               ? Colors.white
@@ -329,7 +453,7 @@ class _RiwayatCustomerScreenState extends State<RiwayatCustomerScreen> {
                                           Text(
                                             '${order.items.length} Items',
                                             style: TextStyle(
-                                              fontSize: 14,
+                                              fontSize: 13, // Kurangi dari 14
                                               fontWeight: FontWeight.w500,
                                               color: isDark
                                                   ? Colors.white
@@ -353,7 +477,7 @@ class _RiwayatCustomerScreenState extends State<RiwayatCustomerScreen> {
                                           Text(
                                             'Model: ${firstItem['jenisBaju'] ?? firstItem['jenisCelana'] ?? firstItem['model'] ?? '-'}',
                                             style: TextStyle(
-                                              fontSize: 14,
+                                              fontSize: 13, // Kurangi dari 14
                                               color: isDark
                                                   ? Colors.white70
                                                   : Colors.black54,
@@ -381,7 +505,7 @@ class _RiwayatCustomerScreenState extends State<RiwayatCustomerScreen> {
                                           Text(
                                             'Kain: ${firstItem['fabric'] ?? order.selectedKain ?? '-'}',
                                             style: TextStyle(
-                                              fontSize: 14,
+                                              fontSize: 13, // Kurangi dari 14
                                               color: isDark
                                                   ? Colors.white70
                                                   : Colors.black54,
@@ -409,7 +533,7 @@ class _RiwayatCustomerScreenState extends State<RiwayatCustomerScreen> {
                                           Text(
                                             'Ukuran: ${order.isCustomSize == true ? 'Custom' : (order.estimatedSize ?? 'Standard')}',
                                             style: TextStyle(
-                                              fontSize: 14,
+                                              fontSize: 13, // Kurangi dari 14
                                               color: isDark
                                                   ? Colors.white70
                                                   : Colors.black54,
@@ -436,7 +560,7 @@ class _RiwayatCustomerScreenState extends State<RiwayatCustomerScreen> {
                                           Text(
                                             'Size: ${firstItem['size']}',
                                             style: TextStyle(
-                                              fontSize: 14,
+                                              fontSize: 13, // Kurangi dari 14
                                               color: isDark
                                                   ? Colors.white70
                                                   : Colors.black54,
@@ -456,7 +580,7 @@ class _RiwayatCustomerScreenState extends State<RiwayatCustomerScreen> {
                                                 .toString()
                                                 .substring(0, 16),
                                             style: TextStyle(
-                                              fontSize: 14,
+                                              fontSize: 13, // Kurangi dari 14
                                               color: isDark
                                                   ? Colors.white70
                                                   : Colors.grey,
@@ -489,18 +613,22 @@ class _RiwayatCustomerScreenState extends State<RiwayatCustomerScreen> {
                                                 ),
                                                 padding:
                                                     const EdgeInsets.symmetric(
-                                                      vertical: 12,
+                                                      vertical:
+                                                          10, // Kurangi dari 12
                                                     ),
                                               ),
                                               icon: const Icon(
                                                 Icons.visibility,
                                                 color: Colors.white,
+                                                size: 18, // Kurangi ukuran icon
                                               ),
                                               label: const Text(
                                                 'Cek Detail',
                                                 style: TextStyle(
                                                   color: Colors.white,
                                                   fontWeight: FontWeight.bold,
+                                                  fontSize:
+                                                      12, // Kurangi ukuran font
                                                 ),
                                               ),
                                               onPressed: () {
@@ -508,9 +636,11 @@ class _RiwayatCustomerScreenState extends State<RiwayatCustomerScreen> {
                                               },
                                             ),
                                           ),
-                                          const SizedBox(width: 8),
+                                          const SizedBox(
+                                            width: 6,
+                                          ), // Kurangi dari 8
                                           // Tombol Pesan Lagi hanya untuk pesanan yang sudah selesai
-                                          if (hasPaymentProof) ...[
+                                          if (isCompleted) ...[
                                             Expanded(
                                               child: ElevatedButton.icon(
                                                 style: ElevatedButton.styleFrom(
@@ -525,18 +655,23 @@ class _RiwayatCustomerScreenState extends State<RiwayatCustomerScreen> {
                                                   ),
                                                   padding:
                                                       const EdgeInsets.symmetric(
-                                                        vertical: 12,
+                                                        vertical:
+                                                            10, // Kurangi dari 12
                                                       ),
                                                 ),
                                                 icon: const Icon(
                                                   Icons.shopping_cart,
                                                   color: Colors.white,
+                                                  size:
+                                                      18, // Kurangi ukuran icon
                                                 ),
                                                 label: const Text(
                                                   'Pesan Lagi',
                                                   style: TextStyle(
                                                     color: Colors.white,
                                                     fontWeight: FontWeight.bold,
+                                                    fontSize:
+                                                        12, // Kurangi ukuran font
                                                   ),
                                                 ),
                                                 onPressed: () async {
@@ -563,18 +698,23 @@ class _RiwayatCustomerScreenState extends State<RiwayatCustomerScreen> {
                                                   ),
                                                   padding:
                                                       const EdgeInsets.symmetric(
-                                                        vertical: 12,
+                                                        vertical:
+                                                            10, // Kurangi dari 12
                                                       ),
                                                 ),
                                                 icon: const Icon(
                                                   Icons.payment,
                                                   color: Colors.white,
+                                                  size:
+                                                      18, // Kurangi ukuran icon
                                                 ),
                                                 label: const Text(
-                                                  'Lanjutkan Pembayaran',
+                                                  'Bayar', // Singkat teks untuk mencegah overflow
                                                   style: TextStyle(
                                                     color: Colors.white,
                                                     fontWeight: FontWeight.bold,
+                                                    fontSize:
+                                                        12, // Kurangi ukuran font
                                                   ),
                                                 ),
                                                 onPressed: () {
@@ -589,7 +729,7 @@ class _RiwayatCustomerScreenState extends State<RiwayatCustomerScreen> {
                                         ],
                                       ),
                                       // Pesan informasi untuk pesanan yang belum dibayar
-                                      if (!hasPaymentProof) ...[
+                                      if (!isCompleted && !isCancelled) ...[
                                         const SizedBox(height: 12),
                                         Container(
                                           width: double.infinity,
