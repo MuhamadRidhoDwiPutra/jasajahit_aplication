@@ -229,7 +229,7 @@ class _KategoriCelanaScreenState extends State<KategoriCelanaScreen> {
                             crossAxisCount: 2,
                             crossAxisSpacing: 16,
                             mainAxisSpacing: 16,
-                            childAspectRatio: 0.75,
+                            childAspectRatio: 0.7,
                           ),
                       itemCount: _celanaProducts.length,
                       itemBuilder: (context, index) {

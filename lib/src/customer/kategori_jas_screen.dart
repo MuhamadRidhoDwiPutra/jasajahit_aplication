@@ -228,7 +228,7 @@ class _KategoriJasScreenState extends State<KategoriJasScreen> {
                             crossAxisCount: 2,
                             crossAxisSpacing: 16,
                             mainAxisSpacing: 16,
-                            childAspectRatio: 0.75,
+                            childAspectRatio: 0.7,
                           ),
                       itemCount: _jasProducts.length,
                       itemBuilder: (context, index) {

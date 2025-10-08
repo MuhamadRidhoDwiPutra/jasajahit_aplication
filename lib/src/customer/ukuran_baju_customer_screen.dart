@@ -16,7 +16,11 @@ import 'home_customer_screen.dart';
 class UkuranBajuCustomerScreen extends StatefulWidget {
   final String selectedFabric;
   final List<Map<String, dynamic>>? items;
-  const UkuranBajuCustomerScreen({super.key, required this.selectedFabric, this.items});
+  const UkuranBajuCustomerScreen({
+    super.key,
+    required this.selectedFabric,
+    this.items,
+  });
 
   @override
   State<UkuranBajuCustomerScreen> createState() =>
@@ -29,13 +33,13 @@ class _UkuranBajuCustomerScreenState extends State<UkuranBajuCustomerScreen> {
   final TextEditingController panjangBajuController = TextEditingController();
   final TextEditingController panjangLenganController = TextEditingController();
   final TextEditingController lebarLenganController = TextEditingController();
-  
+
   final FirestoreService _firestoreService = FirestoreService();
   KainModel? _selectedKain;
   int _estimasiHarga = 0;
   String _ukuranEstimasi = 'M';
   bool _isCustomUkuran = false;
-  
+
   // Jenis baju yang tersedia
   final List<String> _jenisBajuList = [
     'Kaos Oblong',
@@ -47,7 +51,7 @@ class _UkuranBajuCustomerScreenState extends State<UkuranBajuCustomerScreen> {
   void _hitungEstimasiHarga() {
     if (_selectedKain != null) {
       final lingkarDada = double.tryParse(lingkarDadaController.text) ?? 0;
-      
+
       // Tentukan ukuran berdasarkan lingkar dada
       if (lingkarDada > 0) {
         if (lingkarDada < 90) {
@@ -67,7 +71,7 @@ class _UkuranBajuCustomerScreenState extends State<UkuranBajuCustomerScreen> {
           _isCustomUkuran = true;
         }
       }
-      
+
       setState(() {
         _estimasiHarga = _selectedKain!.hitungEstimasiHarga(
           jenisPakaian: 'baju',
@@ -85,16 +89,19 @@ class _UkuranBajuCustomerScreenState extends State<UkuranBajuCustomerScreen> {
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     return Scaffold(
-      backgroundColor:
-          isDark ? const Color(0xFF1A1A1A) : const Color(0xFF8FBC8F),
+      backgroundColor: isDark
+          ? const Color(0xFF1A1A1A)
+          : const Color(0xFF8FBC8F),
       body: SafeArea(
         child: Stack(
           children: [
             Column(
               children: [
                 Container(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 16,
+                    vertical: 12,
+                  ),
                   decoration: BoxDecoration(
                     color: isDark ? const Color(0xFF2A2A2A) : Colors.white,
                     boxShadow: [
@@ -115,20 +122,24 @@ class _UkuranBajuCustomerScreenState extends State<UkuranBajuCustomerScreen> {
                           borderRadius: BorderRadius.circular(12),
                         ),
                         child: IconButton(
-                          icon: const Icon(Icons.arrow_back_ios_new,
-                              color: Color(0xFFDE8500)),
-          onPressed: () {
-            Navigator.pushReplacement(
-              context,
-              MaterialPageRoute(
-                                  builder: (context) => const HomeCustomerScreen(initialIndex: 1)),
-            );
-          },
-        ),
+                          icon: const Icon(
+                            Icons.arrow_back_ios_new,
+                            color: Color(0xFFDE8500),
+                          ),
+                          onPressed: () {
+                            Navigator.pushReplacement(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) =>
+                                    const HomeCustomerScreen(initialIndex: 1),
+                              ),
+                            );
+                          },
+                        ),
                       ),
                       Expanded(
                         child: Text(
-          'Ukuran Baju',
+                          'Ukuran Baju',
                           style: TextStyle(
                             fontSize: 20,
                             fontWeight: FontWeight.w600,
@@ -137,10 +148,10 @@ class _UkuranBajuCustomerScreenState extends State<UkuranBajuCustomerScreen> {
                           ),
                           textAlign: TextAlign.center,
                         ),
-        ),
+                      ),
                       const SizedBox(width: 48),
                     ],
-      ),
+                  ),
                 ),
                 Expanded(
                   child: ListView(
@@ -149,8 +160,9 @@ class _UkuranBajuCustomerScreenState extends State<UkuranBajuCustomerScreen> {
                       Container(
                         padding: const EdgeInsets.all(16),
                         decoration: BoxDecoration(
-                          color:
-                              isDark ? const Color(0xFF2A2A2A) : Colors.white,
+                          color: isDark
+                              ? const Color(0xFF2A2A2A)
+                              : Colors.white,
                           borderRadius: BorderRadius.circular(16),
                           boxShadow: [
                             BoxShadow(
@@ -162,7 +174,7 @@ class _UkuranBajuCustomerScreenState extends State<UkuranBajuCustomerScreen> {
                             ),
                           ],
                         ),
-                                child: Column(
+                        child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             // Panduan Ukuran Baju
@@ -198,7 +210,7 @@ class _UkuranBajuCustomerScreenState extends State<UkuranBajuCustomerScreen> {
                                       maxHeight: 450,
                                     ),
                                     child: Image.asset(
-                                      'assets/images/panduan_baju.png',
+                                      'assets/images/panduan_pengukuran_baju.png',
                                       fit: BoxFit.contain,
                                       width: double.infinity,
                                       height: 450,
@@ -221,7 +233,9 @@ class _UkuranBajuCustomerScreenState extends State<UkuranBajuCustomerScreen> {
                             const SizedBox(height: 12),
                             Container(
                               decoration: BoxDecoration(
-                                color: isDark ? const Color(0xFF3A3A3A) : Colors.grey[100],
+                                color: isDark
+                                    ? const Color(0xFF3A3A3A)
+                                    : Colors.grey[100],
                                 borderRadius: BorderRadius.circular(12),
                                 border: Border.all(
                                   color: const Color(0xFFDE8500),
@@ -231,14 +245,19 @@ class _UkuranBajuCustomerScreenState extends State<UkuranBajuCustomerScreen> {
                               child: DropdownButtonFormField<String>(
                                 value: _selectedJenisBaju,
                                 decoration: const InputDecoration(
-                                  contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                                  contentPadding: EdgeInsets.symmetric(
+                                    horizontal: 16,
+                                    vertical: 12,
+                                  ),
                                   border: InputBorder.none,
                                   prefixIcon: Icon(
                                     Icons.checkroom,
                                     color: Color(0xFFDE8500),
                                   ),
                                 ),
-                                dropdownColor: isDark ? const Color(0xFF3A3A3A) : Colors.white,
+                                dropdownColor: isDark
+                                    ? const Color(0xFF3A3A3A)
+                                    : Colors.white,
                                 style: TextStyle(
                                   color: isDark ? Colors.white : Colors.black,
                                   fontFamily: 'SF Pro Text',
@@ -269,38 +288,38 @@ class _UkuranBajuCustomerScreenState extends State<UkuranBajuCustomerScreen> {
                             ),
                             const SizedBox(height: 16),
                             _MeasurementField(
-                              label: 'Lingkar Dada',
+                              label: 'Lingkar Dada (LD)',
                               controller: lingkarDadaController,
                               icon: Icons.straighten,
                             ),
                             const SizedBox(height: 16),
                             _MeasurementField(
-                              label: 'Lebar Bahu',
+                              label: 'Lebar Bahu (LB)',
                               controller: lebarBahuController,
                               icon: Icons.straighten,
-                ),
+                            ),
                             const SizedBox(height: 16),
                             _MeasurementField(
-                              label: 'Panjang Baju',
+                              label: 'Panjang Baju (PB)',
                               controller: panjangBajuController,
                               icon: Icons.straighten,
                             ),
                             const SizedBox(height: 16),
                             _MeasurementField(
-                              label: 'Panjang Lengan',
+                              label: 'Panjang Lengan (PL)',
                               controller: panjangLenganController,
                               icon: Icons.straighten,
                             ),
                             const SizedBox(height: 16),
                             _MeasurementField(
-                              label: 'Lebar Lengan',
+                              label: 'Lebar Lengan (LL)',
                               controller: lebarLenganController,
                               icon: Icons.straighten,
                             ),
                           ],
                         ),
                       ),
-                      
+
                       // Preview Estimasi Harga
                       if (_selectedKain != null && _estimasiHarga > 0)
                         Container(
@@ -342,13 +361,15 @@ class _UkuranBajuCustomerScreenState extends State<UkuranBajuCustomerScreen> {
                             ],
                           ),
                         ),
-                      
+
                       // Pilih Kain untuk Estimasi
                       Container(
                         margin: const EdgeInsets.only(top: 16),
                         padding: const EdgeInsets.all(16),
                         decoration: BoxDecoration(
-                          color: isDark ? const Color(0xFF2A2A2A) : Colors.white,
+                          color: isDark
+                              ? const Color(0xFF2A2A2A)
+                              : Colors.white,
                           borderRadius: BorderRadius.circular(16),
                           boxShadow: [
                             BoxShadow(
@@ -376,12 +397,17 @@ class _UkuranBajuCustomerScreenState extends State<UkuranBajuCustomerScreen> {
                             StreamBuilder<List<KainModel>>(
                               stream: _firestoreService.getKainList(),
                               builder: (context, snapshot) {
-                                if (snapshot.connectionState == ConnectionState.waiting) {
-                                  return const Center(child: CircularProgressIndicator());
+                                if (snapshot.connectionState ==
+                                    ConnectionState.waiting) {
+                                  return const Center(
+                                    child: CircularProgressIndicator(),
+                                  );
                                 }
                                 final kainList = snapshot.data ?? [];
                                 if (kainList.isEmpty) {
-                                  return const Center(child: Text('Belum ada data kain.'));
+                                  return const Center(
+                                    child: Text('Belum ada data kain.'),
+                                  );
                                 }
                                 return SizedBox(
                                   height: 100,
@@ -390,7 +416,8 @@ class _UkuranBajuCustomerScreenState extends State<UkuranBajuCustomerScreen> {
                                     itemCount: kainList.length,
                                     itemBuilder: (context, index) {
                                       final kain = kainList[index];
-                                      final selected = kain.id == _selectedKain?.id;
+                                      final selected =
+                                          kain.id == _selectedKain?.id;
                                       return GestureDetector(
                                         onTap: () {
                                           setState(() {
@@ -400,39 +427,55 @@ class _UkuranBajuCustomerScreenState extends State<UkuranBajuCustomerScreen> {
                                         },
                                         child: Container(
                                           width: 150,
-                                          margin: const EdgeInsets.only(right: 12),
+                                          margin: const EdgeInsets.only(
+                                            right: 12,
+                                          ),
                                           padding: const EdgeInsets.all(12),
                                           decoration: BoxDecoration(
                                             color: selected
                                                 ? Colors.orange.shade900
-                                                : isDark ? Colors.grey[800] : Colors.grey[200],
-                                            borderRadius: BorderRadius.circular(12),
+                                                : isDark
+                                                ? Colors.grey[800]
+                                                : Colors.grey[200],
+                                            borderRadius: BorderRadius.circular(
+                                              12,
+                                            ),
                                             border: selected
-                                                ? Border.all(color: Colors.orange, width: 2)
+                                                ? Border.all(
+                                                    color: Colors.orange,
+                                                    width: 2,
+                                                  )
                                                 : null,
                                           ),
                                           child: Column(
-                                            crossAxisAlignment: CrossAxisAlignment.start,
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
                                             children: [
                                               Text(
                                                 kain.nama,
                                                 style: TextStyle(
                                                   fontWeight: FontWeight.bold,
-                                                  color: selected ? Colors.white : null,
+                                                  color: selected
+                                                      ? Colors.white
+                                                      : null,
                                                   fontSize: 12,
                                                 ),
                                               ),
                                               Text(
                                                 kain.warna,
                                                 style: TextStyle(
-                                                  color: selected ? Colors.white70 : null,
+                                                  color: selected
+                                                      ? Colors.white70
+                                                      : null,
                                                   fontSize: 10,
                                                 ),
                                               ),
                                               Text(
                                                 'Rp ${kain.harga.toString()}/m',
                                                 style: TextStyle(
-                                                  color: selected ? Colors.orange : null,
+                                                  color: selected
+                                                      ? Colors.orange
+                                                      : null,
                                                   fontWeight: FontWeight.bold,
                                                   fontSize: 10,
                                                 ),
@@ -449,23 +492,25 @@ class _UkuranBajuCustomerScreenState extends State<UkuranBajuCustomerScreen> {
                           ],
                         ),
                       ),
-                      
+
                       const SizedBox(height: 24),
                       ElevatedButton(
-                style: ElevatedButton.styleFrom(
+                        style: ElevatedButton.styleFrom(
                           backgroundColor: const Color(0xFFDE8500),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(8),
-                  ),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(8),
+                          ),
                           padding: const EdgeInsets.symmetric(vertical: 16),
-                ),
-                onPressed: () {
+                        ),
+                        onPressed: () {
                           final user = FirebaseAuth.instance.currentUser;
                           if (user == null) {
                             ScaffoldMessenger.of(context).showSnackBar(
                               const SnackBar(
-                                  content: Text(
-                                      'Anda harus login untuk membuat pesanan.')),
+                                content: Text(
+                                  'Anda harus login untuk membuat pesanan.',
+                                ),
+                              ),
                             );
                             return;
                           }
@@ -473,8 +518,10 @@ class _UkuranBajuCustomerScreenState extends State<UkuranBajuCustomerScreen> {
                           if (_selectedKain == null) {
                             ScaffoldMessenger.of(context).showSnackBar(
                               const SnackBar(
-                                  content: Text(
-                                      'Silakan pilih kain terlebih dahulu.')),
+                                content: Text(
+                                  'Silakan pilih kain terlebih dahulu.',
+                                ),
+                              ),
                             );
                             return;
                           }
@@ -488,9 +535,11 @@ class _UkuranBajuCustomerScreenState extends State<UkuranBajuCustomerScreen> {
                           };
 
                           // Langsung lanjut ke konfirmasi dengan kain yang sudah dipilih
-                          final items = List<Map<String, dynamic>>.from(widget.items ?? []);
+                          final items = List<Map<String, dynamic>>.from(
+                            widget.items ?? [],
+                          );
                           const modelName = 'Model Baju';
-                          
+
                           items.add({
                             'orderType': 'Baju',
                             'model': modelName,
@@ -501,26 +550,34 @@ class _UkuranBajuCustomerScreenState extends State<UkuranBajuCustomerScreen> {
                             'estimatedSize': _ukuranEstimasi,
                             'isCustomSize': _isCustomUkuran,
                           });
-                          
+
                           Navigator.pushReplacement(
                             context,
                             MaterialPageRoute(
-                              builder: (context) => KonfirmasiPesananCustomerScreen(
-                                userId: user.uid,
-                                userName: user.displayName ?? user.email ?? 'No Name',
-                                items: items,
-                                isDark: isDark,
-                              ),
+                              builder: (context) =>
+                                  KonfirmasiPesananCustomerScreen(
+                                    userId: user.uid,
+                                    userName:
+                                        user.displayName ??
+                                        user.email ??
+                                        'No Name',
+                                    items: items,
+                                    isDark: isDark,
+                                  ),
                             ),
                           );
                         },
                         child: const Text(
                           'Lanjut',
-                          style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.white),
+                          style: TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.white,
+                          ),
                         ),
-              ),
+                      ),
                     ],
-            ),
+                  ),
                 ),
               ],
             ),
@@ -561,9 +618,7 @@ class _MeasurementField extends StatelessWidget {
         TextField(
           controller: controller,
           keyboardType: TextInputType.number,
-          inputFormatters: [
-            FilteringTextInputFormatter.digitsOnly,
-          ],
+          inputFormatters: [FilteringTextInputFormatter.digitsOnly],
           style: TextStyle(
             color: isDark ? Colors.white : Colors.black,
             fontFamily: 'SF Pro Text',
@@ -574,10 +629,7 @@ class _MeasurementField extends StatelessWidget {
               color: isDark ? Colors.white54 : Colors.grey[400],
               fontFamily: 'SF Pro Text',
             ),
-            prefixIcon: Icon(
-              icon,
-              color: const Color(0xFFDE8500),
-            ),
+            prefixIcon: Icon(icon, color: const Color(0xFFDE8500)),
             filled: true,
             fillColor: isDark ? const Color(0xFF3A3A3A) : Colors.grey[100],
             border: OutlineInputBorder(
@@ -590,10 +642,7 @@ class _MeasurementField extends StatelessWidget {
             ),
             focusedBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(12),
-              borderSide: const BorderSide(
-                color: Color(0xFFDE8500),
-                width: 2,
-              ),
+              borderSide: const BorderSide(color: Color(0xFFDE8500), width: 2),
             ),
           ),
         ),

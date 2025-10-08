@@ -24,7 +24,7 @@ class _StatusPesananAdminScreenState extends State<StatusPesananAdminScreen> {
   late TextEditingController _searchController;
   String _searchQuery = '';
   String _selectedStatusFilter = 'Semua Status';
-  String _sortBy = 'date'; // 'date', 'name', 'status'
+  String _sortBy = 'status'; // 'status' only
   bool _isAscending = false;
 
   List<String> statusOptions = [
@@ -106,20 +106,6 @@ class _StatusPesananAdminScreenState extends State<StatusPesananAdminScreen> {
       int comparison = 0;
 
       switch (_sortBy) {
-        case 'date':
-          final aDate = aData['orderDate'] as Timestamp?;
-          final bDate = bData['orderDate'] as Timestamp?;
-          if (aDate != null && bDate != null) {
-            comparison = aDate.compareTo(bDate);
-          }
-          break;
-        case 'name':
-          final aName = (aData['customerName'] ?? aData['userName'] ?? '')
-              .toString();
-          final bName = (bData['customerName'] ?? bData['userName'] ?? '')
-              .toString();
-          comparison = aName.compareTo(bName);
-          break;
         case 'status':
           final aStatus = (aData['status'] ?? '').toString();
           final bStatus = (bData['status'] ?? '').toString();
@@ -426,7 +412,7 @@ class _StatusPesananAdminScreenState extends State<StatusPesananAdminScreen> {
                                 value: status,
                                 child: Text(
                                   status,
-                                  style: TextStyle(fontSize: 13),
+                                  style: const TextStyle(fontSize: 13),
                                 ),
                               );
                             }).toList(),
@@ -442,71 +428,7 @@ class _StatusPesananAdminScreenState extends State<StatusPesananAdminScreen> {
                       ),
                       const SizedBox(width: 12),
 
-                      // Sort Dropdown
-                      Container(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 12,
-                          vertical: 8,
-                        ),
-                        decoration: BoxDecoration(
-                          color: isDark
-                              ? const Color(0xFF1A1A1A)
-                              : Colors.grey[100],
-                          borderRadius: BorderRadius.circular(8),
-                          border: Border.all(
-                            color: isDark ? Colors.white24 : Colors.grey[300]!,
-                          ),
-                        ),
-                        child: DropdownButton<String>(
-                          value: _sortBy,
-                          dropdownColor: isDark
-                              ? const Color(0xFF2A2A2A)
-                              : Colors.white,
-                          style: TextStyle(
-                            color: isDark ? Colors.white : Colors.black,
-                            fontSize: 13,
-                          ),
-                          underline: Container(),
-                          icon: Icon(
-                            Icons.sort,
-                            color: isDark ? Colors.white70 : Colors.grey[600],
-                            size: 20,
-                          ),
-                          items: [
-                            DropdownMenuItem(
-                              value: 'date',
-                              child: Text(
-                                'Tanggal',
-                                style: TextStyle(fontSize: 13),
-                              ),
-                            ),
-                            DropdownMenuItem(
-                              value: 'name',
-                              child: Text(
-                                'Nama',
-                                style: TextStyle(fontSize: 13),
-                              ),
-                            ),
-                            DropdownMenuItem(
-                              value: 'status',
-                              child: Text(
-                                'Status',
-                                style: TextStyle(fontSize: 13),
-                              ),
-                            ),
-                          ],
-                          onChanged: (value) {
-                            if (value != null) {
-                              setState(() {
-                                _sortBy = value;
-                              });
-                            }
-                          },
-                        ),
-                      ),
-
                       // Sort Direction Toggle
-                      const SizedBox(width: 8),
                       Container(
                         decoration: BoxDecoration(
                           color: isDark

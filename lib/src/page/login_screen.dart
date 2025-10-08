@@ -25,49 +25,56 @@ class _LoginScreenState extends State<LoginScreen> {
   void _showResetPasswordDialog() {
     final TextEditingController emailController = TextEditingController();
     bool isLoading = false;
-    
+
     showDialog(
       context: context,
       builder: (context) => StatefulBuilder(
         builder: (context, setState) => AlertDialog(
           title: const Text('Reset Password'),
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const Text('Masukkan email Anda untuk reset password:'),
-              const SizedBox(height: 16),
-              TextField(
-                controller: emailController,
-                enabled: !isLoading,
-                decoration: const InputDecoration(
-                  labelText: 'Email',
-                  border: OutlineInputBorder(),
-                  hintText: 'contoh@gmail.com',
-                ),
-              ),
-              const SizedBox(height: 16),
-              Container(
-                padding: const EdgeInsets.all(12),
-                decoration: BoxDecoration(
-                  color: Colors.orange[50],
-                  borderRadius: BorderRadius.circular(8),
-                  border: Border.all(color: Colors.orange[200]!),
-                ),
-                child: const Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      '💡 Tips:',
-                      style: TextStyle(fontWeight: FontWeight.bold),
+          content: ConstrainedBox(
+            constraints: BoxConstraints(
+              maxHeight: MediaQuery.of(context).size.height * 0.6,
+            ),
+            child: SingleChildScrollView(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Text('Masukkan email Anda untuk reset password:'),
+                  const SizedBox(height: 16),
+                  TextField(
+                    controller: emailController,
+                    enabled: !isLoading,
+                    decoration: const InputDecoration(
+                      labelText: 'Email',
+                      border: OutlineInputBorder(),
+                      hintText: 'contoh@gmail.com',
                     ),
-                    Text('• Email akan masuk dalam 1-5 menit'),
-                    Text('• Jika tidak ada di Inbox, cek folder Spam'),
-                    Text('• Mark email Firebase sebagai "Not Spam"'),
-                  ],
-                ),
+                  ),
+                  const SizedBox(height: 16),
+                  Container(
+                    padding: const EdgeInsets.all(12),
+                    decoration: BoxDecoration(
+                      color: Colors.orange[50],
+                      borderRadius: BorderRadius.circular(8),
+                      border: Border.all(color: Colors.orange[200]!),
+                    ),
+                    child: const Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          '💡 Tips:',
+                          style: TextStyle(fontWeight: FontWeight.bold),
+                        ),
+                        Text('• Email akan masuk dalam 1-5 menit'),
+                        Text('• Jika tidak ada di Inbox, cek folder Spam'),
+                        Text('• Mark email Firebase sebagai "Not Spam"'),
+                      ],
+                    ),
+                  ),
+                ],
               ),
-            ],
+            ),
           ),
           actions: [
             TextButton(
@@ -75,111 +82,121 @@ class _LoginScreenState extends State<LoginScreen> {
               child: const Text('Batal'),
             ),
             ElevatedButton(
-              onPressed: isLoading ? null : () async {
-                final email = emailController.text.trim();
-                if (email.isEmpty) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(
-                      content: Text('Email tidak boleh kosong!'),
-                      backgroundColor: Colors.red,
-                    ),
-                  );
-                  return;
-                }
+              onPressed: isLoading
+                  ? null
+                  : () async {
+                      final email = emailController.text.trim();
+                      if (email.isEmpty) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                            content: Text('Email tidak boleh kosong!'),
+                            backgroundColor: Colors.red,
+                          ),
+                        );
+                        return;
+                      }
 
-                // Validasi format email
-                final emailRegex = RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$');
-                if (!emailRegex.hasMatch(email)) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(
-                      content: Text('Format email tidak valid!'),
-                      backgroundColor: Colors.red,
-                    ),
-                  );
-                  return;
-                }
-                
-                setState(() {
-                  isLoading = true;
-                });
-                
-                print('🔄 User mencoba reset password untuk email: $email');
-                final authProvider = Provider.of<AuthProvider>(
-                  context,
-                  listen: false,
-                );
-                try {
-                  await authProvider.sendPasswordResetEmail(email);
-                  print('✅ Email reset password berhasil dikirim');
-                  Navigator.pop(context);
-                  
-                  // Tampilkan dialog sukses dengan petunjuk lengkap
-                  showDialog(
-                    context: context,
-                    builder: (context) => AlertDialog(
-                      title: const Text('✅ Email Terkirim!'),
-                      content: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          const Text('Email reset password telah dikirim ke:'),
-                          const SizedBox(height: 8),
-                          Text(
-                            email,
-                            style: const TextStyle(
-                              fontWeight: FontWeight.bold,
-                              color: Colors.blue,
-                            ),
+                      // Validasi format email
+                      final emailRegex = RegExp(
+                        r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$',
+                      );
+                      if (!emailRegex.hasMatch(email)) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                            content: Text('Format email tidak valid!'),
+                            backgroundColor: Colors.red,
                           ),
-                          const SizedBox(height: 16),
-                          const Text('📧 Cek email Anda di:'),
-                          const SizedBox(height: 8),
-                          const Text('• Inbox (Utama)'),
-                          const Text('• Spam/Trash (Spam)'),
-                          const Text('• Promotions (Promosi)'),
-                          const Text('• Updates (Info Terbaru)'),
-                          const SizedBox(height: 16),
-                          Container(
-                            padding: const EdgeInsets.all(8),
-                            decoration: BoxDecoration(
-                              color: Colors.blue[50],
-                              borderRadius: BorderRadius.circular(6),
+                        );
+                        return;
+                      }
+
+                      setState(() {
+                        isLoading = true;
+                      });
+
+                      print(
+                        '🔄 User mencoba reset password untuk email: $email',
+                      );
+                      final authProvider = Provider.of<AuthProvider>(
+                        context,
+                        listen: false,
+                      );
+                      try {
+                        await authProvider.sendPasswordResetEmail(email);
+                        print('✅ Email reset password berhasil dikirim');
+                        Navigator.pop(context);
+
+                        // Tampilkan dialog sukses dengan petunjuk lengkap
+                        showDialog(
+                          context: context,
+                          builder: (context) => AlertDialog(
+                            title: const Text('✅ Email Terkirim!'),
+                            content: Column(
+                              mainAxisSize: MainAxisSize.min,
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                const Text(
+                                  'Email reset password telah dikirim ke:',
+                                ),
+                                const SizedBox(height: 8),
+                                Text(
+                                  email,
+                                  style: const TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.blue,
+                                  ),
+                                ),
+                                const SizedBox(height: 16),
+                                const Text('📧 Cek email Anda di:'),
+                                const SizedBox(height: 8),
+                                const Text('• Inbox (Utama)'),
+                                const Text('• Spam/Trash (Spam)'),
+                                const Text('• Promotions (Promosi)'),
+                                const Text('• Updates (Info Terbaru)'),
+                                const SizedBox(height: 16),
+                                Container(
+                                  padding: const EdgeInsets.all(8),
+                                  decoration: BoxDecoration(
+                                    color: Colors.blue[50],
+                                    borderRadius: BorderRadius.circular(6),
+                                  ),
+                                  child: const Text(
+                                    '💡 Jika masuk Spam, mark sebagai "Not Spam" agar email berikutnya masuk Inbox',
+                                    style: TextStyle(fontSize: 12),
+                                  ),
+                                ),
+                              ],
                             ),
-                            child: const Text(
-                              '💡 Jika masuk Spam, mark sebagai "Not Spam" agar email berikutnya masuk Inbox',
-                              style: TextStyle(fontSize: 12),
-                            ),
+                            actions: [
+                              TextButton(
+                                onPressed: () => Navigator.pop(context),
+                                child: const Text('OK'),
+                              ),
+                            ],
                           ),
-                        ],
-                      ),
-                      actions: [
-                        TextButton(
-                          onPressed: () => Navigator.pop(context),
-                          child: const Text('OK'),
-                        ),
-                      ],
-                    ),
-                  );
-                } catch (e) {
-                  print('❌ Gagal mengirim email reset password: $e');
-                  setState(() {
-                    isLoading = false;
-                  });
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(
-                      content: Text('Gagal mengirim email: ${e.toString()}'),
-                      backgroundColor: Colors.red,
-                    ),
-                  );
-                }
-              },
-              child: isLoading 
-                ? const SizedBox(
-                    width: 20,
-                    height: 20,
-                    child: CircularProgressIndicator(strokeWidth: 2),
-                  )
-                : const Text('Kirim'),
+                        );
+                      } catch (e) {
+                        print('❌ Gagal mengirim email reset password: $e');
+                        setState(() {
+                          isLoading = false;
+                        });
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content: Text(
+                              'Gagal mengirim email: ${e.toString()}',
+                            ),
+                            backgroundColor: Colors.red,
+                          ),
+                        );
+                      }
+                    },
+              child: isLoading
+                  ? const SizedBox(
+                      width: 20,
+                      height: 20,
+                      child: CircularProgressIndicator(strokeWidth: 2),
+                    )
+                  : const Text('Kirim'),
             ),
           ],
         ),

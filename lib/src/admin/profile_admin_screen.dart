@@ -32,12 +32,12 @@ class ProfileAdminScreen extends StatelessWidget {
         child: Card(
           color: isDark ? const Color(0xFF2A2A2A) : Colors.white,
           elevation: 3,
-          margin: const EdgeInsets.all(24),
+          margin: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(16),
           ),
           child: Padding(
-            padding: const EdgeInsets.all(24),
+            padding: const EdgeInsets.all(20),
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
@@ -54,24 +54,10 @@ class ProfileAdminScreen extends StatelessWidget {
                     color: Color(0xFF8FBC8F),
                   ),
                 ),
-                const SizedBox(height: 16),
-                Text(
-                  'Admin Jahit',
-                  style: TextStyle(
-                    fontWeight: FontWeight.bold,
-                    fontSize: 20,
-                    color: isDark ? Colors.white : Colors.black,
-                  ),
-                ),
-                const SizedBox(height: 8),
-                Text(
-                  'admin@email.com',
-                  style: TextStyle(
-                    color: isDark ? Colors.white70 : Colors.grey,
-                  ),
-                ),
+                const SizedBox(height: 12),
+
                 Divider(
-                  height: 32,
+                  height: 24,
                   color: isDark ? Colors.white24 : Colors.black12,
                 ),
                 OutlinedButton(

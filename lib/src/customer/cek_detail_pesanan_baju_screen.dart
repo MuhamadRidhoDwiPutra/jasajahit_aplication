@@ -341,10 +341,10 @@ class CekDetailPesananBajuScreen extends StatelessWidget {
                             ),
                             Text(
                               'Rp ${itemPrice.toStringAsFixed(0)}',
-                              style: TextStyle(
+                              style: const TextStyle(
                                 fontWeight: FontWeight.bold,
                                 fontSize: 14,
-                                color: const Color(0xFFDE8500),
+                                color: Color(0xFFDE8500),
                               ),
                             ),
                           ],
@@ -384,10 +384,10 @@ class CekDetailPesananBajuScreen extends StatelessWidget {
                     ),
                                          Text(
                        'Rp ${(order.totalPrice ?? 0).toStringAsFixed(0)}',
-                       style: TextStyle(
+                       style: const TextStyle(
                          fontWeight: FontWeight.bold,
                          fontSize: 18,
-                         color: const Color(0xFFDE8500),
+                         color: Color(0xFFDE8500),
                        ),
                      ),
                   ],

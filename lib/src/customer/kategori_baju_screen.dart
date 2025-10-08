@@ -228,7 +228,7 @@ class _KategoriBajuScreenState extends State<KategoriBajuScreen> {
                             crossAxisCount: 2,
                             crossAxisSpacing: 16,
                             mainAxisSpacing: 16,
-                            childAspectRatio: 0.75,
+                            childAspectRatio: 0.7,
                           ),
                       itemCount: _bajuProducts.length,
                       itemBuilder: (context, index) {

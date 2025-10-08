@@ -20,7 +20,7 @@ class _RiwayatTransaksiAdminScreenState
   late TextEditingController _searchController;
   String _searchQuery = '';
   String _selectedStatusFilter = 'Semua Status';
-  String _sortBy = 'date'; // 'date', 'name', 'status'
+  String _sortBy = 'name'; // 'name', 'status'
   bool _isAscending = false;
 
   List<String> statusOptions = ['Pesanan telah selesai', 'Pesanan Dibatalkan'];
@@ -94,13 +94,6 @@ class _RiwayatTransaksiAdminScreenState
       int comparison = 0;
 
       switch (_sortBy) {
-        case 'date':
-          final aDate = aData['orderDate'] as Timestamp?;
-          final bDate = bData['orderDate'] as Timestamp?;
-          if (aDate != null && bDate != null) {
-            comparison = aDate.compareTo(bDate);
-          }
-          break;
         case 'name':
           final aName = (aData['customerName'] ?? aData['userName'] ?? '')
               .toString();
@@ -126,6 +119,16 @@ class _RiwayatTransaksiAdminScreenState
       _searchQuery = '';
       _searchController.clear();
     });
+  }
+
+  Color _getStatusColor(String status) {
+    status = status.toLowerCase();
+    if (status.contains('selesai')) {
+      return Colors.green; // #4CAF50
+    } else if (status.contains('batal')) {
+      return Colors.red; // #F44336
+    }
+    return const Color(0xFFDE8500); // Default orange
   }
 
   // Fungsi untuk mendapatkan data customer yang benar
@@ -259,12 +262,12 @@ class _RiwayatTransaksiAdminScreenState
             return Card(
               color: isDark ? const Color(0xFF2A2A2A) : Colors.white,
               elevation: 3,
-              margin: const EdgeInsets.only(bottom: 16),
+              margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
               shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(16),
+                borderRadius: BorderRadius.circular(12),
               ),
               child: Padding(
-                padding: const EdgeInsets.all(16),
+                padding: const EdgeInsets.all(12),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -288,13 +291,17 @@ class _RiwayatTransaksiAdminScreenState
                             vertical: 6,
                           ),
                           decoration: BoxDecoration(
-                            color: const Color(0xFFDE8500).withOpacity(0.1),
+                            color: _getStatusColor(
+                              orderData['status'] ?? 'N/A',
+                            ).withOpacity(0.1),
                             borderRadius: BorderRadius.circular(8),
                           ),
                           child: Text(
                             orderData['status'] ?? 'N/A',
-                            style: const TextStyle(
-                              color: Color(0xFFDE8500),
+                            style: TextStyle(
+                              color: _getStatusColor(
+                                orderData['status'] ?? 'N/A',
+                              ),
                               fontWeight: FontWeight.w500,
                               fontSize: 12,
                             ),
@@ -304,27 +311,27 @@ class _RiwayatTransaksiAdminScreenState
                     ),
                     Divider(
                       color: isDark ? Colors.white24 : Colors.black12,
-                      height: 24,
+                      height: 16,
                     ),
                     Row(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Container(
-                          width: 80,
-                          height: 80,
+                          width: 60,
+                          height: 60,
                           decoration: BoxDecoration(
                             color: const Color(0xFF8FBC8F).withOpacity(0.1),
-                            borderRadius: BorderRadius.circular(12),
+                            borderRadius: BorderRadius.circular(8),
                           ),
                           child: const Center(
                             child: Icon(
                               Icons.shopping_bag,
-                              size: 40,
+                              size: 30,
                               color: Color(0xFF8FBC8F),
                             ),
                           ),
                         ),
-                        const SizedBox(width: 16),
+                        const SizedBox(width: 12),
                         Expanded(
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
@@ -345,7 +352,7 @@ class _RiwayatTransaksiAdminScreenState
                                   color: isDark ? Colors.white : Colors.black,
                                 ),
                               ),
-                              const SizedBox(height: 8),
+                              const SizedBox(height: 4),
                               Text(
                                 'Username',
                                 style: TextStyle(
@@ -362,7 +369,7 @@ class _RiwayatTransaksiAdminScreenState
                                   color: isDark ? Colors.white : Colors.black,
                                 ),
                               ),
-                              const SizedBox(height: 8),
+                              const SizedBox(height: 4),
                               Text(
                                 'Alamat',
                                 style: TextStyle(
@@ -379,7 +386,7 @@ class _RiwayatTransaksiAdminScreenState
                                   color: isDark ? Colors.white : Colors.black,
                                 ),
                               ),
-                              const SizedBox(height: 8),
+                              const SizedBox(height: 4),
                               Text(
                                 'Tanggal Pesan',
                                 style: TextStyle(
@@ -490,88 +497,7 @@ class _RiwayatTransaksiAdminScreenState
                 // Filter data menggunakan fungsi pencarian yang baru
                 var filteredDocs = _filterAndSortOrders(snapshot.data!.docs);
 
-                // Search info dan statistics
-                if (_searchQuery.isNotEmpty) {
-                  return Column(
-                    children: [
-                      // Search info bar
-                      Container(
-                        margin: const EdgeInsets.symmetric(
-                          horizontal: 16,
-                          vertical: 8,
-                        ),
-                        padding: const EdgeInsets.all(12),
-                        decoration: BoxDecoration(
-                          color: isDark
-                              ? const Color(0xFF2A2A2A)
-                              : Colors.white,
-                          borderRadius: BorderRadius.circular(8),
-                          border: Border.all(
-                            color: isDark ? Colors.white24 : Colors.grey[300]!,
-                          ),
-                        ),
-                        child: Row(
-                          children: [
-                            const Icon(
-                              Icons.search,
-                              size: 16,
-                              color: Color(0xFFDE8500),
-                            ),
-                            const SizedBox(width: 8),
-                            Expanded(
-                              child: Text(
-                                'Mencari: "$_searchQuery"',
-                                style: TextStyle(
-                                  fontSize: 12,
-                                  color: isDark
-                                      ? Colors.white70
-                                      : Colors.grey[600],
-                                ),
-                              ),
-                            ),
-                            Container(
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: 8,
-                                vertical: 4,
-                              ),
-                              decoration: BoxDecoration(
-                                color: const Color(0xFFDE8500).withOpacity(0.1),
-                                borderRadius: BorderRadius.circular(12),
-                              ),
-                              child: Text(
-                                '${filteredDocs.length} hasil',
-                                style: const TextStyle(
-                                  fontSize: 12,
-                                  color: Color(0xFFDE8500),
-                                  fontWeight: FontWeight.w600,
-                                ),
-                              ),
-                            ),
-                            const SizedBox(width: 8),
-                            TextButton(
-                              onPressed: () {
-                                setState(() {
-                                  _searchQuery = '';
-                                });
-                              },
-                              child: const Text(
-                                'Clear',
-                                style: TextStyle(
-                                  color: Color(0xFFDE8500),
-                                  fontSize: 12,
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                      // Results list
-                      Expanded(child: _buildResultsList(filteredDocs, isDark)),
-                    ],
-                  );
-                }
-
-                // Jika tidak ada search query, tampilkan semua data
+                // Tampilkan semua data tanpa search info bar
                 return _buildResultsList(filteredDocs, isDark);
               },
             ),

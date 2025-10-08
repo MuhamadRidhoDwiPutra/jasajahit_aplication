@@ -771,7 +771,7 @@ class _HomeCustomerContentState extends State<_HomeCustomerContent> {
             gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
               crossAxisCount: 2,
               childAspectRatio:
-                  0.75, // Ubah dari 0.85 ke 0.75 untuk memberikan ruang lebih
+                  0.7, // Perbesar gambar dengan aspect ratio lebih kecil
               crossAxisSpacing: 16,
               mainAxisSpacing: 16,
             ),
@@ -1054,28 +1054,33 @@ class _ModelCard extends StatelessWidget {
           ClipRRect(
             borderRadius: const BorderRadius.vertical(top: Radius.circular(16)),
             child: Container(
-              height: 100, // Perbesar dari 80 ke 100
+              height: 120, // Perbesar dari 100 ke 120 untuk gambar lebih besar
               width: double.infinity,
               color: isDark ? Colors.grey[800] : Colors.grey[100],
-              child: Image.asset(
-                product.imagePath,
-                height: 100, // Perbesar dari 80 ke 100
-                width: double.infinity,
-                fit: BoxFit.contain,
-                errorBuilder: (context, error, stackTrace) {
-                  return Container(
-                    height: 100, // Perbesar dari 80 ke 100
-                    width: double.infinity,
-                    color: isDark ? Colors.grey[700] : Colors.grey[300],
-                    child: Center(
-                      child: Icon(
-                        Icons.image_not_supported,
-                        color: isDark ? Colors.white70 : Colors.black54,
-                        size: 28, // Perbesar dari 24 ke 28
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Image.asset(
+                  product.imagePath,
+                  height:
+                      120, // Perbesar dari 100 ke 120 untuk gambar lebih besar
+                  width: double.infinity,
+                  fit: BoxFit.contain,
+                  errorBuilder: (context, error, stackTrace) {
+                    return Container(
+                      height:
+                          120, // Perbesar dari 100 ke 120 untuk gambar lebih besar
+                      width: double.infinity,
+                      color: isDark ? Colors.grey[700] : Colors.grey[300],
+                      child: Center(
+                        child: Icon(
+                          Icons.image_not_supported,
+                          color: isDark ? Colors.white70 : Colors.black54,
+                          size: 28, // Perbesar dari 24 ke 28
+                        ),
                       ),
-                    ),
-                  );
-                },
+                    );
+                  },
+                ),
               ),
             ),
           ),
@@ -1095,7 +1100,7 @@ class _ModelCard extends StatelessWidget {
                       color: isDark ? Colors.white : Colors.black,
                       fontFamily: 'SF Pro Text',
                     ),
-                    maxLines: 1,
+                    maxLines: 2,
                     overflow: TextOverflow.ellipsis,
                   ),
                   const SizedBox(

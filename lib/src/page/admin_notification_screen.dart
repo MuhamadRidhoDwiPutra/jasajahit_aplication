@@ -75,12 +75,14 @@ class _AdminNotificationScreenState extends State<AdminNotificationScreen> {
                         child: Text(
                           'Notifikasi Admin',
                           style: TextStyle(
-                            fontSize: 20,
+                            fontSize: 18,
                             fontWeight: FontWeight.w600,
                             color: isDark ? Colors.white : Colors.black,
                             fontFamily: 'SF Pro Display',
                           ),
                           textAlign: TextAlign.center,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
                         ),
                       ),
                       if (notifications.isNotEmpty)
@@ -182,30 +184,6 @@ class _AdminNotificationScreenState extends State<AdminNotificationScreen> {
                               const SnackBar(
                                 content: Text('Notifikasi diperbarui!'),
                                 backgroundColor: Color(0xFF2196F3),
-                              ),
-                            );
-                          },
-                        ),
-                      ),
-                      // Tombol cek notifikasi
-                      Container(
-                        decoration: BoxDecoration(
-                          color: const Color(0xFF9C27B0).withOpacity(0.1),
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                        child: IconButton(
-                          icon: const Icon(
-                            Icons.info_outline,
-                            color: Color(0xFF9C27B0),
-                          ),
-                          onPressed: () async {
-                            await notifProvider.checkAllNotifications();
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(
-                                content: Text(
-                                  'Info notifikasi ditampilkan di console!',
-                                ),
-                                backgroundColor: Color(0xFF9C27B0),
                               ),
                             );
                           },
